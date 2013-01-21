@@ -1,5 +1,4 @@
 #!/bin/bash
-#author: wangxiaojun
 
 check_system (){
 SYSTEM_INFO=`head -n 1 /etc/issue`
