@@ -5,10 +5,11 @@ usage (){
         exit 1
 }
 
-#check_user () {
-#       local user="$1"
-#       grep ${user} /etc/passwd >/dev/null 2>&1 && return 0 || return 1
-#}
+uid=`id -g`
+if [ ${uid} -ne 0 ];then
+	echo "only root can be execut this script!" 1>&2
+	exit 1
+fi
 
 while getopts spu opt
 do
