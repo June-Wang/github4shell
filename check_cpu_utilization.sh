@@ -48,9 +48,11 @@ log="${log_path}/${log_name}.log"
 
 rm_name=`date -d "-15 day" +"%F"`
 rm_log="${log_path}/${rm_name}.log"
+uid=`id -g`
 
 test -e ${rm_log} && rm -f ${rm_log}
 test -d ${log_path} || mkdir -p ${log_path}
+[ ${uid} -eq 0 ] && chown nagios.nagios -R ${log_path}
 echo `date -d "now" +"%F %T"` >> ${log}
 
 cpu_utilization=`ps -eo pcpu,args|\
