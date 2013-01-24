@@ -48,7 +48,7 @@ log="${log_path}/${log_name}.log"
 
 rm_name=`date -d "-15 day" +"%F"`
 rm_log="${log_path}/${rm_name}.log"
-uid=`id -g`
+uid=`id -u`
 
 test -e ${rm_log} && rm -f ${rm_log}
 test -d ${log_path} || mkdir -p ${log_path}

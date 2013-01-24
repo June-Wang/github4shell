@@ -5,7 +5,7 @@ usage (){
         exit 1
 }
 
-uid=`id -g`
+uid=`id -u`
 if [ ${uid} -ne 0 ];then
 	echo "only root can be execute this script!" 1>&2
 	exit 1
