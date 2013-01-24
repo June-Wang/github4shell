@@ -38,6 +38,8 @@ install_git () {
                 ${cmd} >> ~/install_${file}.log 2>&1
         done
 	echo "done."
+	test -e ./contrib/completion/git-completion.bash &&\
+	cp ./contrib/completion/git-completion.bash /etc/profile.d/git-completion.sh
 	cd ..
 }
 
