@@ -6,7 +6,7 @@ STATE_CRITICAL=2
 STATE_UNKNOWN=3
 
 usage () {
-        echo -en "USAGE: $0 -w 20 -c 10\n" 1>&2
+        echo -en "USAGE: $0 -w 100 -c 300\n" 1>&2
         exit ${STATE_WARNING}
 }
 
@@ -61,17 +61,21 @@ sort -nr|\
 tee -a ${log}|\
 awk '{sum+=$1}END{print sum}'`
 
-num=`echo "(100-${cpu_utilization})/1"|bc`
+if [ -n "${cpu_utilization}" ];then
+	CPU_UTILIZATION=`echo "${cpu_utilization}/1"|bc`
+else
+	CPU_UTILIZATION=0
+fi
 
 message () {
-        echo "CPU utilization is $1: ${cpu_utilization}% | CPU_utilization=${cpu_utilization};$[100-${WARNING}];$[100-${CRITICAL}];0;120"
+        echo "CPU utilization is $1: ${CPU_UTILIZATION}% | CPU_utilization=${CPU_UTILIZATION};${WARNING};${CRITICAL};0;800"
 }
-if [ ${num} -le ${CRITICAL} ];then
+if [ ${CPU_UTILIZATION} -ge ${CRITICAL} ];then
         message CRITICAL
         exit ${STATE_CRITICAL}
 fi
 
-if [ ${num} -le ${WARNING} ];then
+if [ ${CPU_UTILIZATION} -ge ${WARNING} ];then
         message WARNING
         exit ${STATE_WARNING}
 fi
