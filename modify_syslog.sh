@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #log server
-#syslog_server='192.168.29.238'
 syslog_server='syslog.suixingpay.local'
 
 #yum server

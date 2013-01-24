@@ -96,7 +96,7 @@ fi
 
 main () {
 yum_server='yum.suixingpay.com'
-log_server='192.168.29.238'
+log_server='syslog.suixingpay.local'
 check_system
 set_install_cmd
 install_rsyslog

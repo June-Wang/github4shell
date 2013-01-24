@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum_server='192.168.29.234'
+yum_server='yum.suixingpay.com'
 nagios_plugin='check_denyhosts.sh'
 nagios_cfg='/usr/local/nagios/etc/nrpe.cfg'
 nagios_lib='/usr/local/nagios/libexec'

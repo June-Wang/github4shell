@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum_server='192.168.29.234'
+yum_server='yum.suixingpay.com'
 local_path='/usr/local'
 
 usage (){
