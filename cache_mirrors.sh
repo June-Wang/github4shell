@@ -66,7 +66,7 @@ gpgcheck=0
 #baseurl=http://${CACHE_SERVER}/epel/testing/\$releasever/SRPMS
 #failovermethod=priority
 #gpgcheck=0" > ${repo_file}
-yum makecache
+#yum makecache
 }
 
 modify_debian_mirror () {
@@ -98,7 +98,7 @@ apt_conf_dir="${SOURCE_DIR}/apt.conf.d"
 #proxy_conf="${apt_conf_dir}/000apt-cacher-ng-proxy"
 #test -d ${apt_conf_dir} && echo "Acquire::http::Proxy \"http://${CACHE_SERVER}:3142/\";" > ${proxy_conf}
 find ${apt_conf_dir} -type f |xargs -r grep -l 'Acquire::http::Proxy'|xargs -r -i sed -i '/^Acquire::http::Proxy/d' "{}"
-apt-get update
+#apt-get update
 }
 
 main () {
