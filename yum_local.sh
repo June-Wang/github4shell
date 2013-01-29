@@ -45,7 +45,7 @@ centos5)
 echo "[centos5-lan]
 name=CentOS-\$releasever - Media
 baseurl=http://${yum_server}/centos5.8_${platform}/
-gpgcheck=0" > ${file}
+gpgcheck=0" > ${repo_file}
 ;;
 esac
 }
