@@ -1,8 +1,9 @@
 #!/bin/bash
 
 CACHE_SERVER='cache.mirrors.local'
+#MIRROR_URL='ftp://ftp.kr.debian.org'
 
-backup_local_repo_file () {
+modify_centos_mirror () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
         find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS5-lan.repo|cache_mirror.repo|RHEL5-lan.repo'|\
@@ -11,9 +12,7 @@ if [ -d "${SOURCE_DIR}" ];then
                 mv "${source_file}" "${source_file}.${my_date}.$$"
         done
 fi
-}
 
-modify_centos_mirror () {
 repo_file="${SOURCE_DIR}/cache_mirror.repo"
 echo "[base]
 name=CentOS-\$releasever - Base
@@ -70,73 +69,6 @@ gpgcheck=0
 #yum makecache
 }
 
-modify_rhel5_mirror () {
-repo_file="${SOURCE_DIR}/cache_mirror.repo"
-echo "[base]
-name=CentOS-${releasever} - Base
-mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=os
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-gpgcheck=0
-
-[updates]
-name=CentOS-${releasever} - Updates
-mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=updates
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-gpgcheck=0
-
-[extras]
-name=CentOS-${releasever} - Extras
-mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=extras
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-gpgcheck=0
-
-[centosplus]
-name=CentOS-${releasever} - Plus
-mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=centosplus
-#gpgcheck=1
-enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-gpgcheck=0
-
-[contrib]
-name=CentOS-${releasever} - Contrib
-mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=contrib
-#gpgcheck=1
-enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-gpgcheck=0
-
-[epel]
-name=Extra Packages for Enterprise Linux 5 - $basearch
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-${releasever}&arch=$basearch
-failovermethod=priority
-enabled=1
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
-gpgcheck=0
-
-[epel-debuginfo]
-name=Extra Packages for Enterprise Linux 5 - $basearch - Debug
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-debug-${releasever}&arch=$basearch
-failovermethod=priority
-enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
-#gpgcheck=1
-gpgcheck=0
-
-[epel-source]
-name=Extra Packages for Enterprise Linux 5 - $basearch - Source
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-${releasever}&arch=$basearch
-failovermethod=priority
-enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
-#gpgcheck=1
-gpgcheck=0" > ${repo_file}
-}
-
 modify_debian_mirror () {
 local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
@@ -175,7 +107,6 @@ case "${SYSTEM_INFO}" in
         'CentOS'*)
                 SYSTEM='centos'
                 SOURCE_DIR='/etc/yum.repos.d'
-				backup_local_repo_file
                 modify_centos_mirror
                 ;;
         'Debian'*)
@@ -186,11 +117,9 @@ case "${SYSTEM_INFO}" in
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 yum_source_name='RHEL5-lan'
-				releasever='5'
-#                echo "This script not support ${SYSTEM_INFO}" 1>&2
-#                exit 1
-				backup_local_repo_file
-				modify_rhel5_mirror
+                file='/etc/yum.repos.d/RHEL5-lan.repo'
+                echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
                 ;;
         *)
                 SYSTEM='unknown'
