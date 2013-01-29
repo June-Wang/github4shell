@@ -80,7 +80,7 @@ yum makecache |tail -n 1 && exit 0
 main () {
 yum_server='yum.suixingpay.com'
 check_system
-check_repo_config
+#check_repo_config
 check_platform
 echo "Set yum please wait ......"
 set_repo_file
