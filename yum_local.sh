@@ -39,7 +39,7 @@ rhel5)
 echo "[RHEL5-lan]
 name=Red Hat Enterprise Linux \$releasever - \$basearch
 baseurl=http://${yum_server}/rhel5.8_${platform}/Server/
-gpgcheck=0" > ${file}
+gpgcheck=0" > ${repo_file}
 ;;
 centos5)
 echo "[centos5-lan]
@@ -68,7 +68,7 @@ set_yum_proxy () {
 yum_config='/etc/yum.conf'
 if [ -e ${yum_config} ];then
 	grep -E '^proxy*' ${yum_config} >/dev/null 2>&1 &&\
-	sed -r -i "s/^proxy*/proxy = http:\/\/${yum_server}:80\//" ${yum_config} ||\
+	sed -r -i "s/^proxy.*$/proxy=http:\/\/${yum_server}:80\//" ${yum_config} ||\
 	echo "proxy=http://${yum_server}:80/" >> ${yum_config}
 fi
 }
