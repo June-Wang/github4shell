@@ -230,6 +230,7 @@ case "${SYSTEM_INFO}" in
         'Debian'*)
                 SYSTEM='debian'
                 SOURCE_DIR='/etc/apt'
+				check_debian_version
                 modify_debian_mirror
         ;;
         'Red Hat Enterprise Linux Server release'*)
