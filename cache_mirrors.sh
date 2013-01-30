@@ -97,7 +97,7 @@ gpgcheck=1" > ${repo_file}
 #yum makecache
 }
 
-modify_rhel5_mirror () {
+modify_rhel_mirror () {
 repo_file="${SOURCE_DIR}/cache_mirror.repo"
 echo "[base]
 name=CentOS-${releasever} - Base
@@ -164,21 +164,38 @@ enabled=0
 gpgcheck=0" > ${repo_file}
 }
 
-modify_debian_mirror () {
-local source_file="${SOURCE_DIR}/sources.list"
-if [ -e ${source_file} ];then
-        case "${SYSTEM_INFO}" in
-                'Debian GNU/Linux 6'*)
+check_debian_version () {
+debian_release=`echo "${SYSTEM_INFO}" |\
+grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
+case "${debian_release}" in
+                6)
                         DEBIAN_VERSION='squeeze'
                 ;;
-                'Debian GNU/Linux 5'*)
+                5)
                         DEBIAN_VERSION='wheezy'
                 ;;
                 *)
                         echo "This script not support ${SYSTEM_INFO}" 1>&2
                         exit 1
                 ;;
-        esac
+esac
+}
+
+modify_debian_mirror () {
+local source_file="${SOURCE_DIR}/sources.list"
+if [ -e ${source_file} ];then
+#        case "${SYSTEM_INFO}" in
+#                'Debian GNU/Linux 6'*)
+#                        DEBIAN_VERSION='squeeze'
+#                ;;
+#                'Debian GNU/Linux 5'*)
+#                        DEBIAN_VERSION='wheezy'
+#                ;;
+#                *)
+#                        echo "This script not support ${SYSTEM_INFO}" 1>&2
+#                        exit 1
+#                ;;
+#        esac
         local my_date=`date -d "now" +"%F"`
         cp "${source_file}" "${source_file}.${my_date}.$$"
         echo "deb http://${CACHE_SERVER}/debian stable main #non-free contrib
@@ -196,6 +213,11 @@ find ${apt_conf_dir} -type f |xargs -r grep -l 'Acquire::http::Proxy'|xargs -r -
 #apt-get update
 }
 
+check_rhel_version () {
+releasever=`echo "${SYSTEM_INFO}" |\
+grep -oP 'Red Hat Enterprise Linux Server release\s+\d+'|awk '{print $NF}'`
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -210,13 +232,12 @@ case "${SYSTEM_INFO}" in
                 SOURCE_DIR='/etc/apt'
                 modify_debian_mirror
         ;;
-        'Red Hat Enterprise Linux Server release 5'*)
-                SYSTEM='rhel5'
+        'Red Hat Enterprise Linux Server release'*)
+                SYSTEM='rhel'
                 SOURCE_DIR='/etc/yum.repos.d'
-                yum_source_name='RHEL5-lan'
-				releasever='5'
+				check_rhel_version
 				backup_local_repo_file
-				modify_rhel5_mirror
+				modify_rhel_mirror
                 ;;
         *)
                 SYSTEM='unknown'
