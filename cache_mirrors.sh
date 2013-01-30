@@ -137,8 +137,8 @@ enabled=0
 gpgcheck=0
 
 [epel]
-name=Extra Packages for Enterprise Linux ${releasever} - $basearch
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-${releasever}&arch=$basearch
+name=Extra Packages for Enterprise Linux ${releasever} - \$basearch
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=1
 #gpgcheck=1
@@ -146,8 +146,8 @@ enabled=1
 gpgcheck=0
 
 [epel-debuginfo]
-name=Extra Packages for Enterprise Linux ${releasever} - $basearch - Debug
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-debug-${releasever}&arch=$basearch
+name=Extra Packages for Enterprise Linux ${releasever} - \$basearch - Debug
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-debug-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=0
 #gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
@@ -155,8 +155,8 @@ enabled=0
 gpgcheck=0
 
 [epel-source]
-name=Extra Packages for Enterprise Linux ${releasever} - $basearch - Source
-mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-${releasever}&arch=$basearch
+name=Extra Packages for Enterprise Linux ${releasever} - \$basearch - Source
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=0
 #gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
@@ -212,10 +212,9 @@ case "${SYSTEM_INFO}" in
         ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
+                SOURCE_DIR='/etc/yum.repos.d'
                 yum_source_name='RHEL5-lan'
 				releasever='5'
-#                echo "This script not support ${SYSTEM_INFO}" 1>&2
-#                exit 1
 				backup_local_repo_file
 				modify_rhel5_mirror
                 ;;
