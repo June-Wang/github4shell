@@ -1,8 +1,8 @@
 #!/bin/bash
 
 CACHE_SERVER='cache.mirrors.local'
-CENTOS_MIRRORS='mirrors.ustc.edu.cn'
-EPEL_MIRRORS='mirrors.ustc.edu.cn'
+#CENTOS_MIRRORS='mirrors.ustc.edu.cn'
+#EPEL_MIRRORS='mirrors.ustc.edu.cn'
 proxy_server='yum.suixingpay.com'
 
 backup_local_repo_file () {
@@ -17,46 +17,42 @@ fi
 }
 
 modify_centos_mirror () {
-repo_file="${SOURCE_DIR}/${CENTOS_MIRRORS}.repo"
+repo_file="${SOURCE_DIR}/cache_mirror.repo"
 echo "[base]
 name=CentOS-\$releasever - Base
-baseurl=http://${CENTOS_MIRRORS}/centos/\$releasever/os/\$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=os
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-\$releasever
 
-#released updates 
 [updates]
 name=CentOS-\$releasever - Updates
-baseurl=http://${CENTOS_MIRRORS}/centos/\$releasever/updates/\$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=updates
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-\$releasever
 
-#additional packages that may be useful
 [extras]
 name=CentOS-\$releasever - Extras
-baseurl=http://${CENTOS_MIRRORS}/centos/\$releasever/extras/\$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=extras
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-\$releasever
 
-#additional packages that extend functionality of existing packages
 [centosplus]
 name=CentOS-\$releasever - Plus
-baseurl=http://${CENTOS_MIRRORS}/centos/\$releasever/centosplus/\$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
 gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-\$releasever
 
-#contrib - packages by Centos Users
 [contrib]
 name=CentOS-\$releasever - Contrib
-baseurl=http://${CENTOS_MIRRORS}/centos/\$releasever/contrib/\$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=contrib
 gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-\$releasever
 
 [epel]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch
-baseurl=http://${EPEL_MIRRORS}/epel/\$releasever/\$basearch
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=1
 gpgcheck=1
@@ -64,7 +60,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
 
 [epel-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Debug
-baseurl=http://${EPEL_MIRRORS}/epel/\$releasever/\$basearch/debug
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-debug-\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
@@ -72,7 +68,7 @@ gpgcheck=1
 
 [epel-source]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Source
-baseurl=http://${EPEL_MIRRORS}/epel/\$releasever/SRPMS
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
@@ -80,7 +76,7 @@ gpgcheck=1
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch 
-baseurl=http://${EPEL_MIRRORS}/epel/testing/\$releasever/\$basearch
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=testing-epel\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=0
 gpgcheck=1
@@ -88,7 +84,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
 
 [epel-testing-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Debug
-baseurl=http://${EPEL_MIRRORS}/epel/testing/\$releasever/\$basearch/debug
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=testing-debug-epel\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
@@ -96,12 +92,11 @@ gpgcheck=1
 
 [epel-testing-source]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Source
-baseurl=http://${EPEL_MIRRORS}/epel/testing/\$releasever/SRPMS
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=testing-source-epel\$releasever&arch=\$basearch
 failovermethod=priority
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
 gpgcheck=1" > ${repo_file}
-#yum makecache
 }
 
 modify_rhel_mirror () {
