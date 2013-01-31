@@ -74,6 +74,7 @@ fi
 }
 
 create_yum_cache () {
+yum clean
 yum makecache |tail -n 1 && exit 0
 }
 
@@ -86,7 +87,7 @@ echo "Set yum please wait ......"
 set_repo_file
 alias_yum
 set_dns_server
-set_yum_proxy
+#set_yum_proxy
 create_yum_cache
 }
 

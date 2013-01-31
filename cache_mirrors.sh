@@ -218,6 +218,15 @@ releasever=`echo "${SYSTEM_INFO}" |\
 grep -oP 'Red Hat Enterprise Linux Server release\s+\d+'|awk '{print $NF}'`
 }
 
+set_yum_proxy () {
+yum_config='/etc/yum.conf'
+if [ -e ${yum_config} ];then
+    grep -E '^proxy*' ${yum_config} >/dev/null 2>&1 &&\
+    sed -r -i "s/^proxy.*$/proxy=http:\/\/${yum_server}:80\//" ${yum_config} ||\
+    echo "proxy=http://${yum_server}:80/" >> ${yum_config}
+fi
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -249,3 +258,4 @@ esac
 }
 
 main
+set_yum_proxy
