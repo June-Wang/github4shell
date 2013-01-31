@@ -3,6 +3,7 @@
 CACHE_SERVER='cache.mirrors.local'
 CENTOS_MIRRORS='mirrors.ustc.edu.cn'
 EPEL_MIRRORS='mirrors.ustc.edu.cn'
+proxy_server='yum.suixingpay.com'
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
@@ -216,8 +217,8 @@ set_yum_proxy () {
 yum_config='/etc/yum.conf'
 if [ -e ${yum_config} ];then
     grep -E '^proxy*' ${yum_config} >/dev/null 2>&1 &&\
-    sed -r -i "s/^proxy.*$/proxy=http:\/\/${yum_server}:80\//" ${yum_config} ||\
-    echo "proxy=http://${yum_server}:80/" >> ${yum_config}
+    sed -r -i "s/^proxy.*$/proxy=http:\/\/${proxy_server}:80\//" ${yum_config} ||\
+    echo "proxy=http://${proxy_server}:80/" >> ${yum_config}
 fi
 }
 
