@@ -108,8 +108,10 @@ install_acng () {
 	cp build/apt-cacher-ng /usr/local/sbin/
 	cp build/acngfs /usr/local/sbin/
 	cp build/in.acng /usr/local/sbin/
-	cp expire-caller.pl /etc/cron.daily/apt-cacher-ng
-	chmod +x /etc/cron.daily/apt-cacher-ng
+	cp expire-caller.pl /etc/cron.daily/
+	test -d /usr/lib/apt-cacher-ng/ || mkdir -p /usr/lib/apt-cacher-ng/
+	cp distkill.pl expire-caller.pl urlencode-fixer.pl /usr/lib/apt-cacher-ng/
+	chmod +x /etc/cron.daily/expire-caller.pl
         local cache_dir='/var/cache/apt-cacher-ng'
         test -d ${cache_dir} || mkdir -p ${cache_dir}
         local log_dir='/var/log/apt-cacher-ng'
