@@ -108,7 +108,7 @@ echo -n "Compile ${file} please wait ...... "
 
 run_cmds () {
 local   cmd_log="${TEMP_PATH}/install_${PACKAGE}.log"
-        test -f "${cmd_log}" && cat /dev/null > "${TEMP_PATH}/install_${dir}.log"
+        test -f "${cmd_log}" && rm -f ${cmd_log}
         for cmd in "$@"
         do
                 ${cmd} >> "${cmd_log}" 2>&1 || compile='fail'
