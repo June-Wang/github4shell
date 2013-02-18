@@ -10,7 +10,6 @@ PACKAGE='coreutils-8.21.tar.gz'
 YUM_SERVER='yum.suixingpay.com'
 #YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ zlib zlib-devel bzip2-libs bzip2-devel pkgconfig fuse fuse-devel'
 
-
 check_system (){
 system_info=`head -n 1 /etc/issue`
 case "${system_info}" in
