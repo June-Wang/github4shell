@@ -9,48 +9,62 @@ MY_PROJECT='coreutils'
 PACKAGE='coreutils-8.21.tar.gz'
 YUM_SERVER='yum.suixingpay.com'
 #YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ zlib zlib-devel bzip2-libs bzip2-devel pkgconfig fuse fuse-devel'
+YUM_PACKAGE='gcc glibc glibc-common openssl-devel make cmake gcc-c++'
+APT_PACKAGE='build-essential'
 
 check_system (){
-system_info=`head -n 1 /etc/issue`
-case "${system_info}" in
+SYSTEM_INFO=`head -n 1 /etc/issue`
+case "${SYSTEM_INFO}" in
         'CentOS release 5'*)
                 SYSTEM='centos5'
                 YUM_SOURCE_NAME='centos5-lan'
+		        CONFIG_CMD='chkconfig'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
+        		CONFIG_CMD='chkconfig'
+                ;;
+	    'Debian GNU/Linux 6'*)
+    		    SYSTEM='debian6'
+        		CONFIG_CMD='sysv-rc-conf'
                 ;;
         *)
                 SYSTEM='unknown'
-                echo "This script not support ${system_info}" 1>&2
+                echo "This script not support ${SYSTEM_INFO}" 1>&2
                 exit 1
                 ;;
 esac
 }
 
-set_yum () {
-local yum_para="$1"
-if [ "${yum_para}" = 'lan' ];then
-        YUM="yum --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
-else
-        YUM='yum'
+install_package () {
+local para="$1"
+case "${SYSTEM}" in
+    centos5|rhel5)
+        local install_cmd='yum --skip-broken --nogpgcheck'
+        local package="${YUM_PACKAGE}"
+    ;;
+    debian6)
+        local install_cmd='apt-get'
+        local package="${APT_PACKAGE}"
+        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+    ;;
+    *)
+        echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
+        ;;
+esac
+
+if [ "${install_cmd}" = 'yum' -a "${para}" = 'lan' ];then
+        install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
-}
 
-create_user () {
-        username="${MY_PROJECT}"
-        grep "${username}" /etc/passwd >/dev/null 2>&1 || useradd  -c "${username} user" -s /sbin/nologin ${username}
-}
+local log_file="${TEMP_PATH}/${MY_PROJECT}.log"
 
-install_yum_package () {
-local yum_package="$1"
-local log_file="${TEMP_PATH}/yum_for_${MY_PROJECT}.log"
-
-echo -n "install ${yum_package} please wait ...... "
-eval "${YUM} install -y ${yum_package} >${log_file} 2>&1" || local yum_install='fail'
-if [ "${yum_install}" = "fail" ];then
-        echo -e "yum not available!\nview error please type: less ${log_file}" 1>&2
+echo -n "install ${package} please wait ...... "
+eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
+if [ "${install_stat}" = "fail" ];then
+        echo -e "${install_cmd} not available!\nview error please type: less ${log_file}" 1>&2
         exit 1
 fi
 echo "done."
@@ -124,11 +138,11 @@ PACKAGE_URL="http://${YUM_SERVER}/tools/${PACKAGE}"
 trap "exit 1"           HUP INT PIPE QUIT TERM
 trap "rm -rf ${INSTALL_PATH}"  EXIT
 
-#check_system
+check_system
 #create_user
 create_tmp_dir
 #set_yum 'lan'
-#install_yum_package "${YUM_PACKAGE}"
+install_package 'lan'
 install_coreutils
 #set_auto_run
 del_tmp
