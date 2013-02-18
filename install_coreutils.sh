@@ -9,7 +9,7 @@ MY_PROJECT='coreutils'
 PACKAGE='coreutils-8.21.tar.gz'
 YUM_SERVER='yum.suixingpay.com'
 #YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ zlib zlib-devel bzip2-libs bzip2-devel pkgconfig fuse fuse-devel'
-YUM_PACKAGE='gcc glibc glibc-common openssl-devel make cmake gcc-c++'
+YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
 APT_PACKAGE='build-essential'
 
 check_system (){
