@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage (){
-        echo -en "Usage: $0 -u [LOCAL USER]\nFor example:\t$0 -u posp\n" 1>&2
+        echo -en "Usage: $0 -u [LOCAL USER]\nFor example:\t$0 -ups\n" 1>&2
         exit 1
 }
 
@@ -23,7 +23,8 @@ do
         *) usage;;
         esac
 done
-shift $[ $OPTIND - 1 ]
+#shift $[ $OPTIND - 1 ]
+shift `echo "$OPTIND - 1"|bc`
 
 [ $# -ne 0 ] && usage
 
