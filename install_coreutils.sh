@@ -45,9 +45,9 @@ case "${SYSTEM}" in
         local package="${YUM_PACKAGE}"
     ;;
     debian6)
-        local install_cmd='apt-get'
+        local install_cmd='apt-get --force-yes'
         local package="${APT_PACKAGE}"
-        eval "${install_cmd} install -y --force-yes sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
     ;;
     *)
         echo "This script not support ${SYSTEM_INFO}" 1>&2
