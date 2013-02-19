@@ -10,7 +10,7 @@ export HISTFILESIZE=1000
 TMOUT=3600
 
 #SET LOCAL
-export LC_ALL=C
+#export LC_ALL=C
 
 # 1.Environment variables
 export EDITOR=vim
