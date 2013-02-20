@@ -35,7 +35,7 @@ case "${SYSTEM_INFO}" in
 esac
 }
 
-install_package () {
+set_install_cmd () {
 local para="$1"
 case "${SYSTEM}" in
     centos5|rhel5)
@@ -141,7 +141,7 @@ check_system
 #create_user
 create_tmp_dir
 #set_yum 'lan'
-install_package 'lan'
+set_install_cmd 'lan'
 install_coreutils
 #set_auto_run
 del_tmp
