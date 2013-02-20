@@ -2,13 +2,11 @@
 
 #SET TEMP PATH
 TEMP_PATH='/usr/local/src'
-INSTALL_DIR="install_$$"
 
 #SET GLOBAL VAR
 MY_PROJECT='coreutils'
 PACKAGE='coreutils-8.21.tar.gz'
 YUM_SERVER='yum.suixingpay.com'
-#YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ zlib zlib-devel bzip2-libs bzip2-devel pkgconfig fuse fuse-devel'
 YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
 APT_PACKAGE='build-essential'
 
@@ -132,6 +130,7 @@ echo_bye () {
 }
 
 main () {
+INSTALL_DIR="install_$$"
 INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 PACKAGE_URL="http://${YUM_SERVER}/tools/${PACKAGE}"
 
