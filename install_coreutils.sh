@@ -57,7 +57,7 @@ if [ "${install_cmd}" = 'yum' -a "${para}" = 'lan' ];then
         install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
 
-local log_file="${TEMP_PATH}/${MY_PROJECT}.log"
+local log_file="${TEMP_PATH}/yum_for_${MY_PROJECT}.log"
 
 echo -n "install ${package} please wait ...... "
 eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
