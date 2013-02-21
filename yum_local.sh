@@ -88,7 +88,7 @@ set_repo_file
 alias_yum
 set_dns_server
 #set_yum_proxy
-create_yum_cache
+#create_yum_cache
 }
 
 main
