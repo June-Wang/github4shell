@@ -73,9 +73,9 @@ if [ -e ${yum_config} ];then
 fi
 }
 
-create_yum_cache () {
+clean_yum_cache () {
 yum clean
-yum makecache |tail -n 1 && exit 0
+#yum makecache |tail -n 1 && exit 0
 }
 
 main () {
@@ -88,7 +88,7 @@ set_repo_file
 alias_yum
 set_dns_server
 #set_yum_proxy
-#create_yum_cache
+clean_yum_cache
 }
 
 main
