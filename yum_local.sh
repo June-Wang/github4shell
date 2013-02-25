@@ -83,12 +83,13 @@ yum_server='yum.suixingpay.com'
 check_system
 #check_repo_config
 check_platform
-echo "Set yum please wait ......"
+#echo "Set yum please wait ......"
 set_repo_file
 alias_yum
 set_dns_server
 #set_yum_proxy
 clean_yum_cache
+echo "Done."
 }
 
 main
