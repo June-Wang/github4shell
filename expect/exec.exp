@@ -1,0 +1,30 @@
+#!/usr/bin/expect -f                                                                                                          
+
+if {$argc<2} {
+puts stderr "Usage: $argv0 host user password timeout cmd path"
+exit 1
+}
+
+set HOST [lindex $argv 0]
+set USER [lindex $argv 1]
+set PASSWD [lindex $argv 2]
+set TIMEOUT [lindex $argv 3]
+set MYCMD [lindex $argv 4]
+set MYPATH [lindex $argv 5]
+set timeout $TIMEOUT
+
+spawn scp $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
+expect {
+    "(yes/no)" { send "yes\r"; exp_continue}
+    "assword:" { send "$PASSWD\r"}
+}
+#expect "#"
+expect eof
+
+spawn ssh $USER@$HOST "nohup /bin/bash /tmp/$MYCMD.sh $HOST ;rm -f /tmp/$MYCMD.sh &"
+expect {
+    "(yes/no)" { send "yes\r"; exp_continue}
+    "assword:" { send "$PASSWD\r"}
+#	exp_continue
+}
+expect eof

@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f                                                                                                          
+
+if {$argc<2} {
+puts stderr "Usage: $argv0 host user password timeout newpasswd"
+exit 1
+}
+
+set HOST [lindex $argv 0]
+set USER [lindex $argv 1]
+set PASSWD [lindex $argv 2]
+set TIMEOUT [lindex $argv 3]
+set NEWPSW [lindex $argv 4]
+set timeout $TIMEOUT
+
+spawn ssh $USER@$HOST "echo $USER:$NEWPSW|chpasswd"
+expect {
+    "(yes/no)" { send "yes\r"; exp_continue}
+    "assword:" { send "$PASSWD\r" }
+}
+expect "please try again" {exit 1}
