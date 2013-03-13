@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#####################################################################################################################
+#Notice: if you install pnp ,please type : cp check_cpu_utilization.php /usr/local/pnp4nagios/share/templates.dist/ #
+#####################################################################################################################
+
 STATE_OK=0
 STATE_WARNING=1
 STATE_CRITICAL=2
@@ -14,7 +18,7 @@ check_para () {
 local para="$1"
 echo "${para}"|\
 grep -E '^[0-9]+$' >/dev/null 2>&1 ||\
-eval "echo Error parameters: ${para} . Please enter the number. 1>&2;exit ${STATE_WARNING}"
+eval "echo Error parameters: ${para} . Please enter numbers. 1>&2;exit ${STATE_WARNING}"
 }
 
 while getopts w:c: opt
@@ -60,6 +64,7 @@ awk '{str="";for (i=2;i<=NF;i++) str=str" "$i;item[str]+=$1}END{for (x in item) 
 sort -nr|\
 tee -a ${log}|\
 awk '{sum+=$1}END{print sum}'`
+chown nagios.nagios ${log}
 
 if [ -n "${cpu_utilization}" ];then
 	CPU_UTILIZATION=`echo "${cpu_utilization}/1"|bc`
