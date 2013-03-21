@@ -31,7 +31,7 @@ mark_file="/etc/init_${system}.info"
 mydate=`date -d now +"%Y%m%d%H%M%S"`
 
 #alias yum local
-alias yum="yum --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
+#alias yum="yum --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
 
 #set ntp
 yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'

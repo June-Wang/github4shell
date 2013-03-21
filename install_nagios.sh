@@ -134,7 +134,7 @@ if [ -f "${nrpe_cfg}" ];then
         grep 'check_root' ${nrpe_cfg} >/dev/null 2>&1 ||\
         echo 'command[check_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_cfg}
         grep 'check_cpu_utilization' ${nrpe_cfg} >/dev/null 2>&1 ||\
-        echo 'command[check_cpu_utilization]=/usr/local/nagios/libexec/check_cpu_utilization.sh -w 20 -c 10' >> ${nrpe_cfg}
+        echo 'command[check_cpu_utilization]=/usr/local/nagios/libexec/check_cpu_utilization.sh -w 100 -c 300' >> ${nrpe_cfg}
 fi
 
 if [ -d /usr/local/nagios/libexec ];then

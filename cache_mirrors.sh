@@ -1,8 +1,6 @@
 #!/bin/bash
 
 CACHE_SERVER='cache.mirrors.local'
-#CENTOS_MIRRORS='mirrors.ustc.edu.cn'
-#EPEL_MIRRORS='mirrors.ustc.edu.cn'
 proxy_server='cache.mirrors.local'
 proxy_port=3142
 
@@ -226,6 +224,7 @@ case "${SYSTEM_INFO}" in
                 SOURCE_DIR='/etc/yum.repos.d'
 				backup_local_repo_file
                 modify_centos_mirror
+				yum clean all
                 ;;
         'Debian'*)
                 SYSTEM='debian'
@@ -239,6 +238,7 @@ case "${SYSTEM_INFO}" in
 				check_rhel_version
 				backup_local_repo_file
 				modify_rhel_mirror
+				yum clean all
                 ;;
         *)
                 SYSTEM='unknown'

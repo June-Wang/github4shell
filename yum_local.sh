@@ -74,7 +74,7 @@ fi
 }
 
 clean_yum_cache () {
-yum clean
+yum clean all
 #yum makecache |tail -n 1 && exit 0
 }
 
