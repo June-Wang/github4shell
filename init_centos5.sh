@@ -176,3 +176,4 @@ test -e /etc/inittab &&\
 sed -i "s/ca::ctrlaltdel:\/sbin\/shutdown -t3 -r now/#ca::ctrlaltdel:\/sbin\/shutdown -t3 -r now/" /etc/inittab
 
 echo "init ${system} ok" > ${mark_file} && exit 0
+#END
