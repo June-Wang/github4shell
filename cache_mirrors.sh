@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CACHE_SERVER='cache.mirrors.local'
+#CACHE_SERVER='cache.mirrors.local'
 proxy_server='cache.mirrors.local'
 proxy_port=3142
 
@@ -187,19 +187,23 @@ local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
         local my_date=`date -d "now" +"%F"`
         cp "${source_file}" "${source_file}.${my_date}.$$"
-        echo "deb http://${CACHE_SERVER}/debian stable main #non-free contrib
-deb-src http://${CACHE_SERVER}/debian stable main #non-free contrib
-deb http://${CACHE_SERVER}/debian-security ${DEBIAN_VERSION}/updates main
-deb-src http://${CACHE_SERVER}/debian-security ${DEBIAN_VERSION}/updates main" > ${source_file}
+#        echo "deb http://${CACHE_SERVER}/debian stable main #non-free contrib
+#deb-src http://${CACHE_SERVER}/debian stable main #non-free contrib
+#deb http://${CACHE_SERVER}/debian-security ${DEBIAN_VERSION}/updates main
+#deb-src http://${CACHE_SERVER}/debian-security ${DEBIAN_VERSION}/updates main" > ${source_file}
+		echo "deb http://cdn.debian.net/debian/ ${DEBIAN_VERSION} main
+deb-src http://cdn.debian.net/debian/ ${DEBIAN_VERSION} main
+deb http://cdn.debian.net/debian/ ${DEBIAN_VERSION}-updates main contrib
+deb-src http://cdn.debian.net/debian/ ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
 else
         echo "Can not find ${source_file},please check!" 1>&2
         exit 1
 fi
 apt_conf_dir="${SOURCE_DIR}/apt.conf.d"
-#proxy_conf="${apt_conf_dir}/000apt-cacher-ng-proxy"
-#test -d ${apt_conf_dir} && echo "Acquire::http::Proxy \"http://${CACHE_SERVER}:3142/\";" > ${proxy_conf}
+proxy_conf="${apt_conf_dir}/000apt-cacher-ng-proxy"
+test -d ${apt_conf_dir} && echo "Acquire::http::Proxy \"http://${proxy_server}:3142/\";" > ${proxy_conf}
 find ${apt_conf_dir} -type f |xargs -r grep -l 'Acquire::http::Proxy'|xargs -r -i sed -i '/^Acquire::http::Proxy/d' "{}"
-#apt-get update
+apt-get update
 }
 
 check_rhel_version () {
