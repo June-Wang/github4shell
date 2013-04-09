@@ -6,16 +6,16 @@ case "${SYSTEM_INFO}" in
         'CentOS release 5'*)
                 SYSTEM='centos5'
                 YUM_SOURCE_NAME='centos5-lan'
-		CONFIG_CMD='chkconfig'
+				CONFIG_CMD='chkconfig'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
-		CONFIG_CMD='chkconfig'
+				CONFIG_CMD='chkconfig'
                 ;;
-	'Debian GNU/Linux 6'*)
-		SYSTEM='debian6'
-		CONFIG_CMD='sysv-rc-conf'
+		'Debian GNU/Linux 6'*)
+				SYSTEM='debian6'
+				CONFIG_CMD='sysv-rc-conf'
                 ;;
         *)
                 SYSTEM='unknown'
@@ -115,14 +115,14 @@ local   cmd_log="${TEMP_PATH}/install_${PACKAGE}.log"
 
 install_nagios_plugins () {
 	download_file "${PACKAGE_URL}"
-        check_file "${PACKAGE}"
+    check_file "${PACKAGE}"
 	run_cmds './configure --with-nagios-user=nagios --with-nagios-group=nagios' 'make' 'make install'
 	cd ..
 }
 
 install_nrpe () {
 	download_file "${PACKAGE_URL}"
-        check_file "${PACKAGE}"
+    check_file "${PACKAGE}"
 	run_cmds './configure' 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
 	cd ..
 }
@@ -140,7 +140,7 @@ fi
 if [ -d /usr/local/nagios/libexec ];then
         cd /usr/local/nagios/libexec
         wget -q http://${YUM_SERVER}/shell/check_cpu_utilization.sh && chmod +x check_cpu_utilization.sh ||\
-	echo "download fail http://${YUM_SERVER}/shell/check_cpu_utilization.sh"
+		echo "download fail http://${YUM_SERVER}/shell/check_cpu_utilization.sh"
 		test -d /var/log/cpu_utilization || mkdir -p /var/log/cpu_utilization
 		chown -R nagios.nagios /var/log/cpu_utilization
 fi
