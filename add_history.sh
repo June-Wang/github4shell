@@ -27,7 +27,7 @@ case "${SYSTEM}" in
         centos5|rhel5)
                 INSTALL_CMD='yum --skip-broken --nogpgcheck'
                 CONFIG_CMD='chkconfig'
-		MODIFY_SYSCONFIG='true'
+				MODIFY_SYSCONFIG='true'
         ;;
         debian6)
                 INSTALL_CMD='apt-get'

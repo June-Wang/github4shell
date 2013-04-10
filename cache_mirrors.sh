@@ -199,10 +199,16 @@ else
         echo "Can not find ${source_file},please check!" 1>&2
         exit 1
 fi
+
+#set conf var
 apt_conf_dir="${SOURCE_DIR}/apt.conf.d"
 proxy_conf="${apt_conf_dir}/000apt-cacher-ng-proxy"
+
+#add proxy setting
 test -d ${apt_conf_dir} && echo "Acquire::http::Proxy \"http://${proxy_server}:3142/\";" > ${proxy_conf}
-find ${apt_conf_dir} -type f |xargs -r grep -l 'Acquire::http::Proxy'|xargs -r -i sed -i '/^Acquire::http::Proxy/d' "{}"
+
+#del proxy setting
+#find ${apt_conf_dir} -type f |xargs -r grep -l 'Acquire::http::Proxy'|xargs -r -i sed -i '/^Acquire::http::Proxy/d' "{}"
 apt-get update
 }
 
