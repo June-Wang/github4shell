@@ -21,6 +21,18 @@ case "${system_info}" in
 esac
 }
 
+backup_local_repo_file () {
+local my_date=`date -d "now" +"%F"`
+SOURCE_DIR='/etc/yum.repos.d'
+if [ -d "${SOURCE_DIR}" ];then
+        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS5-lan.repo|RHEL5-lan.repo'|\
+        while read source_file
+        do
+                mv "${source_file}" "${source_file}.${my_date}.$$"
+        done
+fi
+}
+
 check_repo_config () {
 #Detect repo configuration
 grep -E "${yum_source_name}" >/dev/null 2>&1 ${repo_file} && set_yum='ok'
@@ -53,8 +65,11 @@ esac
 alias_yum () {
 profile_dir='/etc/profile.d'
 [ -d "${profile_dir}" ] &&\
-echo "alias yum='yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}'" > ${profile_dir}/yum_alias.sh
-alias yum="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
+yum_para='yum --skip-broken --nogpgcheck'
+#echo "alias yum='yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}'" > ${profile_dir}/yum_alias.sh
+echo "alias yum='${yum_para}'" > ${profile_dir}/yum_alias.sh
+#alias yum="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
+alias yum="${yum_para}"
 }
 
 set_dns_server () {
@@ -88,6 +103,7 @@ set_repo_file
 alias_yum
 set_dns_server
 #set_yum_proxy
+backup_local_repo_file
 clean_yum_cache
 echo "Done."
 }
