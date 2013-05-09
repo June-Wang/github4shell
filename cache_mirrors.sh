@@ -169,6 +169,9 @@ check_debian_version () {
 debian_release=`echo "${SYSTEM_INFO}" |\
 grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
 case "${debian_release}" in
+				7)
+                        DEBIAN_VERSION='wheezy'
+                ;;
                 6)
                         DEBIAN_VERSION='squeeze'
                 ;;
@@ -229,32 +232,32 @@ fi
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
-        'CentOS'*)
-                SYSTEM='centos'
-                SOURCE_DIR='/etc/yum.repos.d'
-				backup_local_repo_file
-                modify_centos_mirror
-				yum clean all
-                ;;
-        'Debian'*)
-                SYSTEM='debian'
-                SOURCE_DIR='/etc/apt'
-				check_debian_version
-                modify_debian_mirror
-        ;;
-        'Red Hat Enterprise Linux Server release'*)
-                SYSTEM='rhel'
-                SOURCE_DIR='/etc/yum.repos.d'
-				check_rhel_version
-				backup_local_repo_file
-				modify_rhel_mirror
-				yum clean all
-                ;;
-        *)
-                SYSTEM='unknown'
-                echo "This script not support ${SYSTEM_INFO}" 1>&2
-                exit 1
-                ;;
+'CentOS'*)
+	SYSTEM='centos'
+	SOURCE_DIR='/etc/yum.repos.d'
+	backup_local_repo_file
+	modify_centos_mirror
+	yumcleanall
+	;;
+'Debian'*)
+	SYSTEM='debian'
+	SOURCE_DIR='/etc/apt'
+	check_debian_version
+	modify_debian_mirror
+	;;
+'RedHatEnterpriseLinuxServerrelease'*)
+	SYSTEM='rhel'
+	SOURCE_DIR='/etc/yum.repos.d'
+	check_rhel_version
+	backup_local_repo_file
+	modify_rhel_mirror
+	yumcleanall
+	;;
+*)
+	SYSTEM='unknown'
+	echo"Thisscriptnotsupport${SYSTEM_INFO}"1>&2
+	exit1
+	;;
 esac
 }
 
