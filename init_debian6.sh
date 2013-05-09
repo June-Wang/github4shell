@@ -52,7 +52,7 @@ fi
 echo 'done.'
 
 #tunoff services
-sysv-rc-conf --list|awk '/3:on/{print $1}'|grep -E 'nfs-common|portmap|exim4'|\
+sysv-rc-conf --list|awk '/3:on/{print $1}'|grep -E 'nfs-common|portmap|exim4|rpcbind'|\
 while read line
 do
         sysv-rc-conf "${line}" off
