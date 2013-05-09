@@ -65,7 +65,7 @@ sshd_config='/etc/ssh/sshd_config'
 test -e ${sshd_config} && sshd_service='true'
 if [ "${sshd_service}" = 'true' ];then
 	echo "set service sshd.modify ${sshd_config}"
-	grep 'UseDNS' || echo "UseDNS no" >> ${sshd_config} && \
+	grep 'UseDNS' ${sshd_config} || echo "UseDNS no" >> ${sshd_config} && \
 	sed -i -r 's/^UseDNS.*/UseDNS no/g' ${sshd_config}
 	/etc/init.d/ssh restart
 fi
