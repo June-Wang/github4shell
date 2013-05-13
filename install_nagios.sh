@@ -1,21 +1,32 @@
 #!/bin/bash
 
+check_platform (){
+platform_info=`uname -m`
+echo ${platform_info}|grep '64' >/dev/null 2>&1 && platform='x64' || platform='x86'
+}
+
 check_system (){
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
         'CentOS release 5'*)
                 SYSTEM='centos5'
                 YUM_SOURCE_NAME='centos5-lan'
-				CONFIG_CMD='chkconfig'
+                CONFIG_CMD='chkconfig'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
-				CONFIG_CMD='chkconfig'
+                CONFIG_CMD='chkconfig'
                 ;;
-		'Debian GNU/Linux 6'*)
-				SYSTEM='debian6'
-				CONFIG_CMD='sysv-rc-conf'
+        'Debian GNU/Linux 6'*)
+                SYSTEM='debian6'
+                CONFIG_CMD='sysv-rc-conf'
+                ;;
+        'Debian GNU/Linux 7'*)
+                SYSTEM='debian7'
+                CONFIG_CMD='sysv-rc-conf'
+                check_platform
+                [ "${platform}" = 'x64' ] && NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
                 ;;
         *)
                 SYSTEM='unknown'
@@ -33,17 +44,17 @@ create_user () {
 install_package () {
 local para="$1"
 case "${SYSTEM}" in
-	centos5|rhel5)
-		local install_cmd='yum --skip-broken --nogpgcheck'
-		local package="${YUM_PACKAGE}"
-	;;
-	debian6)
-		local install_cmd='apt-get'
-		local package="${APT_PACKAGE}"
-		eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
-	;;
-	*)
-		echo "This script not support ${SYSTEM_INFO}" 1>&2
+        centos5|rhel5)
+                local install_cmd='yum --skip-broken --nogpgcheck'
+                local package="${YUM_PACKAGE}"
+        ;;
+        debian6|debian7)
+                local install_cmd='apt-get'
+                local package="${APT_PACKAGE}"
+                eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+        ;;
+        *)
+                echo "This script not support ${SYSTEM_INFO}" 1>&2
                 exit 1
         ;;
 esac
@@ -114,17 +125,17 @@ local   cmd_log="${TEMP_PATH}/install_${PACKAGE}.log"
 }
 
 install_nagios_plugins () {
-	download_file "${PACKAGE_URL}"
-    check_file "${PACKAGE}"
-	run_cmds './configure --with-nagios-user=nagios --with-nagios-group=nagios' 'make' 'make install'
-	cd ..
+        download_file "${PACKAGE_URL}"
+        check_file "${PACKAGE}"
+        run_cmds './configure --with-nagios-user=nagios --with-nagios-group=nagios' 'make' 'make install'
+        cd ..
 }
 
 install_nrpe () {
-	download_file "${PACKAGE_URL}"
-    check_file "${PACKAGE}"
-	run_cmds './configure' 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
-	cd ..
+        download_file "${PACKAGE_URL}"
+        check_file "${PACKAGE}"
+        run_cmds "./configure ${NRPE_PARA}" 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
+        cd ..
 }
 
 add_check_cpu_utilization () {
@@ -140,9 +151,9 @@ fi
 if [ -d /usr/local/nagios/libexec ];then
         cd /usr/local/nagios/libexec
         wget -q http://${YUM_SERVER}/shell/check_cpu_utilization.sh && chmod +x check_cpu_utilization.sh ||\
-		echo "download fail http://${YUM_SERVER}/shell/check_cpu_utilization.sh"
-		test -d /var/log/cpu_utilization || mkdir -p /var/log/cpu_utilization
-		chown -R nagios.nagios /var/log/cpu_utilization
+        echo "download fail http://${YUM_SERVER}/shell/check_cpu_utilization.sh"
+        test -d /var/log/cpu_utilization || mkdir -p /var/log/cpu_utilization
+        chown -R nagios.nagios /var/log/cpu_utilization
 fi
 }
 
@@ -202,6 +213,6 @@ NAGIOS_SERVER='nagios.suixingpay.local'
 step1
 MY_PROJECT='nrpe'
 PACKAGE='nrpe-2.13.tar.gz'
-YUM_SERVER='yum.suixingpay.com'
+YUM_SERVER='192.168.29.248'
 step2
 step3
