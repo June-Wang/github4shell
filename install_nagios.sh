@@ -25,8 +25,12 @@ case "${SYSTEM_INFO}" in
         'Debian GNU/Linux 7'*)
                 SYSTEM='debian7'
                 CONFIG_CMD='sysv-rc-conf'
-                check_platform
-                [ "${platform}" = 'x64' ] && NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
+				check_platform
+				if [ "${platform}" = 'x64' ];then
+					NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
+				else
+					NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
+				fi
                 ;;
         *)
                 SYSTEM='unknown'
