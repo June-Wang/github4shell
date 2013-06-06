@@ -103,38 +103,28 @@ repo_file="${SOURCE_DIR}/cache_mirror.repo"
 echo "[base]
 name=CentOS-${releasever} - Base
 mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=os
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 gpgcheck=0
 
 [updates]
 name=CentOS-${releasever} - Updates
 mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=updates
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 gpgcheck=0
 
 [extras]
 name=CentOS-${releasever} - Extras
 mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=extras
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 gpgcheck=0
 
 [centosplus]
 name=CentOS-${releasever} - Plus
 mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=centosplus
-#gpgcheck=1
 enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 gpgcheck=0
 
 [contrib]
 name=CentOS-${releasever} - Contrib
 mirrorlist=http://mirrorlist.centos.org/?release=${releasever}&arch=\$basearch&repo=contrib
-#gpgcheck=1
 enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 gpgcheck=0
 
 [epel]
@@ -142,8 +132,6 @@ name=Extra Packages for Enterprise Linux ${releasever} - \$basearch
 mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=1
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
 gpgcheck=0
 
 [epel-debuginfo]
@@ -151,8 +139,6 @@ name=Extra Packages for Enterprise Linux ${releasever} - \$basearch - Debug
 mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-debug-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
-#gpgcheck=1
 gpgcheck=0
 
 [epel-source]
@@ -160,8 +146,6 @@ name=Extra Packages for Enterprise Linux ${releasever} - \$basearch - Source
 mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-${releasever}&arch=\$basearch
 failovermethod=priority
 enabled=0
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL
-#gpgcheck=1
 gpgcheck=0" > ${repo_file}
 }
 
@@ -237,7 +221,7 @@ case "${SYSTEM_INFO}" in
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
 	modify_centos_mirror
-	yumcleanall
+	yum clean all
 	;;
 'Debian'*)
 	SYSTEM='debian'
@@ -245,17 +229,17 @@ case "${SYSTEM_INFO}" in
 	check_debian_version
 	modify_debian_mirror
 	;;
-'RedHatEnterpriseLinuxServerrelease'*)
+'RedHat Enterprise Linux Server release'*)
 	SYSTEM='rhel'
 	SOURCE_DIR='/etc/yum.repos.d'
 	check_rhel_version
 	backup_local_repo_file
 	modify_rhel_mirror
-	yumcleanall
+	yum clean all
 	;;
 *)
 	SYSTEM='unknown'
-	echo"Thisscriptnotsupport${SYSTEM_INFO}"1>&2
+	echo"This script not support ${SYSTEM_INFO}"1>&2
 	exit1
 	;;
 esac
