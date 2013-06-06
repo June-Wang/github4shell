@@ -176,7 +176,7 @@ case "${debian_release}" in
                         DEBIAN_VERSION='squeeze'
                 ;;
                 5)
-                        DEBIAN_VERSION='wheezy'
+                        DEBIAN_VERSION='lenny'
                 ;;
                 *)
                         echo "This script not support ${SYSTEM_INFO}" 1>&2
