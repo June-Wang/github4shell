@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #CACHE_SERVER='cache.mirrors.local'
-proxy_server='cache.mirrors.local'
-proxy_port=3142
+proxy_server='squid.proxy.local'
+proxy_port=3128
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
