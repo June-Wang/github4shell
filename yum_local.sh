@@ -94,12 +94,12 @@ yum clean all
 }
 
 main () {
-yum_server='yum.suixingpay.com'
-proxy_server='proxy.suixingpay.local'
+yum_server='yum.suixingpay.local'
+proxy_server='squid.proxy.local'
+proxy_port='3128'
 check_system
 #check_repo_config
 check_platform
-#echo "Set yum please wait ......"
 set_repo_file
 alias_yum
 set_dns_server
