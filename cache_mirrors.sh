@@ -229,7 +229,7 @@ case "${SYSTEM_INFO}" in
 	check_debian_version
 	modify_debian_mirror
 	;;
-'RedHat Enterprise Linux Server release'*)
+'Red Hat Enterprise Linux Server release'*)
 	SYSTEM='rhel'
 	SOURCE_DIR='/etc/yum.repos.d'
 	check_rhel_version
@@ -239,8 +239,8 @@ case "${SYSTEM_INFO}" in
 	;;
 *)
 	SYSTEM='unknown'
-	echo"This script not support ${SYSTEM_INFO}"1>&2
-	exit1
+	echo "This script not support ${SYSTEM_INFO}"1>&2
+	exit 1
 	;;
 esac
 }
