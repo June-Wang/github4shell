@@ -149,6 +149,7 @@ check_system
 create_tmp_dir
 install_jdk
 del_tmp
+echo_bye
 }
 
 main
