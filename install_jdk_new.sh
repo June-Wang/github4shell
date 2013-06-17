@@ -81,7 +81,7 @@ fi
 local jdk_install_path="/home/${user}/${jdk_path}"
 mv "${TEMP_PATH}/${jdk_path}" ${jdk_install_path}
 
-env_path="/home/${user}/etc/"
+env_path="/home/${user}/env/"
 test -d "${env_path}" || mkdir -p "${env_path}"
 
 jdk_env_profile="/home/${user}/etc/jdk.env"
