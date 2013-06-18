@@ -65,7 +65,7 @@ local file="$1"
 test -f ${file} && tar xzf ${file} || eval "echo ${file} not exsit!;del_tmp;exit 1"
 }
 
-install_jdk () {
+install_tomcat () {
 local tomcat_file="${tomcat_path}.tar.gz"
 local file_url="http://${YUM_SERVER}/tools/${tomcat_file}"
 download_file "${file_url}"
