@@ -72,11 +72,6 @@ local file_url="http://${YUM_SERVER}/tools/${jdk_file}"
 download_file "${file_url}"
 decompress_file "${jdk_file}"
 
-local user=`whoami`
-if [ "${user}" = 'root' ];then
-        echo "Does not support the root installation!" 1>&2
-        exit 1
-fi
 
 local jdk_install_path="/home/${user}/${jdk_path}"
 mv "${TEMP_PATH}/${jdk_path}" ${jdk_install_path}
@@ -103,6 +98,12 @@ echo "Install ${jdk_path} complete!
 JDK Environment:
 ${jdk_env_profile}"
 }
+
+user=`whoami`
+if [ "${user}" = 'root' ];then
+        echo "Does not support root!" 1>&2
+        exit 1
+fi
 
 while getopts p:v: opt
 do
