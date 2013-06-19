@@ -81,6 +81,7 @@ test -d "${env_path}" || mkdir -p "${env_path}"
 
 jdk_env_profile="${env_path}/jdk.env"
 echo "export JAVA_HOME=${jdk_install_path}
+export JRE_HOME=${jdk_install_path}
 export CLASSPATH=\$CLASSPATH:\$JAVA_HOME/lib:\$JAVA_HOME/jre/lib
 export PATH=\$JAVA_HOME/bin:\$JAVA_HOME/jre/bin:\$PATH" > ${jdk_env_profile}
 
