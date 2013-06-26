@@ -71,7 +71,7 @@ while read host user password
 do
         read -u 3
 #        new_password=`echo -n $RANDOM|md5sum|head -c 20`
-        new_password=`mkpasswd -l 21 -d 3 -C 5 -s 3|sed 's/'\''|\"|\&|\;|\`|\~|^|\\//g'|grep -Eo '^.{14}'`
+        new_password=`mkpasswd -l 25 -d 3 -C 5 -s 5|grep -o '.'|grep -Ev '\$|\"|\&|\\`|\;|\^|'\'''|awk 'BEGIN{ORS=""}NR<=14{print}END{print "\n"}'`
 #       md5_password=`echo ${new_password}|md5sum`
 #       base64_pawwword=`echo ${new_password}|base64`
         (
