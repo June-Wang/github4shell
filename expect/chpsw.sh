@@ -70,7 +70,8 @@ grep -Ev "^#"  ${host_list}|
 while read host user password
 do
         read -u 3
-        new_password=`echo -n $RANDOM|md5sum|head -c 20`
+#        new_password=`echo -n $RANDOM|md5sum|head -c 20`
+        new_password=`mkpasswd -l 21 -d 3 -C 5 -s 3|sed 's/'\''|\"|\&|\;|\`|\~|^|\\//g'|grep -Eo '^.{14}'`
 #       md5_password=`echo ${new_password}|md5sum`
 #       base64_pawwword=`echo ${new_password}|base64`
         (
