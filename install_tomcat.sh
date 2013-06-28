@@ -73,6 +73,7 @@ decompress_file "${tomcat_file}"
 
 local tomcat_install_path="/home/${user}/${tomcat_path}"
 mv "${TEMP_PATH}/${tomcat_path}" ${tomcat_install_path}
+test -d ${tomcat_install_path} && cd ${tomcat_install_path}/webapps && rm -rf ./*
 
 env_path="/home/${user}/env"
 test -d "${env_path}" || mkdir -p "${env_path}"
