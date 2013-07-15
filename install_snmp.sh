@@ -93,9 +93,9 @@ com2sec notConfigUser  default       ${community}
 group   notConfigGroup v1           notConfigUser
 group   notConfigGroup v2c           notConfigUser
 view    systemview    included   .1
-access  notConfigGroup ""      any       noauth    exact  systemview none none
+access  notConfigGroup \"\"      any       noauth    exact  systemview none none
 syslocation ${location}
-syscontact ${contact} ${email}
+syscontact ${contact} (${email})
 dontLogTCPWrappersConnects yes
 #SET SNMP _END_" >${snmp_conf}
 
