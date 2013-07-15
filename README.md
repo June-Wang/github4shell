@@ -1,0 +1,3 @@
+SHELL
+
+For myself
