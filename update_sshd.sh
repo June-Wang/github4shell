@@ -9,6 +9,9 @@ pkgs=(
 'libedit0-3.0-1.20090722cvs.el5.x86_64.rpm'
 )
 
+trap "exit 1"           HUP INT PIPE QUIT TERM
+trap "rm -f /tmp/*.rpm"  EXIT
+
 for pkg in "${pkgs[@]}"
 do
 	wget http://${yum_server}/tools/${pkg} -O /tmp/${pkg} || eval "echo Can not download ${pkg}!;exit 1"
@@ -16,4 +19,4 @@ done
 
 cd /tmp/
 
-rpm -Uvh ${pkgs[@]} && rm -f ${pkgs[@]}
+rpm -Uvh ${pkgs[@]} 
