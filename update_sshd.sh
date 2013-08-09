@@ -14,7 +14,7 @@ trap "rm -f /tmp/*.rpm"  EXIT
 
 for pkg in "${pkgs[@]}"
 do
-	wget http://${yum_server}/tools/${pkg} -O /tmp/${pkg} || eval "echo Can not download ${pkg}!;exit 1"
+	wget -q http://${yum_server}/tools/${pkg} -O /tmp/${pkg} || eval "echo Can not download ${pkg}!;exit 1"
 done
 
 cd /tmp/
