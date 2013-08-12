@@ -68,12 +68,11 @@ gpgcheck=1" > ${repo_file}
 
 mirrors_for_alt () {
 repo_file="${SOURCE_DIR}/alt.mirrors.repo"
-echo"[CentALT]
+echo "[CentALT]
 name=CentALT Packages for Enterprise Linux \$releasever - \$basearch
 baseurl=http://alt.mirrors.local/\$releasever/\$basearch/
 enabled=1
-gpgcheck=0
-" > ${repo_file}
+gpgcheck=0" > ${repo_file}
 }
 
 main () {
