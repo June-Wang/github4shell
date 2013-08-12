@@ -66,6 +66,16 @@ gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 gpgcheck=1" > ${repo_file}
 }
 
+mirrors_for_alt () {
+repo_file="${SOURCE_DIR}/alt.mirrors.repo"
+echo"[CentALT]
+name=CentALT Packages for Enterprise Linux \$releasever - \$basearch
+baseurl=http://alt.mirrors.local/\$releasever/\$basearch/
+enabled=1
+gpgcheck=0
+" > ${repo_file}
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -74,6 +84,7 @@ case "${SYSTEM_INFO}" in
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
 	mirrors_for_epel
+	mirrors_for_alt
 	yum clean all
 	;;
 'Red Hat Enterprise Linux Server release'*)
@@ -81,6 +92,7 @@ case "${SYSTEM_INFO}" in
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
 	mirrors_for_epel
+	mirrors_for_alt
 	yum clean all
 	;;
 *)
