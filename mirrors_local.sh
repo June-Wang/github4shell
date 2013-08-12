@@ -1,6 +1,8 @@
 #!/bin/bash
 
-mirrors_server='mirrors.suixingpay.local'
+epel_mirrors='epel.mirrors.local'
+alt_mirrors='alt.mirrors.local'
+debian_mirrors='debian.mirrors.local'
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
@@ -13,22 +15,22 @@ if [ -d "${SOURCE_DIR}" ];then
 fi
 }
 
-modify_redhat_mirror () {
-repo_file="${SOURCE_DIR}/mirror.suixingpay.repo"
+mirrors_for_epel () {
+repo_file="${SOURCE_DIR}/epel.mirrors.repo"
 echo "[epel]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch
-baseurl=http://${mirrors_server}/epel/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/\$releasever/\$basearch
 failovermethod=priority
 enabled=1
 gpgcheck=1
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 
 [epel-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Debug
-baseurl=http://${mirrors_server}/epel/\$releasever/\$basearch/debug
+baseurl=http://${epel_mirrors}/\$releasever/\$basearch/debug
 failovermethod=priority
 enabled=0
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-source]
@@ -36,23 +38,23 @@ name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Source
 baseurl=http://cache.mirrors.local/epel/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch 
-baseurl=http://${mirrors_server}/epel/testing/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/testing/\$releasever/\$basearch
 failovermethod=priority
 enabled=0
 gpgcheck=1
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 
 [epel-testing-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Debug
-baseurl=http://${mirrors_server}/epel/testing/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/testing/\$releasever/\$basearch
 failovermethod=priority
 enabled=0
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-testing-source]
@@ -60,7 +62,7 @@ name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - S
 baseurl=http://epel.mirrors.cache/epel/testing/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
-gpgkey=http://${mirrors_server}/epel/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
 gpgcheck=1" > ${repo_file}
 }
 
@@ -71,14 +73,14 @@ case "${SYSTEM_INFO}" in
 	SYSTEM='centos'
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
-	modify_redhat_mirror
+	mirrors_for_epel
 	yum clean all
 	;;
 'Red Hat Enterprise Linux Server release'*)
 	SYSTEM='rhel'
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
-	modify_redhat_mirror
+	mirrors_for_epel
 	yum clean all
 	;;
 *)
