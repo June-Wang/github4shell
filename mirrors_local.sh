@@ -1,7 +1,6 @@
 #!/bin/bash
 
 epel_mirrors='epel.mirrors.local'
-alt_mirrors='alt.mirrors.local'
 debian_mirrors='debian.mirrors.local'
 
 backup_local_repo_file () {
@@ -83,7 +82,6 @@ case "${SYSTEM_INFO}" in
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
 	mirrors_for_epel
-	mirrors_for_alt
 	yum clean all
 	;;
 'Red Hat Enterprise Linux Server release'*)
@@ -91,7 +89,6 @@ case "${SYSTEM_INFO}" in
 	SOURCE_DIR='/etc/yum.repos.d'
 	backup_local_repo_file
 	mirrors_for_epel
-	mirrors_for_alt
 	yum clean all
 	;;
 *)
