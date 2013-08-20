@@ -104,7 +104,7 @@ else
         echo "Can not find ${source_file},please check!" 1>&2
         exit 1
 fi
-apt-update
+	aptitude update
 }
 
 main () {
