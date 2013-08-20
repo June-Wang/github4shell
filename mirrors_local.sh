@@ -74,6 +74,39 @@ enabled=1
 gpgcheck=0" > ${repo_file}
 }
 
+check_debian_version () {
+debian_release=`echo "${SYSTEM_INFO}" |\
+grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
+case "${debian_release}" in
+                7)
+                        DEBIAN_VERSION='wheezy'
+                ;;
+                6)
+                        DEBIAN_VERSION='squeeze'
+                ;;
+                *)
+                        echo "This script not support ${SYSTEM_INFO}" 1>&2
+                        exit 1
+                ;;
+esac
+}
+
+mirrors_for_debian () {
+local source_file="${SOURCE_DIR}/sources.list"
+if [ -e ${source_file} ];then
+	local my_date=`date -d "now" +"%F"`
+	cp "${source_file}" "${source_file}.${my_date}.$$"
+	echo "deb ${debian_mirrors} ${DEBIAN_VERSION} main
+deb-src ${debian_mirrors} ${DEBIAN_VERSION} main
+deb ${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
+deb-src ${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
+else
+        echo "Can not find ${source_file},please check!" 1>&2
+        exit 1
+fi
+apt-update
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -91,6 +124,12 @@ case "${SYSTEM_INFO}" in
 	mirrors_for_epel
 	yum clean all
 	;;
+'Debian'*)
+	SYSTEM='debian'
+	SOURCE_DIR='/etc/apt'
+	check_debian_version
+	mirrors_for_debian
+        ;;
 *)
 	SYSTEM='unknown'
 	echo "This script not support ${SYSTEM_INFO}"1>&2
