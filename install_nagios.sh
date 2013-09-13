@@ -216,7 +216,7 @@ APT_PACKAGE='xinetd libssl-dev openssl build-essential'
 NAGIOS_SERVER='nagios.suixingpay.local'
 step1
 MY_PROJECT='nrpe'
-PACKAGE='nrpe-2.13.tar.gz'
+PACKAGE='nrpe-2.15.tar.gz'
 YUM_SERVER='192.168.29.248'
 step2
 step3
