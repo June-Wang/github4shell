@@ -1,7 +1,8 @@
 #!/bin/bash
 
 epel_mirrors='epel.mirrors.local'
-debian_mirrors='debian.mirrors.local'
+#debian_mirrors='debian.mirrors.local'
+debian_mirrors='ftp.jp.debian.org/debian/'
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
