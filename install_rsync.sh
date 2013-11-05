@@ -16,16 +16,20 @@ case "${SYSTEM_INFO}" in
         'CentOS release 5'*)
                 SYSTEM='centos5'
                 YUM_SOURCE_NAME='centos5-lan'
-		        CONFIG_CMD='chkconfig'
+		CONFIG_CMD='chkconfig'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
-        		CONFIG_CMD='chkconfig'
+        	CONFIG_CMD='chkconfig'
                 ;;
-	    'Debian GNU/Linux 6'*)
-    		    SYSTEM='debian6'
-        		CONFIG_CMD='sysv-rc-conf'
+	'Debian GNU/Linux 6'*)
+		SYSTEM='debian6'
+		CONFIG_CMD='sysv-rc-conf'
+                ;;
+	'Debian GNU/Linux 7'*)
+		SYSTEM='debian7'
+		CONFIG_CMD='sysv-rc-conf'
                 ;;
         *)
                 SYSTEM='unknown'
@@ -42,7 +46,7 @@ case "${SYSTEM}" in
         local install_cmd='yum --skip-broken --nogpgcheck'
         local package="${YUM_PACKAGE}"
     ;;
-    debian6)
+    debian6|debian7)
         local install_cmd='apt-get --force-yes'
         local package="${APT_PACKAGE}"
         eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
