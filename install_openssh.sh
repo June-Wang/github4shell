@@ -76,16 +76,16 @@ test -d "${INSTALL_PATH}" && rm -rf "${INSTALL_PATH}"
 
 download_file () {
 local   url="$1"
-local   file=`echo ${url}|awk -F'/' '{print $NF}'`
+#local   file=`echo ${url}|awk -F'/' '{print $NF}'`
 
-if [ ! -f "${file}" ]; then
-        echo -n "download ${url} ...... "
+#if [ ! -f "${file}" ]; then
+        echo -n "Download ${url} ...... "
         wget -q "${url}"  && echo 'done.' || local download='fail'
         if [ "${download}" = "fail" ];then
                 echo "download ${url} fail!" 1>&2 && del_tmp
                 exit 1
         fi
-fi
+#fi
 }
 
 check_file () {
@@ -119,7 +119,7 @@ download_and_check () {
 }
 
 echo_bye () {
-        echo "Install ${PACKAGE} complete!" && exit 0
+        echo "Install ${PACKAGE} complete!"
 }
 
 exit_and_clear () {
