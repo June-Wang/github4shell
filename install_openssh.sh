@@ -144,7 +144,7 @@ trap "rm -rf ${INSTALL_PATH}"  EXIT
 
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
-create_tmp_dir
+#create_tmp_dir
 set_install_cmd 'lan'
 
 #Stop sshd service and clear old version
