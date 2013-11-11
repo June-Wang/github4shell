@@ -76,16 +76,13 @@ test -d "${INSTALL_PATH}" && rm -rf "${INSTALL_PATH}"
 
 download_file () {
 local   url="$1"
-#local   file=`echo ${url}|awk -F'/' '{print $NF}'`
 
-#if [ ! -f "${file}" ]; then
         echo -n "Download ${url} ...... "
         wget -q "${url}"  && echo 'done.' || local download='fail'
         if [ "${download}" = "fail" ];then
-                echo -en "\nDownload ${url} fail!" 1>&2 && del_tmp
+                echo "fail!" 1>&2 && del_tmp
                 exit 1
         fi
-#fi
 }
 
 check_file () {
@@ -157,6 +154,7 @@ rpm -qa openssh*|xargs -r -i rpm -e "{}"
 
 #Install zlib-1.2.8
 PACKAGE='zlib-1.2.8.tar.gz'
+create_tmp_dir
 download_and_check
 run_cmds './configure' 'make' 'make install'
 #cd ..
@@ -165,6 +163,7 @@ exit_and_clear
 
 #Install openssl-0.9.8y
 PACKAGE='openssl-0.9.8y.tar.gz'
+create_tmp_dir
 download_and_check
 run_cmds './configure' 'make' 'make install'
 #cd ..
@@ -173,6 +172,7 @@ exit_and_clear
 
 #install
 PACKAGE='openssh-6.4p1.tar.gz'
+create_tmp_dir
 download_and_check
 run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install'
 #cd ..
