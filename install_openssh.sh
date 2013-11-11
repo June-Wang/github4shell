@@ -51,7 +51,7 @@ if [ "${install_cmd}" = 'yum' -a "${para}" = 'lan' ];then
         install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
 
-local log_file="${TEMP_PATH}/${PACKAGE}.log"
+local log_file="${TEMP_PATH}/YUM.log"
 
 echo -n "install ${package} please wait ...... "
 eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
@@ -82,7 +82,7 @@ local   url="$1"
         echo -n "Download ${url} ...... "
         wget -q "${url}"  && echo 'done.' || local download='fail'
         if [ "${download}" = "fail" ];then
-                echo "download ${url} fail!" 1>&2 && del_tmp
+                echo -en "\nDownload ${url} fail!" 1>&2 && del_tmp
                 exit 1
         fi
 #fi
