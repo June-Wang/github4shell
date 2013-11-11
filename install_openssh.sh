@@ -165,7 +165,7 @@ exit_and_clear
 PACKAGE='openssl-0.9.8y.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure' 'make' 'make install'
+run_cmds './config' 'make test' 'make' 'make install'
 #cd ..
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
