@@ -107,7 +107,7 @@ local   cmd_log="${TEMP_PATH}/install_${PACKAGE}.log"
                 fi
         done
         echo "done."
-		cd ..
+#		cd ..
 }
 
 download_and_check () {
@@ -157,7 +157,6 @@ PACKAGE='zlib-1.2.8.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds './configure' 'make' 'make install'
-#cd ..
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
@@ -166,7 +165,6 @@ PACKAGE='openssl-0.9.8y.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds './config' 'make test' 'make' 'make install'
-#cd ..
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
@@ -174,15 +172,15 @@ exit_and_clear
 PACKAGE='openssh-6.4p1.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install'
-#cd ..
+run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd'
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
 #Modify sshd_config
 SSH_CONFIG="/etc/ssh/sshd_config"
-test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g' ${SSH_CONFIG} ||\
-eval echo "${SSH_CONFIG} not found!";exit 1
+test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
+eval "echo ${SSH_CONFIG} not found!;exit 1"
+echo "UseDNS no" >> ${SSH_CONFIG}
 
 #Restart sshd service
 test -f ${SSH_SERVICE} && ${SSH_SERVICE} restart
