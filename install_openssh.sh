@@ -150,6 +150,11 @@ check_system
 create_tmp_dir
 set_install_cmd 'lan'
 
+#Stop sshd service and clear old version
+SSH_SERVICE="/etc/init.d/sshd"
+test -f ${SSH_SERVICE} && ${SSH_SERVICE} stop
+rpm -qa openssh*|xargs -r -i rpm -e "{}"
+
 #Install zlib-1.2.8
 PACKAGE='zlib-1.2.8.tar.gz'
 download_and_check
@@ -173,6 +178,14 @@ run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install'
 #cd ..
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
+
+#Modify sshd_config
+SSH_CONFIG="/etc/ssh/sshd_config"
+test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g' ${SSH_CONFIG} ||\
+eval echo "${SSH_CONFIG} not found!";exit 1
+
+#Restart sshd service
+test -f ${SSH_SERVICE} && ${SSH_SERVICE} restart
 
 }
 
