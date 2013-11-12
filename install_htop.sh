@@ -151,7 +151,7 @@ set_install_cmd 'lan'
 PACKAGE='htop-1.0.2.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --disable-unicode' 'make' 'make install'
+run_cmds './configure --prefix=/usr --disable-unicode' 'make' 'make install'
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
