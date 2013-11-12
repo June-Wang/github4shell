@@ -147,7 +147,7 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Install htop-1.0.2
+#Install lftp-4.4.11
 PACKAGE='lftp-4.4.11.tar.gz'
 create_tmp_dir
 download_and_check
