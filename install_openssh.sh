@@ -13,14 +13,14 @@ case "${SYSTEM_INFO}" in
                 YUM_SOURCE_NAME='RHEL5-lan'
         	CONFIG_CMD='chkconfig'
                 ;;
-	'Debian GNU/Linux 6'*)
-		SYSTEM='debian6'
-		CONFIG_CMD='sysv-rc-conf'
-                ;;
-	'Debian GNU/Linux 7'*)
-		SYSTEM='debian7'
-		CONFIG_CMD='sysv-rc-conf'
-                ;;
+#	'Debian GNU/Linux 6'*)
+#		SYSTEM='debian6'
+#		CONFIG_CMD='sysv-rc-conf'
+#                ;;
+#	'Debian GNU/Linux 7'*)
+#		SYSTEM='debian7'
+#		CONFIG_CMD='sysv-rc-conf'
+#                ;;
         *)
                 SYSTEM='unknown'
                 echo "This script not support ${SYSTEM_INFO}" 1>&2
@@ -36,11 +36,11 @@ case "${SYSTEM}" in
         local install_cmd='yum --skip-broken --nogpgcheck'
         local package="${YUM_PACKAGE}"
     ;;
-    debian6|debian7)
-        local install_cmd='apt-get --force-yes'
-        local package="${APT_PACKAGE}"
-        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
-    ;;
+#    debian6|debian7)
+#        local install_cmd='apt-get --force-yes'
+#        local package="${APT_PACKAGE}"
+#        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+#    ;;
     *)
         echo "This script not support ${SYSTEM_INFO}" 1>&2
                 exit 1
@@ -130,7 +130,7 @@ TEMP_PATH='/usr/local/src'
 
 #SET PACKAGE
 YUM_SERVER='yum.suixingpay.com'
-YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
+YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ readline-devel'
 APT_PACKAGE='build-essential'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
@@ -147,44 +147,14 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Stop sshd service and clear old version
-SSH_SERVICE="/etc/init.d/sshd"
-test -f ${SSH_SERVICE} && ${SSH_SERVICE} stop
-rpm -qa openssh*|xargs -r -i rpm -e "{}"
-
-#Install zlib-1.2.8
-PACKAGE='zlib-1.2.8.tar.gz'
+#Install coreutils-8.21
+PACKAGE='coreutils-8.21.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure' 'make' 'make install'
+run_cmds 'export FORCE_UNSAFE_CONFIGURE=1' './configure --prefix=/' 'make' 'make install'
+
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
-
-#Install openssl-0.9.8y
-PACKAGE='openssl-0.9.8y.tar.gz'
-create_tmp_dir
-download_and_check
-run_cmds './config' 'make' 'make install'
-#EXIT AND CLEAR TEMP DIR
-exit_and_clear
-
-#install
-PACKAGE='openssh-6.4p1.tar.gz'
-create_tmp_dir
-download_and_check
-run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd'
-#EXIT AND CLEAR TEMP DIR
-exit_and_clear
-
-#Modify sshd_config
-SSH_CONFIG="/etc/ssh/sshd_config"
-test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
-eval "echo ${SSH_CONFIG} not found!;exit 1"
-echo "UseDNS no" >> ${SSH_CONFIG}
-
-#Restart sshd service
-test -f ${SSH_SERVICE} && ${SSH_SERVICE} start
-${CONFIG_CMD} sshd on
 
 }
 
