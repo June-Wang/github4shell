@@ -161,14 +161,15 @@ done
 rpm -q htop >/dev/null 2>&1 || htop_install='fail'
 
 if [ "${htop_install}" = 'fail' ];then
-	platform=`uname -p`
-	echo ${platform}|grep '64' >/dev/null 2>&1 && system='64bit'
-	echo "install htop ..."
-	if [ "${system}" = "64bit" ];then
-		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.x86_64.rpm >/dev/null 2>&1
-	else
-		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.i386.rpm >/dev/null 2>&1
-	fi
+#	platform=`uname -p`
+#	echo ${platform}|grep '64' >/dev/null 2>&1 && system='64bit'
+#	echo "install htop ..."
+#	if [ "${system}" = "64bit" ];then
+#		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.x86_64.rpm >/dev/null 2>&1
+#	else
+#		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.i386.rpm >/dev/null 2>&1
+#	fi
+	curl http://${yum_server}/shell/install_htop.sh|/bin/bash
 fi
 
 #close ctrl+alt+del
