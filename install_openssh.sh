@@ -184,7 +184,7 @@ echo "UseDNS no" >> ${SSH_CONFIG}
 
 #Restart sshd service
 test -f ${SSH_SERVICE} && ${SSH_SERVICE} start
-chkconfig sshd on
+${CONFIG_CMD} sshd on
 
 }
 
