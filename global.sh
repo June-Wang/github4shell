@@ -15,7 +15,7 @@ TMOUT=3600
 # 1.Environment variables
 export EDITOR=vim
 export VISUAL=vim
-export LC_COLLATE="POSIX"
+#export LC_COLLATE="POSIX"
 
 # 2.File creation mask
 #umask 022
