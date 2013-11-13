@@ -151,7 +151,7 @@ set_install_cmd 'lan'
 PACKAGE='lftp-4.4.11.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --without-libresolv --without-gnutls' 'make' 'make install'
+run_cmds './configure --prefix=/usr --without-libresolv --without-gnutls' 'make' 'make install'
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
