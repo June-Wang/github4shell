@@ -160,7 +160,7 @@ PACKAGE='setuptools-1.3.2.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds 'python setup.py build' 'python setup.py install'
-python_version=`ls /usr/bin/python2*|grep -E '[0-9]\.[0-9]$'|head -n 1`
+python_version=`ls /usr/bin/python2*|grep -oE '[0-9]\.[0-9]$'|head -n 1`
 yum_file='/usr/bin/yum'
 my_time=`date -d now +"%F_%H-%M"`
 test -f ${yum_file} && sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${yum_file}
