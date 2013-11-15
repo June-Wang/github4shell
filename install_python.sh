@@ -155,6 +155,12 @@ old_python_version='/usr/bin/python'
 test -f ${old_python_version} && mv ${old_python_version} ${old_python_version}.bak
 run_cmds './configure --prefix=/usr' 'make' 'make install'
 
+#Install easy_install
+PACKAGE='setuptools-1.3.2.tar.gz'
+create_tmp_dir
+download_and_check
+run_cmds 'python setup.py build' 'python setup.py install'
+
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
