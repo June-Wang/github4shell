@@ -147,12 +147,14 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
+my_time=`date -d now +"%F_%H-%M"`
+
 #Install Python-2.7.6
 PACKAGE='Python-2.7.6.tgz'
 create_tmp_dir
 download_and_check
 old_python_version='/usr/bin/python'
-test -f ${old_python_version} && mv ${old_python_version} ${old_python_version}.bak
+test -f ${old_python_version} && mv ${old_python_version} ${old_python_version}.bak.${my_time}
 run_cmds './configure --prefix=/usr' 'make' 'make install'
 
 #Install easy_install
@@ -162,7 +164,6 @@ download_and_check
 run_cmds 'python setup.py build' 'python setup.py install'
 python_version=`ls /usr/bin/python2*|grep -oE '[0-9]\.[0-9]$'|head -n 1`
 yum_file='/usr/bin/yum'
-my_time=`date -d now +"%F_%H-%M"`
 test -f ${yum_file} && sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${yum_file}
 
 #EXIT AND CLEAR TEMP DIR
