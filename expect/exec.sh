@@ -74,7 +74,7 @@ do
 		if [ "${ssh_stat}" = 'open' ];then
 			./exec.exp "${host}" "${user}" "${password}" "${timeout}" "${shell}" "${path}" >${log} 2>&1
 		else
-			echo "ssh: connect to host ${host} port 22: Connection refused" > ${log}
+			echo "ssh: connect to host ${host} port 22: Connection refused" >> ${log}
 		fi
 		echo >&3
 	)&
