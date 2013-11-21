@@ -168,12 +168,16 @@ test -f ${yum_file} && sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_versi
 
 #Modify yum cmds
 yum_cmd_path='/usr/share/system-config-network'
-test -d ${yum_cmd_path} && cd ${yum_cmd_path}
-ls *.py|\
-while read cmd_file
-do
-    sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${cmd_file}
-done
+test -d ${yum_cmd_path} && cd ${yum_cmd_path} || cmd_path='not found'
+if [ "${cmd_path}" = 'not found' ];then
+	echo ${yum_cmd_path} not found! 1>&2
+else	
+	ls *.py|\
+		while read cmd_file
+		do
+		    sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${cmd_file}
+		done
+fi
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
