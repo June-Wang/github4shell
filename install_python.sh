@@ -166,6 +166,15 @@ python_version=`ls /usr/bin/python2*|grep -oE '[0-9]\.[0-9]$'|head -n 1`
 yum_file='/usr/bin/yum'
 test -f ${yum_file} && sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${yum_file}
 
+#Modify yum cmds
+yum_cmd_path='/usr/share/system-config-network'
+test -d ${yum_cmd_path} && cd ${yum_cmd_path}
+ls *.py|\
+while read cmd_file
+do
+    sed -r -i.bak_${my_time} "1s/(python).*$/\1${python_version}/" ${cmd_file}
+done
+
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
