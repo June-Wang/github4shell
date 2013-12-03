@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#dns server
+dns_server='192.168.29.229'
+
 #yum server
 yum_server='yum.suixingpay.com'
 
@@ -29,6 +32,9 @@ mark_file="/etc/init_${system}.info"
 
 #set time
 mydate=`date -d now +"%Y%m%d%H%M%S"`
+
+#add to dns
+test -f /etc/resolv.conf && echo "nameserver ${dns_server}" > /etc/resolv.conf
 
 #set ntp
 yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
