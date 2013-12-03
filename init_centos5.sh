@@ -30,9 +30,6 @@ mark_file="/etc/init_${system}.info"
 #set time
 mydate=`date -d now +"%Y%m%d%H%M%S"`
 
-#alias yum local
-#alias yum="yum --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
-
 #set ntp
 yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
 if [ "${install_ntp}" = "fail" ];then
@@ -41,14 +38,23 @@ if [ "${install_ntp}" = "fail" ];then
 else
 	grep 'ntpdate' /etc/crontab >/dev/null 2>&1 || ntp_set='no'
 	if [ "${ntp_set}" = "no" ];then
-#		/usr/sbin/ntpdate ${ntp_server} >/dev/null 2>&1
 		echo "*/15 * * * * root ntpdate ${ntp_server} > /dev/null 2>&1" >> /etc/crontab
 		service crond restart
 	fi
 fi
 
 #set ulimit
-#test -e /etc/profile.d/ulimited.sh || echo "ulimit -SHn 102400" > /etc/profile.d/ulimited.sh
+grep -E '^ulimit.*' /etc/rc.local >/dev/null 2>&1 || echo "ulimit -SHn 102400" >> /etc/rc.local
+limit_conf='/etc/security/limits.conf'
+grep -E '^#-=set_ulimit_end=-' ${limit_conf} >/dev/null 2>&1 ||set_limit="no"
+if [ "${set_limit}" = 'no' ];then
+test -f ${limit_conf} && echo '
+#-=set_ulimit_start=-
+* soft nofile 4096
+* hard nofile 65536
+#-=set_ulimit_end=-
+' >> ${limit_conf}
+fi
 
 #set locale
 #true > /etc/sysconfig/i18n
@@ -65,25 +71,25 @@ if [ -f "${sysctl_cf}" ];then
 	if [ "${sysctl_init}" = 'fail' ]; then 
 		cp /etc/sysctl.conf /etc/sysctl.conf.${mydate}
 		echo '#init _BEGIN_
-#net.ipv4.tcp_fin_timeout = 30
-#net.ipv4.tcp_tw_reuse = 1
-#net.ipv4.tcp_tw_recycle = 1
-#net.ipv4.tcp_syncookies = 1
-#net.ipv4.tcp_keepalive_time = 300
-#net.ipv4.ip_local_port_range = 4000    65000
-#net.ipv4.tcp_max_tw_buckets = 36000
-#net.ipv4.route.gc_timeout = 100
-#net.ipv4.tcp_syn_retries = 2
-#net.ipv4.tcp_synack_retries = 2
-#net.core.rmem_max = 16777216
-#net.core.wmem_max = 16777216
-#net.ipv4.tcp_rmem = 4096 87380 16777216
-#net.ipv4.tcp_wmem = 4096 65536 16777216
-#net.core.netdev_max_backlog = 30000
-#net.ipv4.tcp_no_metrics_save = 1
-#net.core.somaxconn = 262144
-#net.ipv4.tcp_max_orphans = 262144
-#net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_keepalive_time = 300
+net.ipv4.ip_local_port_range = 4000    65000
+net.ipv4.tcp_max_tw_buckets = 36000
+net.ipv4.route.gc_timeout = 100
+net.ipv4.tcp_syn_retries = 2
+net.ipv4.tcp_synack_retries = 2
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 65536 16777216
+net.core.netdev_max_backlog = 30000
+net.ipv4.tcp_no_metrics_save = 1
+net.core.somaxconn = 262144
+net.ipv4.tcp_max_orphans = 262144
+net.ipv4.tcp_max_syn_backlog = 262144
 #SET sysctl.conf _END_' >> ${sysctl_cf}
 		/sbin/sysctl -p > ~/set_sysctl.log 2>&1
 		echo "sysctl set OK!!"
@@ -107,7 +113,7 @@ echo "ipv6 is disabled!"
 if [ -f "/etc/selinux/config" ];then
 	cp /etc/selinux/config /etc/selinux/config.${mydate}
 	sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
-	echo "selinux is disabled,you must reboot!"
+	echo "selinux is disabled,you must reboot!" 1>&2
 fi
 
 #vim
@@ -142,7 +148,8 @@ else
 fi
 
 #tunoff services
-chkconfig --list|awk '/:on/{print $1}'|grep -E 'autofs|cpuspeed|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
+chkconfig --list|awk '/:on/{print $1}'|\
+grep -E 'autofs|cpuspeed|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
 while read line
 do
 	chkconfig "${line}" off
@@ -161,15 +168,7 @@ done
 rpm -q htop >/dev/null 2>&1 || htop_install='fail'
 
 if [ "${htop_install}" = 'fail' ];then
-#	platform=`uname -p`
-#	echo ${platform}|grep '64' >/dev/null 2>&1 && system='64bit'
-#	echo "install htop ..."
-#	if [ "${system}" = "64bit" ];then
-#		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.x86_64.rpm >/dev/null 2>&1
-#	else
-#		rpm -Uvh http://${yum_server}/extend/htop-0.8.3-1.el5.i386.rpm >/dev/null 2>&1
-#	fi
-	curl http://${yum_server}/shell/install_htop.sh|/bin/bash
+	curl -s http://${yum_server}/shell/install_htop.sh|/bin/bash
 fi
 
 #close ctrl+alt+del
