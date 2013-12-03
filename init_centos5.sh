@@ -44,13 +44,13 @@ else
 fi
 
 #set ulimit
-grep -E '^ulimit.*' /etc/rc.local >/dev/null 2>&1 || echo "ulimit -SHn 102400" >> /etc/rc.local
+grep -E '^ulimit.*' /etc/rc.local >/dev/null 2>&1 || echo "ulimit -SHn 10240" >> /etc/rc.local
 limit_conf='/etc/security/limits.conf'
 grep -E '^#-=set_ulimit_end=-' ${limit_conf} >/dev/null 2>&1 ||set_limit="no"
 if [ "${set_limit}" = 'no' ];then
 test -f ${limit_conf} && echo '
 #-=set_ulimit_start=-
-* soft nofile 4096
+* soft nofile 10240
 * hard nofile 65536
 #-=set_ulimit_end=-
 ' >> ${limit_conf}
@@ -69,7 +69,7 @@ sysctl_cf='/etc/sysctl.conf'
 if [ -f "${sysctl_cf}" ];then
 	grep -E '^#SET sysctl.conf _END_' >/dev/null ${sysctl_cf} || sysctl_init='fail'
 	if [ "${sysctl_init}" = 'fail' ]; then 
-		cp /etc/sysctl.conf /etc/sysctl.conf.${mydate}
+		/sbin/sysctl -a > /etc/sysctl.conf.${mydate}
 		echo '#init _BEGIN_
 net.ipv4.tcp_fin_timeout = 30
 net.ipv4.tcp_tw_reuse = 1
