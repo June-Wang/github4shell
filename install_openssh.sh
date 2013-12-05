@@ -182,6 +182,10 @@ test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(Us
 eval "echo ${SSH_CONFIG} not found!;exit 1"
 echo "UseDNS no" >> ${SSH_CONFIG}
 
+SSH_CONFIG="/etc/ssh/ssh_config"
+test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
+eval "echo ${SSH_CONFIG} not found!;exit 1"
+
 #Restart sshd service
 test -f ${SSH_SERVICE} && ${SSH_SERVICE} start
 ${CONFIG_CMD} sshd on
