@@ -69,7 +69,7 @@ while read host user password
 do
     read -u 3
 	(	
-		ssh_stat=`nmap -n -p 22 ${host}|awk '/ssh/{print $2}'`
+		ssh_stat=`nmap -n -p 22 ${host} -P0|awk '/ssh/{print $2}'`
 		log="${log_path}/${host}.log"
 		if [ "${ssh_stat}" = 'open' ];then
 			./exec.exp "${host}" "${user}" "${password}" "${timeout}" "${shell}" "${path}" >${log} 2>&1

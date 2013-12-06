@@ -69,13 +69,14 @@ grep -Ev "^#" ${host_list}|\
 while read host user password
 do
     read -u 3
+	nmap -n -p 22 ${host} -P0 >/dev/null 2>&1 || ssh_stat="fail"
+	if [ "${ssh_stat}" == "fail" ];then
+		my_time=`date -d now +"%F %T"`
+		echo "${my_time} ssh: connect to host ${host} port 22: Connection refused" >> ${log_path}/error.log
+		continue
+	fi
 	(
-		ssh_stat=`nmap -n -p 22 ${host}|awk '/ssh/{print $2}'`
-                if [ "${ssh_stat}" = 'open' ];then
-			./conn.exp "${host}" "${user}" "${password}" "${timeout}" "${shell}" "${path}" >${log_path}/${host}.log 2>&1
-		else
-                        echo "ssh: connect to host ${host} port 22: Connection refused" > ${log_path}/${host}.log
-                fi
+		./conn.exp "${host}" "${user}" "${password}" "${timeout}" "${shell}" "${path}" >${log_path}/${host}.log 2>&1
 		echo >&3
 	)&
 done

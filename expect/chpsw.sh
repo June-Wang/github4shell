@@ -32,9 +32,6 @@ else
         path='.'
 fi
 
-#chk mkpasswd
-#which mkpasswd >/dev/null 2>&1 || chk='fail'
-
 #chk expect
 which expect >/dev/null 2>&1 || chk='fail'
 
@@ -46,7 +43,6 @@ fi
 mydate=`date -d  "NOW" +"%Y/%m/%d"`
 timeout=5
 log_path="./log/${sc_file_name}/${mydate}"
-#info_path="./info/${sc_file_name}"
 
 pipefile=/tmp/fifo.$$
 mkfifo $pipefile
@@ -59,7 +55,6 @@ Threshold=12
 seq ${Threshold} >&3
 
 mkdir -p ${log_path}
-#mkdir -p ${info_path}
 
 now=`date -d now +"%Y%m%d%H%M%S"`
 my_date=`date -d now +"%Y-%m-%d %H:%M:%S"`
@@ -70,17 +65,25 @@ grep -Ev "^#"  ${host_list}|
 while read host user password
 do
         read -u 3
-#        new_password=`echo -n $RANDOM|md5sum|head -c 20`
-        new_password=`mkpasswd -l 25 -d 3 -C 5 -s 5|grep -o '.'|grep -Ev '\$|\"|\&|\\`|\;|\^|'\'''|awk 'BEGIN{ORS=""}NR<=14{print}END{print "\n"}'`
-#       md5_password=`echo ${new_password}|md5sum`
-#       base64_pawwword=`echo ${new_password}|base64`
+		#make passwd
+        new_password=`mkpasswd -l 25 -d 3 -C 5 -s 5|\
+		grep -o '.'|grep -Ev '\$|\"|\&|\\`|\;|\^|'\'''|awk 'BEGIN{ORS=""}NR<=14{print}END{print "\n"}'`
+		
+		#check sshd service
+		nmap -n -p 22 ${host} -P0 >/dev/null 2>&1 || ssh_stat="fail"
+		if [ "${ssh_stat}" == "fail" ];then
+			my_time=`date -d now +"%F %T"`
+			echo "${my_time} ssh: connect to host ${host} port 22: Connection refused" >> ${log_path}/error.log
+			continue 
+		fi
+		
+		#main
         (
                 ./chpsw.exp ${host} ${user} ${password} ${timeout} ${new_password}\
                 >${log_path}/${host}.log 2>&1 && cmd_status='ok'
                 if [ "${cmd_status}" = "ok" ];then
                         echo -en "${host}\t${user}\t${new_password}\n" > new.list  #.${now}
                         echo -en "${my_date}\t${host}\t${user}\t ${password}\tchanged to\t${new_password}\n" >> ${log_file}
-                        #chmod 600 "new.list.${now}"
                         chmod 600 "new.list"
                 else
                         echo -en "${my_date}\t${host}\t${user}\t change password fail!\n" >> ${log_file}
