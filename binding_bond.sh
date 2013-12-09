@@ -6,7 +6,7 @@ BOND="$3"
 BOND_IP="$4"
 
 usage () {
-	echo -en "$0 [dev1] [dev2] [bond] [IP]\nFor example: $0 eth0 eth1 bond0 192.168.10.18" 1>&2
+	echo -en "$0 [dev1] [dev2] [bond] [IP]\nFor example: $0 eth0 eth1 bond0 192.168.10.18\n" 1>&2
 	exit 1
 }
 
@@ -22,8 +22,11 @@ ${NIC2}
 for nic in "${NIC_DEV[@]}"
 do
 	ifconfig -s|grep -Ev '^Iface'|grep "${nic}" >/dev/null 2>&1 ||\
-	eval "echo ${nic} not exist!please tap ifconfig -a;exit 1"
+	eval "echo \"${nic} not exist!please tap ifconfig -a\" 1>&2;exit 1"
 done
+
+echo "${BOND_IP}"|grep -oP '^\d{1,3}(\.\d{1,3}){3}$' ||\
+eval "echo \"${BOND_IP} not a ip!\" 1>&2;exit 1"
 
 my_time=`date -d now +"%F_%H-%M-%S"`
 
