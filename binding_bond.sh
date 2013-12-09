@@ -70,7 +70,7 @@ if [ -f "${mod_conf}" ];then
         echo "
 #-=SET ${BOND} BEGIN=-
 alias ${BOND} bonding
-options ${BOND} miimon=100 mode=6" >> ${mod_conf}
+options ${BOND} miimon=100 mode=1" >> ${mod_conf}
         fi
 fi
 
