@@ -52,13 +52,12 @@ fi
 #set ulimit
 grep -E '^ulimit.*' /etc/rc.local >/dev/null 2>&1 || echo "ulimit -SHn 10240" >> /etc/rc.local
 limit_conf='/etc/security/limits.conf'
-grep -E '^#-=set_ulimit_end=-' ${limit_conf} >/dev/null 2>&1 ||set_limit="no"
+grep -E '^#-=SET Ulimit=-' ${limit_conf} >/dev/null 2>&1 ||set_limit="no"
 if [ "${set_limit}" = 'no' ];then
 test -f ${limit_conf} && echo '
-#-=set_ulimit_start=-
+#-=SET Ulimit=-
 * soft nofile 10240
 * hard nofile 65536
-#-=set_ulimit_end=-
 ' >> ${limit_conf}
 fi
 
