@@ -178,7 +178,8 @@ exit_and_clear
 
 #Modify sshd_config
 SSH_CONFIG="/etc/ssh/sshd_config"
-test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
+#test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
+test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
 eval "echo ${SSH_CONFIG} not found!;exit 1"
 echo "UseDNS no" >> ${SSH_CONFIG}
 
