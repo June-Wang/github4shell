@@ -130,7 +130,7 @@ TEMP_PATH='/usr/local/src'
 
 #SET PACKAGE
 YUM_SERVER='yum.suixingpay.com'
-YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
+YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ pam-devel'
 APT_PACKAGE='build-essential'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
@@ -150,7 +150,7 @@ set_install_cmd 'lan'
 #Stop sshd service and clear old version
 SSH_SERVICE="/etc/init.d/sshd"
 test -f ${SSH_SERVICE} && ${SSH_SERVICE} stop
-rpm -qa openssh*|xargs -r -i rpm -e "{}"
+#rpm -qa openssh*|xargs -r -i rpm -e "{}"
 
 #Install zlib-1.2.8
 PACKAGE='zlib-1.2.8.tar.gz'
@@ -172,7 +172,7 @@ exit_and_clear
 PACKAGE='openssh-6.4p1.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd'
+run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh --with-pam --with-md5-passwords' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd'
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
@@ -180,7 +180,16 @@ exit_and_clear
 SSH_CONFIG="/etc/ssh/sshd_config"
 test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
 eval "echo ${SSH_CONFIG} not found!;exit 1"
-echo -en "UseDNS no\nUsePAM yes\n" >> ${SSH_CONFIG}
+grep -E '^#-=SET SSHD=-' ${SSH_CONFIG} ||\
+echo "#-=SET SSHD=-
+UseDNS no   
+UsePAM no
+
+PasswordAuthentication yes
+PermitRootLogin yes 
+PermitEmptyPasswords no
+PasswordAuthentication yes
+" >> ${SSH_CONFIG}
 
 SSH_CONFIG="/etc/ssh/ssh_config"
 test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
