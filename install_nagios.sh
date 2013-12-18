@@ -209,7 +209,7 @@ trap "rm -rf ${INSTALL_PATH}"  EXIT
 
 #SET GLOBAL VAR
 MY_PROJECT='nagios'
-PACKAGE='nagios-plugins-1.4.16.tar.gz'
+PACKAGE='nagios-plugins-1.5.tar.gz'
 YUM_SERVER='yum.suixingpay.com'
 YUM_PACKAGE='gcc glibc glibc-common openssl-devel xinetd'
 APT_PACKAGE='xinetd libssl-dev openssl build-essential'
