@@ -183,13 +183,26 @@ eval "echo ${SSH_CONFIG} not found!;exit 1"
 grep -E '^#-=SET SSHD=-' ${SSH_CONFIG} ||\
 echo "#-=SET SSHD=-
 UseDNS no   
-UsePAM no
+UsePAM yes
 
 PasswordAuthentication yes
 PermitRootLogin yes 
 PermitEmptyPasswords no
 PasswordAuthentication yes
 " >> ${SSH_CONFIG}
+
+#Add PAM model for sshd
+SSHD4PAM_CONFIG='/etc/pam.d/sshd'
+test -f ${SSHD4PAM_CONFIG} ||\ 
+echo '#%PAM-1.0
+auth       include      system-auth
+account    required     pam_nologin.so
+account    include      system-auth
+password   include      system-auth
+session    optional     pam_keyinit.so force revoke
+session    include      system-auth
+session    required     pam_loginuid.so
+' > ${SSHD4PAM_CONFIG}
 
 SSH_CONFIG="/etc/ssh/ssh_config"
 test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
