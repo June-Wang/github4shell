@@ -147,6 +147,10 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
+#check nagios account
+id nagios >/dev/null 2>&1 ||\
+/usr/sbin/useradd nagios -s /sbin/nologin -M -c "nagios user"
+
 #Install nagios-plugins-1.5
 PACKAGE='nagios-plugins-1.5.tar.gz'
 create_tmp_dir
