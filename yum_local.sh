@@ -100,11 +100,11 @@ proxy_port='3128'
 check_system
 #check_repo_config
 check_platform
+backup_local_repo_file
 set_repo_file
 alias_yum
 set_dns_server
 #set_yum_proxy
-backup_local_repo_file
 clean_yum_cache
 echo "Done."
 }
