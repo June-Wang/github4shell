@@ -1,0 +1,58 @@
+define host{
+        use                             windows-server,hosts-pnp
+        host_name                       HOST_NAME
+        alias                           HOST_NAME
+        address                         ADDRESS
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+        hostgroups                      windows-servers
+}
+define service {
+        host_name                       HOST_NAME
+        service_description             CPU负载
+        use                             generic-service,services-pnp
+        check_command                   check_nt!CPULOAD!-l 5,80,90
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+}
+define service {
+        host_name                       HOST_NAME
+        service_description             磁盘空间C:
+        use                             generic-service,services-pnp
+        check_command                   check_nt!USEDDISKSPACE!-l c -w 80% -c 90%
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+}
+
+define service {
+        host_name                       HOST_NAME
+        service_description             内存使用率
+        use                             generic-service,services-pnp
+        check_command                   check_nt!MEMUSE!-w 80 -c 90
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+}
+
+define service {
+        host_name                       HOST_NAME
+        service_description             NSClient++版本
+        use                             generic-service
+        check_command                   check_nt!CLIENTVERSION
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+}
+
+define service {
+        host_name                       HOST_NAME
+        service_description             在线时长
+        use                             generic-service
+        check_command                   check_nt!UPTIME
+        _owner                          系统组
+        contact_groups                  sysadm
+        register                        1
+}

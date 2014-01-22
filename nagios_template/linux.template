@@ -1,0 +1,111 @@
+define host{
+        use                     linux-server,hosts-pnp
+        host_name               HOST_NAME
+        alias                   HOST_NAME
+        address                 ADDRESS
+        _owner                  系统组
+        contact_groups          sysadm
+        hostgroups              linux-servers
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     CPU负载
+        check_command           check_nrpe!check_load
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     本地登录用户数
+        check_command           check_nrpe!check_users
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     根分区磁盘使用率
+        check_command           check_nrpe!check_disk_root
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     系统进程数
+        check_command           check_nrpe!check_total_procs
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     僵尸进程数
+        check_command           check_nrpe!check_zombie_procs
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service {
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     CPU占用率
+        check_command           check_nrpe!check_cpu_utilization
+        max_check_attempts      10
+        retry_interval          5
+        register                1
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service
+        host_name               HOST_NAME
+        service_description     DenyHosts服务
+        check_command           check_nrpe!check_denyhosts
+        max_check_attempts      1
+        check_interval          1
+        register                1
+        notification_options    w,u,c
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     网络链接数
+        _owner                  系统组
+        check_command           check_nrpe!check_tcp_stat
+        max_check_attempts      7
+        check_interval          3
+        retry_check_interval    2
+        notification_options    w,u,c,r
+        contact_groups          sysadm
+        register                1
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               HOST_NAME
+        service_description     检测时钟服务器
+        check_command           check_nrpe!check_ntp_time
+        max_check_attempts      3
+        check_interval          3
+        retry_check_interval    2
+        notification_options    w,u,c,r
+        _owner                  系统组
+        contact_groups          sysadm
+        register                1
+}
+define service {
+        host_name                       HOST_NAME
+        service_description             内存使用率
+        use                             generic-service,services-pnp
+        check_command                   check_nrpe!check_mem
+        check_interval                  3
+                retry_check_interval            3
+        max_check_attempts              5
+        notification_options            w,u,c,r
+        contact_groups                  sysadm
+        _owner                  系统组
+        register                        1
+}
