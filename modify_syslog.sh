@@ -11,10 +11,12 @@ case "${system_info}" in
         'CentOS release 5'*)
                 system='centos5'
                 yum_source_name='centos5-lan'
+				MODIFY_SYSCONFIG='true'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 system='rhel5'
                 yum_source_name='RHEL5-lan'
+				MODIFY_SYSCONFIG='true'
                 ;;
         *)
                 system='unknown'
@@ -54,6 +56,13 @@ if [ "${rsyslog_status}" = 'not set' ];then
 local4.=debug                  -/var/log/history.log 
 #log to syslog server 
 *.*            @${syslog_server}" >> ${rsyslog_config}
+
+if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
+        if [ -e /etc/sysconfig/rsyslog ];then
+                sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
+        fi
+fi
+
 /etc/init.d/rsyslog restart
 else
 	echo "${rsyslog_config} has been configured!"
