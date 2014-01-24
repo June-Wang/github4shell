@@ -102,9 +102,18 @@ define service {
         use                             generic-service,services-pnp
         check_command                   check_nrpe!check_mem
         check_interval                  3
-                retry_check_interval            3
+		retry_check_interval            3
         max_check_attempts              5
         notification_options            w,u,c,r
+        contact_groups                  sysadm
+        _owner                  系统组
+        register                        1
+}
+define service {
+        host_name                       HOST_NAME
+        service_description             swap交换分区使用率
+        use                             generic-service,services-pnp
+        check_command                   check_nrpe!check_swap
         contact_groups                  sysadm
         _owner                  系统组
         register                        1
