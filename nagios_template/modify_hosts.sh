@@ -51,7 +51,8 @@ do
                 echo "${ip} not ip!" 1>&2
                 exit 1
         fi
-                ls ../servers/*.cfg|grep "${ip}\.cfg"|sed -r 's/.*\/(.*)-.*$/& \1/'|\
+                find ../servers/ -type f -name "*${ip}\.cfg"|\
+				sed -r 's/.*\/(.*)-.*$/& \1/'|\
                 while read file hostname
                 do
                         test -f ${file} && sed "s/HOST_NAME/${hostname}/g" ${template} >> ${file}

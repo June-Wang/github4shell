@@ -47,7 +47,7 @@ fi
 #set rsyslog config
 grep -E '^#MODIFY SYSLOG CONFIG' ${rsyslog_config} >/dev/null 2>&1 || rsyslog_status='not set'
 if [ "${rsyslog_status}" = 'not set' ];then
-	sed 'ActionFileDefaultTemplate/d' ${rsyslog_config}
+	sed -i.bak.`date -d now +"%F_%H-%M"` -r 's/\$ActionFileDefaultTemplate.*/#&/' ${rsyslog_config}
 	echo "#MODIFY SYSLOG CONFIG
 # Use default timestamp format
 \$template myformat,\"%\$NOW% %TIMESTAMP% %hostname% %syslogtag% %msg%\n\"
