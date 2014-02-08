@@ -7,8 +7,9 @@ echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10
 
 grep 'check_cpu_utilization' ${nrpe_conf}||\
 echo 'command[check_cpu_utilization]=/usr/local/nagios/libexec/check_cpu_utilization.sh -w 300 -c 500' >> ${nrpe_conf}
-wget 'http://yum.suixingpay.local/shell/check_cpu_utilization.sh' -O /usr/local/nagios/libexec/check_cpu_utilization.sh &&\
+wget 'http://yum.suixingpay.local/shell/check_cpu_utilization.sh' -O /usr/local/nagios/libexec/check_cpu_utilization.sh
 chmod +x /usr/local/nagios/libexec/check_cpu_utilization.sh
+/usr/local/nagios/libexec/check_cpu_utilization.sh -w 300 -c 500
 
 grep 'check_tcp_stat' ${nrpe_conf}||\
 echo 'command[check_tcp_stat]=/usr/local/nagios/libexec/check_tcp_stat.sh -w 300 -c 500 -l' >> ${nrpe_conf}
