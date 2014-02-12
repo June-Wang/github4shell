@@ -57,6 +57,7 @@ local4.=debug                  -/var/log/history.log
 #log to syslog server 
 *.*            @${syslog_server}" >> ${rsyslog_config}
 
+#modify rsyslog config
 if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
         if [ -e /etc/sysconfig/rsyslog ];then
                 sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
