@@ -111,3 +111,5 @@ setting_rsyslog_config
 modify_rsyslog_config
 restart_rsyslog
 }
+
+main
