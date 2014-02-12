@@ -29,7 +29,7 @@ esac
 
 stop_syslogd () {
 test -e /etc/init.d/syslog && chkconfig syslog off
-pgrep syslod >/dev/null 2>&1 && /etc/init.d/syslog stop
+pgrep syslogd >/dev/null 2>&1 && /etc/init.d/syslog stop
 }
 
 alias_yum () {
@@ -110,6 +110,7 @@ install_rsyslog
 setting_rsyslog_config
 modify_rsyslog_config
 restart_rsyslog
+setting_get_history
 }
 
 main
