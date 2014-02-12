@@ -6,6 +6,7 @@ syslog_server='syslog.suixingpay.local'
 #yum server
 yum_server='yum.suixingpay.com'
 
+check_system () {
 system_info=`head -n 1 /etc/issue`
 case "${system_info}" in
         'CentOS release 5'*)
@@ -24,16 +25,21 @@ case "${system_info}" in
                 exit 1
                 ;;
 esac
+}
 
-#stop syslog
-test -e /etc/init.d/syslog && eval "/etc/init.d/syslog stop;chkconfig syslog off"
+stop_syslogd () {
+test -e /etc/init.d/syslog && chkconfig syslog off
+pgrep syslod >/dev/null 2>&1 && /etc/init.d/syslog stop
+}
 
-#alias yum local
+alias_yum () {
 alias yum="yum --disablerepo=\* --enablerepo=${yum_source_name}"
+}
 
-#install rsyslog
+install_rsyslog () {
 rsyslog_config='/etc/rsyslog.conf'
-if [ -e "${rsyslog_config}" ];then
+rsyslog_init='/etc/init.d/rsyslog'
+if [ -e "${rsyslog_init}" ];then
 	echo "rsyslog has been installed!"
 else	
 	yum -y install rsyslog || install_rsyslog='fail'
@@ -43,8 +49,9 @@ else
 	fi
 	chkconfig rsyslog on
 fi
+}
 
-#set rsyslog config
+setting_rsyslog_config () {
 grep -E '^#MODIFY SYSLOG CONFIG' ${rsyslog_config} >/dev/null 2>&1 || rsyslog_status='not set'
 if [ "${rsyslog_status}" = 'not set' ];then
 	sed -i.bak.`date -d now +"%F_%H-%M"` -r 's/\$ActionFileDefaultTemplate.*/#&/' ${rsyslog_config}
@@ -56,20 +63,25 @@ if [ "${rsyslog_status}" = 'not set' ];then
 local4.=debug                  -/var/log/history.log 
 #log to syslog server 
 *.*            @${syslog_server}" >> ${rsyslog_config}
-
-#modify rsyslog config
-if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
-        if [ -e /etc/sysconfig/rsyslog ];then
-                sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
-        fi
-fi
-
-/etc/init.d/rsyslog restart
 else
 	echo "${rsyslog_config} has been configured!"
 fi
+}
 
-#set get_history script
+modify_rsyslog_config () {
+if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
+        if [ -e /etc/sysconfig/rsyslog ];then
+				time_now=`date -d now +"%F_%H-%M"`
+                sed -i.bak.${time_now} -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
+        fi
+fi
+}
+
+restart_rsyslog () {
+/etc/init.d/rsyslog restart
+}
+
+setting_get_history () {
 his_file="http://${yum_server}/shell/get_history.sh"
 cd /sbin
 wget -q ${his_file} || wget_history='fail'
@@ -88,3 +100,14 @@ if [ "${get_history}" = 'not set' ];then
 else
 	echo "get_history.sh has been configured!"
 fi
+}
+
+main () {
+check_system
+stop_syslogd
+alias_yum
+install_rsyslog
+setting_rsyslog_config
+modify_rsyslog_config
+restart_rsyslog
+}
