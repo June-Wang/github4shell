@@ -25,12 +25,6 @@ case "${SYSTEM_INFO}" in
         'Debian GNU/Linux 7'*)
                 SYSTEM='debian7'
                 CONFIG_CMD='sysv-rc-conf'
-                                check_platform
-                if [ "${platform}" = 'x64' ];then
-                    NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
-                else
-                    NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
-                fi
                 ;;
         *)
                 SYSTEM='unknown'
@@ -47,11 +41,11 @@ case "${SYSTEM}" in
         local install_cmd='yum --skip-broken --nogpgcheck'
         local package="${YUM_PACKAGE}"
     ;;
-#    debian6|debian7)
-#        local install_cmd='apt-get --force-yes'
-#        local package="${APT_PACKAGE}"
-#        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
-#    ;;
+    debian6|debian7)
+        local install_cmd='apt-get --force-yes'
+        local package="${APT_PACKAGE}"
+        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+    ;;
     *)
         echo "This script not support ${SYSTEM_INFO}" 1>&2
                 exit 1
@@ -126,6 +120,19 @@ download_and_check () {
         check_file "${PACKAGE}"
 }
 
+config_xinetd () {
+#if [ -f /etc/xinetd.d/nrpe ]; then
+#        sed -i "s/only_from.*$/only_from = ${NAGIOS_SERVER}/g" /etc/xinetd.d/nrpe
+#fi
+
+if [ -f /etc/services ];then
+        grep '5666' /etc/services >/dev/null 2>&1 || echo "nrpe 5666/tcp #NRPE" >> /etc/services
+        /etc/init.d/xinetd restart
+        sleep 1
+        ${CONFIG_CMD} xinetd on
+fi
+}
+
 echo_bye () {
         echo "Install ${PACKAGE} complete!"
 }
@@ -135,27 +142,14 @@ exit_and_clear () {
                 echo_bye
 }
 
-config_xinetd () {
-if [ -f /etc/xinetd.d/nrpe ]; then
-        sed -i "s/only_from.*$/only_from = ${NAGIOS_SERVER}/g" /etc/xinetd.d/nrpe
-fi      
-
-if [ -f /etc/services ];then
-        grep '5666' /etc/services >/dev/null 2>&1 || echo "nrpe 5666/tcp #NRPE" >> /etc/services
-        /etc/init.d/xinetd restart
-        sleep 1
-        ${CONFIG_CMD} xinetd on
-fi      
-}
-
 main () {
 #SET TEMP PATH
 TEMP_PATH='/usr/local/src'
 
 #SET PACKAGE
 YUM_SERVER='yum.suixingpay.com'
-YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
-APT_PACKAGE='build-essential'
+YUM_PACKAGE='gcc glibc glibc-common openssl-devel xinetd'
+APT_PACKAGE='xinetd libssl-dev openssl build-essential'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
 #SET TEMP DIR
@@ -168,6 +162,16 @@ trap "rm -rf ${INSTALL_PATH}"  EXIT
 
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
+
+#CHECK platform
+check_platform
+
+if [ "${platform}" = 'x64' -a "${SYATEM}" = 'debian7' ];then
+	NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
+else
+	NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
+fi
+
 #create_tmp_dir
 set_install_cmd 'lan'
 
@@ -175,13 +179,11 @@ set_install_cmd 'lan'
 id nagios >/dev/null 2>&1 ||\
 /usr/sbin/useradd nagios -s /sbin/nologin -M -c "nagios user"
 
-#Install nagios-plugins-1.5
+#Install nrpe-2.15
 PACKAGE='nrpe-2.15.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds "./configure ${NRPE_PARA}" 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
-NAGIOS_SERVER='nagios.suixingpay.local'
-config_xinetd
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
