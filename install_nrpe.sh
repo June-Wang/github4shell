@@ -133,6 +133,13 @@ if [ -f /etc/services ];then
 fi
 }
 
+backup_nrpe_config () {
+local nrpe_config='/usr/local/nagios/etc/nrpe.cfg'
+if [ -f "${nrpe_config}" ];then
+        mv ${nrpe_config} ${nrpe_config}.bak`date -d now +"%F_%H-%M-%S"`
+fi  
+}
+
 echo_bye () {
         echo "Install ${PACKAGE} complete!"
 }
@@ -174,6 +181,9 @@ fi
 
 #create_tmp_dir
 set_install_cmd 'lan'
+
+#backup nrpe config
+backup_nrpe_config
 
 #check nagios account
 id nagios >/dev/null 2>&1 ||\
