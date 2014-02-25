@@ -105,6 +105,17 @@ dontLogTCPWrappersConnects yes
 fi
 }
 
+syslog_off () {
+snmp_options='/etc/sysconfig/snmpd.options'
+test -f "${snmp_options}.bak.old" && exit 1
+
+if [ -f "${snmp_options}" ];then
+        cp ${snmp_options} ${snmp_options}.bak.old
+        echo 'OPTIONS="-Lf /dev/null -p /var/run/snmpd.pid -a"' > ${snmp_options}
+#        /etc/init.d/snmpd restart
+fi
+}
+
 echo_bye () {
         echo "Install snmpd complete!" && exit 0
 }
@@ -114,6 +125,7 @@ check_system
 set_install_cmd
 install_snmpd
 check_install_status
+syslog_off
 set_snmpd_config
 echo_bye
 }
