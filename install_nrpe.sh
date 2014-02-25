@@ -136,8 +136,18 @@ fi
 backup_nrpe_config () {
 local nrpe_config='/usr/local/nagios/etc/nrpe.cfg'
 if [ -f "${nrpe_config}" ];then
-        mv ${nrpe_config} ${nrpe_config}.bak`date -d now +"%F_%H-%M-%S"`
-fi  
+                mv ${nrpe_config} ${nrpe_config}.bak`date -d now +"%F_%H-%M-%S"`
+fi
+}
+
+off_syslog(){
+nrpe_config='/etc/xinetd.d/nrpe'
+test -f "${nrpe_config}.bak.old" && exit 1
+
+if [ -f "${nrpe_config}" ];then
+        sed -r -i.bak.old 's/log_on_failure.*$/log_type = file \/dev\/null/' ${nrpe_config}
+#        /etc/init.d/xinetd restart
+fi
 }
 
 echo_bye () {
@@ -174,26 +184,28 @@ check_system
 check_platform
 
 if [ "${platform}" = 'x64' -a "${SYATEM}" = 'debian7' ];then
-	NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
+        NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
 else
-	NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
+        NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
 fi
 
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#backup nrpe config
-backup_nrpe_config
-
 #check nagios account
 id nagios >/dev/null 2>&1 ||\
 /usr/sbin/useradd nagios -s /sbin/nologin -M -c "nagios user"
+
+#backup nrpe config
+backup_nrpe_config
 
 #Install nrpe-2.15
 PACKAGE='nrpe-2.15.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds "./configure ${NRPE_PARA}" 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
+off_syslog
+config_xinetd
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
