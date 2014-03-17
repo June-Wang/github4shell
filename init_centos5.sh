@@ -154,7 +154,7 @@ fi
 
 #tunoff services
 chkconfig --list|awk '/:on/{print $1}'|\
-grep -E 'autofs|cpuspeed|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
+grep -E 'autofs|auditd|cpuspeed|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
 while read line
 do
 	chkconfig "${line}" off
