@@ -1,6 +1,6 @@
 #!/usr/bin/expect -f                                                                                                          
 
-if {$argc<2} {
+if {$argc<5} {
 puts stderr "Usage: $argv0 host user password timeout cmd path"
 exit 1
 }
