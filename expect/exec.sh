@@ -48,7 +48,7 @@ if [ "${chk}" = 'fail' ];then
 fi
 
 mydate=`date -d  "NOW" +"%Y/%m/%d"`
-timeout=30
+timeout=5
 log_path="./log/${shell}/${mydate}"
 
 pipefile=/tmp/fifo.$$

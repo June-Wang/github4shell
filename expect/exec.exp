@@ -13,18 +13,38 @@ set MYCMD [lindex $argv 4]
 set MYPATH [lindex $argv 5]
 set timeout $TIMEOUT
 
-spawn scp $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
+spawn scp -C $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
 expect {
-    "(yes/no)" { send "yes\r"; exp_continue}
-    "assword:" { send "$PASSWD\r"}
+#    "(yes/no)" { send "yes\r"; exp_continue}
+#    "assword:" { send "$PASSWD\r"}
+#    "Permission denied" {send_user "Permission denied";exit 3}
+#       timeout {send_user "Time out";exit 2}
+#       eof {send_user "END";exit 1}
+        -re ".*es.*o.*" {
+                exp_send "yes\r"
+                exp_continue
+        }
+        -re ".*sword.*" {
+        exp_send "$PASSWD\r"
+        }
 }
 #expect "#"
 expect eof
 
-spawn ssh $USER@$HOST "nohup /bin/bash /tmp/$MYCMD.sh $HOST ;rm -f /tmp/$MYCMD.sh &"
+spawn ssh -C $USER@$HOST "eval \"nohup /bin/bash /tmp/$MYCMD.sh $HOST >/dev/null 2>&1;rm -f /tmp/$MYCMD.sh;exit 0 &\""
 expect {
-    "(yes/no)" { send "yes\r"; exp_continue}
-    "assword:" { send "$PASSWD\r"}
-#	exp_continue
+#    "(yes/no)" { send "yes\r"; exp_continue}
+#    "assword:" { send "$PASSWD\r"}
+#    "Permission denied" {exit 1}
+#        timeout {exit 2}
+#        eof {exit 3}
+#       exp_continue
+        -re ".*es.*o.*" {
+                exp_send "yes\r"
+                exp_continue
+        }
+        -re ".*sword.*" {
+        exp_send "$PASSWD\r"
+        }
 }
 expect eof
