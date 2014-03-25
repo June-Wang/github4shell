@@ -57,10 +57,11 @@ exec 3<>$pipefile
 
 temp_cmd="/tmp/temp_cmd.$$"
 test -f ${temp_cmd} || touch ${temp_cmd}
-chmod 700 ${temp_cmd}
+#chmod 700 ${temp_cmd}
 
 trap "exit 1"           HUP INT PIPE QUIT TERM
 trap "rm -f ${pipefile} ${temp_cmd}"  EXIT
+#trap "rm -f ${pipefile}"  EXIT
 
 thold=12
 seq ${thold} >&3
@@ -78,6 +79,7 @@ do
 		if [ "${ssh_stat}" = 'open' ];then
 #			./run.exp "${host}" "${user}" "${password}" "${timeout}" "${shell}" "${path}" >${log} 2>&1
 			echo "gzip -c ${path}/${shell}.sh |ssh ${user}@${host} 'zcat > /tmp/${shell}.sh ;nohup /bin/bash /tmp/${shell}.sh ${host} &;rm -f /tmp/${shell}.sh'" > ${temp_cmd}
+#			cmd=`echo "gzip -c ${path}/${shell}.sh |ssh ${user}@${host} 'zcat > /tmp/${shell}.sh ;nohup /bin/bash /tmp/${shell}.sh ${host} &;rm -f /tmp/${shell}.sh'"`
 			./run.exp  "${password}" "${temp_cmd}" "${timeout}" >${log} 2>&1
 		else
 			echo "ssh: connect to host ${host} port 22: Connection refused" >> ${log}

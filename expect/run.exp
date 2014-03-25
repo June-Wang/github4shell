@@ -14,20 +14,9 @@ set TIMEOUT [lindex $argv 2]
 #set MYPATH [lindex $argv 3]
 set timeout $TIMEOUT
 
-#spawn scp $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
-#expect {
-#    "(yes/no)" { send "yes\r"; exp_continue}
-#    "assword:" { send "$PASSWD\r"}
-#}
-#expect "#"
-#expect eof
-
-#spawn ssh $USER@$HOST "nohup /bin/bash /tmp/$MYCMD.sh $HOST ;rm -f /tmp/$MYCMD.sh &"
-#spawn gzip -c $MYPATH/$MYCMD.sh |ssh $USER@$HOST "zcat > /tmp/$MYCMD.sh ;nohup /bin/bash /tmp/$MYCMD.sh $HOST &;rm -f /tmp/$MYCMD.sh"
 spawn /bin/bash $CMD
 expect {
     "(yes/no)" { send "yes\r"; exp_continue}
     "assword:" { send "$PASSWD\r"}
-#	exp_continue
 }
 #expect eof

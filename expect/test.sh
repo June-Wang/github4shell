@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uname -a > ~/info.log
+uname -a > /tmp/info.log
