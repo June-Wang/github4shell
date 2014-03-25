@@ -13,7 +13,7 @@ set MYCMD [lindex $argv 4]
 set MYPATH [lindex $argv 5]
 set timeout $TIMEOUT
 
-spawn scp -C $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
+spawn scp -C -q $MYPATH/$MYCMD.sh $USER@$HOST:/tmp/
 expect {
 #    "(yes/no)" { send "yes\r"; exp_continue}
 #    "assword:" { send "$PASSWD\r"}

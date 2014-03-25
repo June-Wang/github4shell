@@ -142,10 +142,10 @@ fi
 
 off_syslog(){
 nrpe_config='/etc/xinetd.d/nrpe'
-test -f "${nrpe_config}.bak.old" && exit 1
+#test -f "${nrpe_config}.bak.old" && exit 1
 
 if [ -f "${nrpe_config}" ];then
-        sed -r -i.bak.old 's/log_on_failure.*$/log_type = file \/dev\/null/' ${nrpe_config}
+        sed -r -i 's/log_on_failure.*$/log_type = file \/dev\/null/' ${nrpe_config}
 #        /etc/init.d/xinetd restart
 fi
 }
