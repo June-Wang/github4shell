@@ -13,6 +13,11 @@ case "${SYSTEM_INFO}" in
                 YUM_SOURCE_NAME='RHEL5-lan'
         	CONFIG_CMD='chkconfig'
                 ;;
+		'Red Hat Enterprise Linux Server release 6'*)
+                SYSTEM='rhel6'
+                YUM_SOURCE_NAME='RHEL6-lan'
+                CONFIG_CMD='chkconfig'
+                ;;
 #	'Debian GNU/Linux 6'*)
 #		SYSTEM='debian6'
 #		CONFIG_CMD='sysv-rc-conf'
@@ -32,7 +37,7 @@ esac
 set_install_cmd () {
 local para="$1"
 case "${SYSTEM}" in
-    centos5|rhel5)
+    centos5|rhel5|rhel6)
         local install_cmd='yum --skip-broken --nogpgcheck'
         local package="${YUM_PACKAGE}"
     ;;
