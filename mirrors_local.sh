@@ -7,7 +7,7 @@ debian_mirrors='ftp.jp.debian.org/debian/'
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
-        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS5-lan.repo|RHEL5-lan.repo'|\
+        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS.*-lan.repo|RHEL.*-lan.repo'|\
         while read source_file
         do
                 mv "${source_file}" "${source_file}.${my_date}.$$"
