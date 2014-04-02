@@ -62,7 +62,7 @@ gpgcheck=0" > ${repo_file}
 rhel6)
 echo "[RHEL6-lan]
 name=Red Hat Enterprise Linux \$releasever - \$basearch
-baseurl=http://${yum_server}/rhel/6.8/${platform}/Server/
+baseurl=http://${yum_server}/rhel/6.4/${platform}/Server/
 gpgcheck=0" > ${repo_file}
 ;;
 centos5)
