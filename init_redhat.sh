@@ -133,7 +133,11 @@ fi
 sed -i "8 s/^/alias vi='vim'/" /root/.bashrc
 echo 'syntax on' > /root/.vimrc
 echo "alias vi='vim'"  >> /etc/profile.d/vim_alias.sh
-grep -E '^set ts=4' /etc/vimrc >/dev/null 2>&1 || echo "set ts=4" >> /etc/vimrc
+grep -E '^set ts=4' /etc/vimrc >/dev/null 2>&1 ||\
+echo "set nocompatible
+set ts=4
+set backspace=indent,eol,start
+syntax on" >> /etc/vimrc
 
 #global
 echo "set global.sh to /etc/profile.d/"
