@@ -42,7 +42,8 @@ test -f /etc/resolv.conf && echo "nameserver ${dns_server}" > /etc/resolv.conf
 
 alias yum='yum --skip-broken --nogpgcheck'
 
-test -f /usr/bin/wget || yum -y install wget 
+yum install -y wget rsync lftp vim >/dev/null 2>&1 || eval "echo YUM Failed!;exit 1"
+
 #set ntp
 yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
 if [ "${install_ntp}" = "fail" ];then
