@@ -77,7 +77,7 @@ modify_rsyslog_config () {
 if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
         if [ -e /etc/sysconfig/rsyslog ];then
 				time_now=`date -d now +"%F_%H-%M"`
-                sed -i.bak.${time_now} -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
+                sed -i.bak.${time_now} -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c5\"/' /etc/sysconfig/rsyslog
         fi
 fi
 }
