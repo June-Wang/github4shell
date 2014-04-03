@@ -174,11 +174,11 @@ do
 done
 
 #install htop
-rpm -q htop >/dev/null 2>&1 || htop_install='fail'
+#rpm -q htop >/dev/null 2>&1 || htop_install='fail'
 
-if [ "${htop_install}" = 'fail' ];then
-        curl -s http://${yum_server}/shell/install_htop.sh|/bin/bash
-fi
+#if [ "${htop_install}" = 'fail' ];then
+#        curl -s http://${yum_server}/shell/install_htop.sh|/bin/bash
+#fi
 
 #close ctrl+alt+del
 test -e /etc/inittab &&\
