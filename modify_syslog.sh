@@ -19,6 +19,11 @@ case "${system_info}" in
                 yum_source_name='RHEL5-lan'
 				MODIFY_SYSCONFIG='true'
                 ;;
+        'Red Hat Enterprise Linux Server release 6'*)
+                system='rhel6'
+                yum_source_name='RHEL6-lan'
+				MODIFY_SYSCONFIG='true'
+                ;;
         *)
                 system='unknown'
                 echo "This script not support ${system_info}" 1>&2
