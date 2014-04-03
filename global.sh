@@ -34,5 +34,5 @@ stty erase 
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-alias vi="vim -c 'syntax on'"
+#alias vi="vim -c 'syntax on'"
 alias ls='ls --color=tty --time-style=long-iso' 2>/dev/null
