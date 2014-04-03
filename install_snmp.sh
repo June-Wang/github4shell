@@ -11,6 +11,11 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
                 ;;
+		'Red Hat Enterprise Linux Server release 6'*)
+                system='rhel6'
+                yum_source_name='RHEL6-lan'
+                repo_file='/etc/yum.repos.d/RHEL6-lan.repo'
+                ;;
         'Debian GNU/Linux 6'*)
                 SYSTEM='debian6'
                 ;;
@@ -27,7 +32,7 @@ esac
 
 set_install_cmd () {
 case "${SYSTEM}" in
-        centos5|rhel5)
+        centos5|rhel5|rhel6)
                 INSTALL_CMD='yum --skip-broken --nogpgcheck'
                 CONFIG_CMD='chkconfig'
         ;;
@@ -130,8 +135,8 @@ set_snmpd_config
 echo_bye
 }
 
-location='suixingpay-office'
-contact='wang xiaojun'
-email='wang_xj@suixingpay.com'
+location='BJ'
+contact='admin'
+email='admin@bj.com'
 community='hisunsray'
 main
