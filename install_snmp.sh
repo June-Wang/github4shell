@@ -12,7 +12,7 @@ case "${SYSTEM_INFO}" in
                 YUM_SOURCE_NAME='RHEL5-lan'
                 ;;
 		'Red Hat Enterprise Linux Server release 6'*)
-                system='rhel6'
+                SYSTEM='rhel6'
                 yum_source_name='RHEL6-lan'
                 repo_file='/etc/yum.repos.d/RHEL6-lan.repo'
                 ;;
