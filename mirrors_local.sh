@@ -35,7 +35,7 @@ gpgcheck=1
 
 [epel-source]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Source
-baseurl=http://cache.mirrors.local/epel/\$releasever/SRPMS
+baseurl=http://${epel_mirrors}/epel/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
 gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
@@ -59,7 +59,7 @@ gpgcheck=1
 
 [epel-testing-source]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Source
-baseurl=http://epel.mirrors.cache/epel/testing/\$releasever/SRPMS
+baseurl=http://${epel_mirrors}/epel/testing/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
 gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
