@@ -1,7 +1,7 @@
 #!/bin/bash
 
 git_cmd='git config --global'
-proxy_host='192.168.29.237'
+proxy_host='proxy.suixingpay.local'
 proxy_port='8087'
 
 for para in https.proxy core.gitproxy http.proxy
