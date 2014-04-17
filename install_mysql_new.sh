@@ -203,7 +203,7 @@ interactive-timeout" > /etc/my.cnf
 #set default value
 mysql_socket_path='/var/lib/mysql'
 mkdir -p ${mysql_socket_path}
-chown -R ${mysql_socket_path}
+chown -R ${DB_USER}:${DB_USER} ${mysql_socket_path}
 local socket_file='/var/lib/mysql/mysql.sock'
 test -f "${socket_file}" && rm -f "${socket_file}"
 ln -s /tmp/mysql.sock ${socket_file}
@@ -265,7 +265,7 @@ run_cmds "cmake \
 -DMYSQL_TCP_PORT=3306" 'make' 'make install'
 cd ..
 mkdir -p /var/run/mysqld ${DB_PATH}/mysql/{binlog,innodata} ${MYSQL_LOG_PATH}
-chown -R mysql:mysql ${DB_PATH}/mysql /var/run/mysqld ${MYSQL_LOG_PATH}
+chown -R ${DB_USER}:${DB_USER} ${DB_PATH}/mysql /var/run/mysqld ${MYSQL_LOG_PATH}
 chmod 700 ${DB_PATH}/mysql/{binlog,innodata} ${MYSQL_LOG_PATH}
 test ! -e /etc/profile.d/mysql_env.sh && echo 'export PATH=/usr/local/mysql/bin:$PATH' > /etc/profile.d/mysql_env.sh
 source /etc/profile.d/mysql_env.sh
