@@ -244,12 +244,11 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Created user
-create_user "${DB_USER}" "bash"
-
 #Install mysql 5.5.25
 PACKAGE='mysql-5.5.25a.tar.gz'
 
+#Created user
+create_user "${DB_USER}" "bash"
 create_tmp_dir
 download_and_check
 run_cmds "cmake \
@@ -273,6 +272,8 @@ source /etc/profile.d/mysql_env.sh
 test -e  /usr/local/mysql/scripts/mysql_install_db &&\
 /usr/local/mysql/scripts/mysql_install_db --basedir=/usr/local/mysql/ --datadir=${DB_PATH}/mysql --user=mysql
 
+set_my_cnf
+set_auto_run
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
