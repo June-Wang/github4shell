@@ -154,14 +154,15 @@ exit_and_clear () {
 
 #install mysql func
 set_my_cnf () {
-        test ! -e /etc/my.cnf &&\
+mysql_socket_path='/var/lib/mysql'
+        test -f /etc/my.cnf && my_cnf='/etc/my.cnf.new' || my_cnf='/etc/my.cnf'
         echo "[client]
 port            = 3306
-socket          = /tmp/mysql.sock
+socket          = ${mysql_socket_path}/mysql.sock
 [mysqld]
 datadir=${DB_PATH}/mysql
 basedir=/usr/local/mysql
-log-error=${MYSQL_ERR_LOG_PATH}/mysql.err
+log-error=${MYSQL_ERR_LOG_PATH}/mysqld.log
 pid-file=/var/run/mysqld/mysqld.pid
 log-bin=${DB_PATH}/mysql/binlog/mysql-bin
 relay-log=${DB_PATH}/mysql/binlog/mysqld-relay-bin
@@ -174,7 +175,7 @@ binlog-ignore-db = test
 #default-storage-engine=MyISAM
 default-storage-engine=innodb
 port            = 3306
-socket          = /tmp/mysql.sock
+socket          = ${mysql_socket_path}/mysql.sock
 skip-external-locking
 key_buffer_size = 384M
 max_allowed_packet = 1M
@@ -198,14 +199,13 @@ sort_buffer_size = 256M
 read_buffer = 2M
 write_buffer = 2M
 [mysqlhotcopy]
-interactive-timeout" > /etc/my.cnf
+interactive-timeout" > ${my_cnf}
 #set default value
-mysql_socket_path='/var/lib/mysql'
 mkdir -p ${mysql_socket_path}
 chown -R ${DB_USER}:${DB_USER} ${mysql_socket_path}
-local socket_file='/var/lib/mysql/mysql.sock'
-test -f "${socket_file}" && rm -f "${socket_file}"
-ln -s /tmp/mysql.sock ${socket_file}
+#local socket_file='/var/lib/mysql/mysql.sock'
+#test -f "${socket_file}" && rm -f "${socket_file}"
+#ln -s /tmp/mysql.sock ${socket_file}
 }
 
 set_auto_run () {
@@ -219,7 +219,7 @@ main () {
 #VALUE FOR MYSQL
 DB_PATH='/data'
 DB_USER='mysql'
-MYSQL_ERR_LOG_PATH='/var/log/mysql'
+MYSQL_ERR_LOG_PATH='/var/log'
 
 #SET TEMP PATH
 TEMP_PATH='/usr/local/src'
