@@ -269,7 +269,7 @@ chmod 700 ${DB_PATH}/mysql/{binlog,innodata} ${MYSQL_ERR_LOG_PATH}
 test ! -e /etc/profile.d/mysql_env.sh && echo 'export PATH=/usr/local/mysql/bin:$PATH' > /etc/profile.d/mysql_env.sh
 source /etc/profile.d/mysql_env.sh
 test -e  /usr/local/mysql/scripts/mysql_install_db &&\
-/usr/local/mysql/scripts/mysql_install_db --basedir=/usr/local/mysql/ --datadir=${DB_PATH}/mysql --user=mysql
+/usr/local/mysql/scripts/mysql_install_db --basedir=/usr/local/mysql/ --datadir=${DB_PATH}/mysql --user=${DB_USER}
 
 set_my_cnf
 set_auto_run
