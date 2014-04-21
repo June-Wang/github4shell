@@ -1,3 +1,3 @@
 SHELL
 
-For myself
+For myself!
