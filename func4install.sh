@@ -51,7 +51,7 @@ case "${SYSTEM}" in
         ;;
 esac
 
-if [ "${install_cmd}" = 'yum' -a "${para}" = 'lan' ];then
+if [ "${ISSUE}" = 'redhat' -a "${para}" = 'lan' ];then
         install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
 
