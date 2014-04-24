@@ -21,11 +21,11 @@ trap "rm -rf ${INSTALL_PATH}"  EXIT
 
 download_func () {
 local func_shell='func4install.sh'
-local func_url="${PACKAGE_URL}/${func_shell}"
+local func_url="http://${YUM_SERVER}/shell/${func_shell}"
 local tmp_file="/tmp/${func_shell}"
 
 wget -q ${func_url} -O ${tmp_file} && source ${tmp_file} ||\
-eval "Can not access ${func_url}! 1>&2;exit 1"
+eval "echo Can not access ${func_url}! 1>&2;exit 1"
 rm -f ${tmp_file}
 }
 
