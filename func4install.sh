@@ -30,18 +30,22 @@ esac
 }
 
 set_install_cmd () {
-local para="$1"
+local package="$1"
+local install_type="$2"
+
 case "${SYSTEM}" in
     centos5|rhel5|rhel6)
         local install_cmd='yum --skip-broken --nogpgcheck'
-        local package="${YUM_PACKAGE}"
+#        local package="${package}"
+		local logfile='yum.log'
 		CONFIG_CMD='chkconfig'
 		ISSUE='redhat'
     ;;
     debian6|debian7)
         local install_cmd='apt-get --force-yes'
-        local package="${APT_PACKAGE}"
+#        local package="${package}"
         eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+		local logfile='apt.log'
 		CONFIG_CMD='sysv-rc-conf'
 		ISSUE='debian'
     ;;
@@ -51,11 +55,11 @@ case "${SYSTEM}" in
         ;;
 esac
 
-if [ "${ISSUE}" = 'redhat' -a "${para}" = 'lan' ];then
+if [ "${ISSUE}" = 'redhat' -a "${install_type}" = 'lan' ];then
         install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
 
-local log_file="${TEMP_PATH}/YUM.log"
+local log_file="${TEMP_PATH}/${logfile}"
 
 echo -n "Install ${package} please wait ...... "
 eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
