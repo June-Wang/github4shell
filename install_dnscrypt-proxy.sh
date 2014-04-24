@@ -42,7 +42,7 @@ set_install_cmd 'lan'
 PACKAGE='libsodium-0.4.5.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure' 'make && make install'
+run_cmds './configure' 'make' 'make install'
 
 #EXIT AND CLEAR TEMP DIR
 #exit_and_clear
