@@ -44,9 +44,6 @@ create_tmp_dir
 download_and_check
 run_cmds './configure' 'make' 'make install'
 
-#EXIT AND CLEAR TEMP DIR
-#exit_and_clear
-
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
 #create_tmp_dir
