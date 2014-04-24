@@ -26,6 +26,7 @@ local tmp_file="/tmp/${func_shell}"
 
 wget -q ${func_url} -O ${tmp_file} && source ${tmp_file} ||\
 eval "Can not access ${func_url}! 1>&2;exit 1"
+rm -f ${tmp_file}
 }
 
 main () {
