@@ -217,8 +217,8 @@ set_install_cmd 'lan'
 NGINX_USER='www'
 create_user "${NGINX_USER}" "nologin"
 
-#Install nginx-1.5.9.tar.gz
-PACKAGE='nginx-1.5.9.tar.gz'
+#Install nginx
+PACKAGE='nginx-1.6.0.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds "./configure --user=${NGINX_USER} \
