@@ -199,7 +199,7 @@ test -f "nginx-conf.${rm_day}.tar.gz" && rm -f "nginx-conf.${rm_day}.tar.gz"
 ' > /etc/nginx/backup_nginx_conf.sh
 chmod +x /etc/nginx/backup_nginx_conf.sh
 echo '#SET backup nginx conf  _BEGIN_
-0 0 * * * root /etc/nginx/backup_nginx_conf.sh >/dev/null
+0 7 * * * root /etc/nginx/backup_nginx_conf.sh >/dev/null
 #SET back nginx conf _END_' >>/etc/crontab
 fi
 }
@@ -240,7 +240,7 @@ run_cmds "./configure --user=${NGINX_USER} \
 
 set_auto_run
 set_logrotate
-backup_nginx_conf
+#backup_nginx_conf
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
