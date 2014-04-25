@@ -31,7 +31,7 @@ local my_date=`date -d "now" +"%F"`
 SOURCE_DIR='/etc/yum.repos.d'
 if [ -d "${SOURCE_DIR}" ];then
 #        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS5-lan.repo|RHEL5-lan.repo'|\
-        find ${SOURCE_DIR} -type f -name "*.repo"|\
+        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'atom|epel|mirrors'|\
         while read source_file
         do
                 mv "${source_file}" "${source_file}.${my_date}.$$"
