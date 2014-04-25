@@ -221,8 +221,8 @@ create_user "${NGINX_USER}" "nologin"
 PACKAGE='nginx-1.5.9.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --user='${NGINX_USER}' \
-        --group='${NGINX_USER}' \
+run_cmds "./configure --user=${NGINX_USER} \
+        --group=${NGINX_USER} \
         --prefix=/usr/local/nginx \
 		--sbin-path=/usr/sbin \
         --conf-path=/etc/nginx/nginx.conf \
@@ -236,7 +236,7 @@ run_cmds './configure --user='${NGINX_USER}' \
         --with-http_flv_module \
         --with-http_gzip_static_module \
         --with-http_stub_status_module \
-        --with-http_perl_module' 'make' 'make install'
+        --with-http_perl_module" 'make' 'make install'
 
 set_auto_run
 set_logrotate
