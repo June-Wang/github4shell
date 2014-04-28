@@ -1,8 +1,8 @@
 #!/bin/bash
 
 epel_mirrors='epel.mirrors.local'
-#debian_mirrors='debian.mirrors.local'
-debian_mirrors='ftp.jp.debian.org/debian/'
+debian_mirrors='debian.mirrors.local'
+#debian_mirrors='ftp.jp.debian.org/debian/'
 atom_mirrors='atom.mirrors.local'
 
 backup_local_repo_file () {
@@ -147,17 +147,11 @@ case "${SYSTEM_INFO}" in
 'CentOS'*)
 	SYSTEM='centos'
 	SOURCE_DIR='/etc/yum.repos.d'
-#	backup_local_repo_file
-#	mirrors_for_epel
-#	yum clean all
 	set_for_redhat
 	;;
 'Red Hat Enterprise Linux Server release'*)
 	SYSTEM='rhel'
 	SOURCE_DIR='/etc/yum.repos.d'
-#	backup_local_repo_file
-#	mirrors_for_epel
-#	yum clean all
 	set_for_redhat
 	;;
 'Debian'*)
