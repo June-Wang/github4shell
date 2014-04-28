@@ -3,6 +3,7 @@
 epel_mirrors='epel.mirrors.local'
 #debian_mirrors='debian.mirrors.local'
 debian_mirrors='ftp.jp.debian.org/debian/'
+atom_mirrors='atom.mirrors.local'
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
@@ -16,7 +17,7 @@ fi
 }
 
 mirrors_for_epel () {
-repo_file="${SOURCE_DIR}/epel.mirrors.repo"
+local repo_file="${SOURCE_DIR}/epel.mirrors.repo"
 echo "[epel]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch
 baseurl=http://${epel_mirrors}/\$releasever/\$basearch
@@ -67,12 +68,37 @@ gpgcheck=1" > ${repo_file}
 }
 
 mirrors_for_alt () {
-repo_file="${SOURCE_DIR}/alt.mirrors.repo"
+local repo_file="${SOURCE_DIR}/alt.mirrors.repo"
 echo "[CentALT]
 name=CentALT Packages for Enterprise Linux \$releasever - \$basearch
 baseurl=http://alt.mirrors.local/\$releasever/\$basearch/
 enabled=1
 gpgcheck=0" > ${repo_file}
+}
+
+mirrors_for_atom () {
+local repo_file="${SOURCE_DIR}/atom.mirrors.repo"
+echo "[atomic]
+name = CentOS / Red Hat Enterprise Linux \$releasever - atomicrocketturtle.com
+mirrorlist = http://${atom_mirrors}/mirrorlist/atomic/centos-\$releasever-\$basearch
+enabled = 1
+priority = 1
+protect = 0
+#gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY.art.txt
+#    file:///etc/pki/rpm-gpg/RPM-GPG-KEY.atomicorp.txt
+#gpgcheck = 0
+
+# Almost Stable, release candidates for [atomic]
+[atomic-testing]
+name = CentOS / Red Hat Enterprise Linux \$releasever - atomicrocketturtle.com - (Testing)
+mirrorlist = http://${atom_mirrors}/mirrorlist/atomic-testing/centos-\$releasever-\$basearch
+enabled = 0
+priority = 1
+protect = 0
+#gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY.art.txt
+#    file:///etc/pki/rpm-gpg/RPM-GPG-KEY.atomicorp.txt
+#gpgcheck = 1
+gpgcheck = 0" > ${repo_file}
 }
 
 check_debian_version () {
@@ -108,22 +134,31 @@ fi
 	aptitude update
 }
 
+set_for_redhat () {
+backup_local_repo_file
+mirrors_for_epel
+mirrors_for_atom
+yum clean all
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
 'CentOS'*)
 	SYSTEM='centos'
 	SOURCE_DIR='/etc/yum.repos.d'
-	backup_local_repo_file
-	mirrors_for_epel
-	yum clean all
+#	backup_local_repo_file
+#	mirrors_for_epel
+#	yum clean all
+	set_for_redhat
 	;;
 'Red Hat Enterprise Linux Server release'*)
 	SYSTEM='rhel'
 	SOURCE_DIR='/etc/yum.repos.d'
-	backup_local_repo_file
-	mirrors_for_epel
-	yum clean all
+#	backup_local_repo_file
+#	mirrors_for_epel
+#	yum clean all
+	set_for_redhat
 	;;
 'Debian'*)
 	SYSTEM='debian'
