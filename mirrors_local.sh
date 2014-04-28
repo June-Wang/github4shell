@@ -123,10 +123,10 @@ local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
 	local my_date=`date -d "now" +"%F"`
 	mv "${source_file}" "${source_file}.${my_date}.$$"
-	echo "deb http://${debian_mirrors}/debian/ ${DEBIAN_VERSION} main
-deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION} main
-deb http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-updates main contrib
-deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
+	echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
+deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
+deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
+deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
 else
         echo "Can not find ${source_file},please check!" 1>&2
         exit 1
