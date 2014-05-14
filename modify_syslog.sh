@@ -4,7 +4,7 @@
 syslog_server='syslog.suixingpay.local'
 
 #yum server
-yum_server='yum.suixingpay.com'
+yum_server='yum.suixingpay.local'
 
 check_system () {
 system_info=`head -n 1 /etc/issue`
