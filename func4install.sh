@@ -61,7 +61,10 @@ fi
 local log_file="${TEMP_PATH}/${logfile}"
 
 echo -n "Install ${package} please wait ...... "
-eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
+if [ -n "${package}" ];then
+		eval "${install_cmd} install -y ${package} >${log_file} 2>&1" || local install_stat='fail'
+fi
+
 if [ "${install_stat}" = "fail" ];then
         echo -e "${install_cmd} not available!\nview error please type: less ${log_file}" 1>&2
         exit 1
