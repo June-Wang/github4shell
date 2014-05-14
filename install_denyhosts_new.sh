@@ -111,3 +111,5 @@ set_auto_run "${MY_PROJECT}"
 exit_and_clear
 
 }
+
+main
