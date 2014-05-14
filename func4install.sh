@@ -156,3 +156,8 @@ exit_and_clear () {
                 del_tmp
                 echo_bye
 }
+
+set_auto_run () {
+local project="$1"
+	eval "${CONFIG_CMD} --add ${project};${CONFIG_CMD} ${project} on"
+}
