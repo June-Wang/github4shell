@@ -39,11 +39,17 @@ grep 'check_denyhosts' ${nrpe_conf}||\
 echo 'command[check_denyhosts]=/usr/local/nagios/libexec/check_denyhosts.sh' >> ${nrpe_conf}
 
 grep 'check_mem' ${nrpe_conf} ||\
-echo 'command[check_mem]=/usr/local/nagios/libexec/check_mem.sh -c 75 -w 85' >> ${nrpe_conf}
+echo 'command[check_mem]=/usr/local/nagios/libexec/check_mem.sh -w 75 -c 85' >> ${nrpe_conf}
 wget 'http://yum.suixingpay.local/shell/check_mem.sh' -O /usr/local/nagios/libexec/check_mem.sh
 chmod +x /usr/local/nagios/libexec/check_mem.sh
 
 grep 'check_swap' ${nrpe_conf} ||\
 echo 'command[check_swap]=/usr/local/nagios/libexec/check_swap -w 20% -c 10%' >> ${nrpe_conf}
+
+grep 'check_net_traffic' ${nrpe_conf} ||\
+echo 'command[check_net_traffic]=/usr/local/nagios/libexec/check_net_traffic.sh -d eth0 -w 50m -c 75m' >> ${nrpe_conf}
+wget 'http://yum.suixingpay.local/shell/check_net_traffic.sh' -O /usr/local/nagios/libexec/check_net_traffic.sh
+chmod +x /usr/local/nagios/libexec/check_net_traffic.sh
+/usr/local/nagios/libexec/check_net_traffic.sh -d eth0 -w 50m -c 75m
 
 #curl -s http://yum.suixingpay.com/shell/install_nagios-plugins.sh|sh
