@@ -48,7 +48,7 @@ if [ "${chk}" = 'fail' ];then
 	exit 1
 fi
 
-mydate=`date -d  "NOW" +"%Y/%m/%d"`
+mydate=`date -d  "NOW" +"%Y/%m_%d"`
 timeout=5
 log_path="./log/${shell}/${mydate}"
 
