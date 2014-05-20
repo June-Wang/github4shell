@@ -18,8 +18,9 @@ fi
 
 shell=$2
 
-if [ ! -s "./${shell}.sh" ]; then
-    echo "${shell}.sh does not exist! " 1>&2
+#if [ ! -s "./${shell}.sh" ]; then
+if [ ! -s "./${shell}" ]; then
+    echo "${shell} does not exist! " 1>&2
     exit 1
 fi
 
