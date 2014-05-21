@@ -1,5 +1,7 @@
 物大始于小
+-----------
 一切源于一个YUM源
+----
 如果你想要管理RHEL或者centos平台，那么搭建一个靠谱的内网的YUM源是很有必要的，好处有这么几点：
 （1）不依赖于外网，影响外网的连通性的因素有很多
 （2）安全性好，全是对本地资源的调取
@@ -50,20 +52,20 @@ YUM源的路径用域名还是用IP？本人还是比较推荐域名方式，原
        如果只是提供公司内部的DNS服务，我推荐轻量级的DNS代理服务器Dnsmasq，配置很简单，而且RHEL或是Centos默认都安装了此服务。加入我们自定义的域名，配置步骤如下：
 （1）添加要读取的本地DNS的文件路径到dnsmasq的配置
 vi /etc/dnsmasq.d/dns.conf
-#设置本地 DNS
+\#设置本地 DNS
 addn-hosts=/etc/dns/dns.local
-#设置ipv4的网通DNS
+\#设置ipv4的网通DNS
 server=202.106.0.20
 server=202.106.46.151
-#不读取/etc/resolv.conf
+\#不读取/etc/resolv.conf
 no-resolv
 （2）编辑本地DNS域名
 vi /etc/dns/dns.local
-#设置YUM源服务器
+\#设置YUM源服务器
 10.2.xxx.xxx yum.company.local
-#设置NTP服务器
+\#设置NTP服务器
 10.2.xxx.xxx ntp.company.local
-#设置SYSLOG服务器
+\#设置SYSLOG服务器
 10.2.xxx.xxx syslog.company.local
 重启dnsmasq的服务即可，配置起来非常简单。鉴于此DNS服务比较重要，建议分别部署在两台服务器上。设置每台linux服务器的DNS服务器地址，比如dns01是10.2.1.10、dns02是10.2.1.11，步骤如下：
 vi /etc/resolv.conf
@@ -84,7 +86,7 @@ autoindex on;
 gzip off;
  }
 access_log /var/log/nginx/yum.access.log;
-#access_log off;
+\#access_log off;
 }
 
 停下思考
