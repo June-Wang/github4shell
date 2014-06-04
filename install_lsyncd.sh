@@ -32,133 +32,116 @@ rm -f ${tmp_file}
 config_lsyncd () {
 local init_file='/etc/init.d/lsyncd'
 cat << EOF > ${init_file}
-#! /bin/sh
-### BEGIN INIT INFO
-# Provides:          lsyncd
-# Required-Start:    \$remote_fs
-# Required-Stop:     \$remote_fs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: lsyncd daemon init script
-# Description:       This script launches the lsyncd daemon.
-### END INIT INFO
-
-# Author: Ignace Mouzannar <ignace@enovance.com>
-
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="synchronization daemon"
-NAME=lsyncd
-DAEMON=/usr/bin/\$NAME
-CONFIG=/etc/lsyncd/lsyncd.conf.lua
-PIDFILE=/var/run/\$NAME.pid
-DAEMON_ARGS="-pidfile \${PIDFILE} \${CONFIG}"
-SCRIPTNAME=/etc/init.d/\$NAME
-
-# Exit if the package is not installed
-[ -x "\$DAEMON" ] || exit 0
-
-# Exit if config file does not exist
-[ -r "\$CONFIG" ] || exit 0
-
-# Read configuration variable file if it is present
-[ -r /etc/default/\$NAME ] && . /etc/default/\$NAME
-
-# Load the VERBOSE setting and other rcS variables
-. /lib/init/vars.sh
-
-# Define LSB log_* functions.
-# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
-. /lib/lsb/init-functions
-
+#!/bin/bash
 #
-# Function that starts the daemon/service
+# chkconfig: - 85 15
+# description: Lightweight inotify based sync daemon
 #
-do_start()
-{
-        start-stop-daemon --start --quiet --pidfile \$PIDFILE --exec \$DAEMON \
-        --test > /dev/null \
-                || return 1
-        start-stop-daemon --start --quiet --make-pidfile --pidfile \$PIDFILE \
-        --exec \$DAEMON -- \
-                \$DAEMON_ARGS \
-                || return 2
+# processname:  lsyncd
+# config:       /etc/lsyncd.conf
+# config:       /etc/sysconfig/lsyncd
+# pidfile:      /var/run/lsyncd.pid
+
+# Source function library
+. /etc/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "\$NETWORKING" = "no" ] && exit 0
+
+LSYNCD_OPTIONS="-pidfile /var/run/lsyncd.pid /etc/lsyncd.conf"
+
+if [ -e /etc/sysconfig/lsyncd ]; then
+  . /etc/sysconfig/lsyncd
+fi
+
+RETVAL=0
+
+prog="lsyncd"
+thelock=/var/lock/subsys/lsyncd
+
+start() {
+        [ -f /etc/lsyncd.conf ] || exit 6
+        echo -n $"Starting \$prog: "
+        if [ \$UID -ne 0 ]; then
+                RETVAL=1
+                failure
+        else
+                daemon /usr/bin/lsyncd \$LSYNCD_OPTIONS
+                RETVAL=\$?
+                [ \$RETVAL -eq 0 ] && touch \$thelock
+        fi;
+        echo
+        return \$RETVAL
 }
 
-#
-# Function that stops the daemon/service
-#
-do_stop()
-{
-        start-stop-daemon --stop --quiet --pidfile \$PIDFILE --name \$NAME
-        RETVAL="\$?"
-        [ "\$RETVAL" = 2 ] && return 2
-        start-stop-daemon --stop --quiet --oknodo --exec \$DAEMON
-        [ "\$?" = 2 ] && return 2
-        # Many daemons don't delete their pidfiles when they exit.
-        rm -f \$PIDFILE
-        return "\$RETVAL"
+stop() {
+        echo -n $"Stopping \$prog: "
+        if [ \$UID -ne 0 ]; then
+                RETVAL=1
+                failure
+        else
+                killproc lsyncd
+                RETVAL=\$?
+                [ \$RETVAL -eq 0 ] && rm -f \$thelock
+        fi;
+        echo
+        return \$RETVAL
 }
 
-#
-# Function that sends a SIGHUP to the daemon/service
-#
-do_reload() {
-        start-stop-daemon --stop --signal 1 --quiet --pidfile \$PIDFILE --name \$NAME
-        return 0
+reload(){
+        echo -n $"Reloading \$prog: "
+        killproc lsyncd -HUP
+        RETVAL=\$?
+        echo
+        return \$RETVAL
+}
+
+restart(){
+        stop
+        start
+}
+
+condrestart(){
+    [ -e \$thelock ] && restart
+    return 0
 }
 
 case "\$1" in
   start)
-        [ "\$VERBOSE" != no ] && log_daemon_msg "Starting \$DESC" "\$NAME"
-        do_start
-        case "\$?" in
-                0|1) [ "\$VERBOSE" != no ] && log_end_msg 0 ;;
-                2) [ "\$VERBOSE" != no ] && log_end_msg 1 ;;
-        esac
+        start
         ;;
   stop)
-        [ "\$VERBOSE" != no ] && log_daemon_msg "Stopping \$DESC" "\$NAME"
-        do_stop
-        case "\$?" in
-                0|1) [ "\$VERBOSE" != no ] && log_end_msg 0 ;;
-                2) [ "\$VERBOSE" != no ] && log_end_msg 1 ;;
-        esac
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  reload)
+        reload
+        ;;
+  condrestart)
+        condrestart
         ;;
   status)
-        status_of_proc \$DAEMON \$NAME && exit 0 || exit \$?
-        ;;
-  restart|force-reload)
-        log_daemon_msg "Restarting \$DESC" "\$NAME"
-        do_stop
-        case "\$?" in
-          0|1)
-                do_start
-                case "\$?" in
-                        0) log_end_msg 0 ;;
-                        1) log_end_msg 1 ;; # Old process is still running
-                        *) log_end_msg 1 ;; # Failed to start
-                esac
-                ;;
-          *)
-                # Failed to stop
-                log_end_msg 1
-                ;;
-        esac
+        status lsyncd
+        RETVAL=\$?
         ;;
   *)
-        echo "Usage: \$SCRIPTNAME {start|stop|restart|force-reload}" >&2
-        exit 3
-        ;;
+        echo $"Usage: \$0 {start|stop|status|restart|condrestart|reload}"
+        RETVAL=1
 esac
 
-:
+exit \$RETVAL
 EOF
 
 test -f ${init_file} && chmod +x ${init_file}
 
-local config_dir='/etc/lsyncd'
-local config_file="${config_dir}/lsyncd.conf.lua"
-test -d ${config_dir} || mkdir -p ${config_dir}
+#local config_dir='/etc/lsyncd'
+local config_file="/etc/lsyncd.conf"
+#test -d ${config_dir} || mkdir -p ${config_dir}
 test -f ${config_file} ||\
 echo 'settings = {
         logfile = "/var/log/lsyncd.log",
