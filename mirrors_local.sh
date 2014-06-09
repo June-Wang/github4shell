@@ -102,7 +102,7 @@ gpgcheck = 0" > ${repo_file}
 }
 
 backup_source_list () {
-local source_file="${SOURCE_DIR}/sources.list"
+source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
 	local my_date=`date -d "now" +"%F"`
 	mv "${source_file}" "${source_file}.${my_date}.$$"
