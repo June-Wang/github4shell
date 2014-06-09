@@ -116,29 +116,30 @@ mirrors_for_debian () {
 debian_release=`echo "${SYSTEM_INFO}" |\
 grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
 case "${debian_release}" in
-                7)
-                        DEBIAN_VERSION='wheezy'
-						DEBIAN_ISSUE='7'
-						backup_source_list
-						echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main
+	7)
+		DEBIAN_VERSION='wheezy'
+		DEBIAN_ISSUE='7'
+		backup_source_list
+		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main
 deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/ stable contrib main
 deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${source_file}
-                ;;
-                6)
-                        DEBIAN_VERSION='squeeze'
-						DEBIAN_ISSUE='6'
-						backup_source_list
-						echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
+	;;
+	6)
+		DEBIAN_VERSION='squeeze'
+		DEBIAN_ISSUE='6'
+		backup_source_list
+		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
 #						echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
 #deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
 #deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
 #deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
-                ;;
-                *)
-                        echo "This script not support ${SYSTEM_INFO}" 1>&2
-                        exit 1
-                ;;
+	;;
+	*)
+		echo "This script not support ${SYSTEM_INFO}" 1>&2
+		exit 1
+	;;
 esac
+
 local apt_conf_d='/etc/apt/apt.conf.d'
 local apt_conf="${apt_conf_d}/00trustlocal"
 test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
