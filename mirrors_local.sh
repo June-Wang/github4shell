@@ -106,17 +106,9 @@ source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
 	local my_date=`date -d "now" +"%F"`
 	mv "${source_file}" "${source_file}.${my_date}.$$"
-#	echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main
-#deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/ stable contrib main
-#deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main" > ${source_file}
-#	echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
-#deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
-#deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
-#deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
-#
 else
-        echo "Can not find ${source_file},please check!" 1>&2
-        exit 1
+	echo "Can not find ${source_file},please check!" 1>&2
+#        exit 1
 fi
 }
 
@@ -136,10 +128,11 @@ deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${
                         DEBIAN_VERSION='squeeze'
 						DEBIAN_ISSUE='6'
 						backup_source_list
-						echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
-deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
-deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
-deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
+						echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main" > ${source_file}
+#						echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
+#deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
+#deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
+#deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
                 ;;
                 *)
                         echo "This script not support ${SYSTEM_INFO}" 1>&2
