@@ -130,7 +130,7 @@ case "${debian_release}" in
 						backup_source_list
 						echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main
 deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/ stable contrib main
-deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main" > ${source_file}
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${source_file}
                 ;;
                 6)
                         DEBIAN_VERSION='squeeze'
