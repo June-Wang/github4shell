@@ -139,6 +139,10 @@ deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${
                         exit 1
                 ;;
 esac
+local apt_conf_d='/etc/apt/apt.conf.d'
+local apt_conf="${apt_conf_d}/00trustlocal"
+test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
+echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
 aptitude update
 }
 
