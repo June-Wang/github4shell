@@ -128,7 +128,12 @@ deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${
 		DEBIAN_VERSION='squeeze'
 		DEBIAN_ISSUE='6'
 		backup_source_list
-		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
+		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd4/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd5/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd6/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
 #						echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
 #deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
 #deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
