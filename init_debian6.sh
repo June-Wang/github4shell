@@ -16,8 +16,8 @@ if [ "${install_package}" = "fail" ];then
 fi
 
 #set vim for python
-grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
-set ts=4" >> /etc/vimrc
+#grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
+#set ts=4" >> /etc/vimrc
 
 #set ntp
 echo -n "Set ntp ... "
