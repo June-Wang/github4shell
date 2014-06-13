@@ -114,7 +114,7 @@ fi
 
 mirrors_for_debian () {
 debian_release=`echo "${SYSTEM_INFO}" |\
-grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
+cat /etc/issue|head -n1|grep -oE '[0-9]+'|head -n1`
 case "${debian_release}" in
 	7)
 		DEBIAN_VERSION='wheezy'
