@@ -156,8 +156,8 @@ set_install_cmd 'lan'
 id nagios >/dev/null 2>&1 ||\
 /usr/sbin/useradd nagios -s /sbin/nologin -M -c "nagios user"
 
-#Install nagios-plugins-1.5
-PACKAGE='nagios-plugins-2.0.tar.gz'
+#Install nagios-plugins-2.0.2.tar.gz
+PACKAGE='nagios-plugins-2.0.2.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds './configure --with-nagios-user=nagios --with-nagios-group=nagios' 'make' 'make install'
