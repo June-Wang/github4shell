@@ -53,9 +53,6 @@ create_tmp_dir
 download_and_check
 run_cmds './configure --with-command-group=nagcmd' 'make all' 'make install' 'make install-init' 'make install-config' 'make install-commandmode' 'make install-webconf'
 
-#EXIT AND CLEAR TEMP DIR
-exit_and_clear
-
 #Setting auto run
 set_auto_run 'nagios'
 set_auto_run 'httpd'
@@ -95,12 +92,17 @@ echo -e '
 \t/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg'
 
 #Start Nagios
-echo -e ' Start Nagios:
+echo -e '
+ Start Nagios:
 \t/usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg'
 
 #View nagios status
-echo -e ' View nagios status:
+echo -e '
+ View nagios status:
 \t/usr/local/nagios/bin/nagiostats'
+
+#EXIT AND CLEAR TEMP DIR
+exit_and_clear
 
 }
 
