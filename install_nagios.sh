@@ -53,26 +53,23 @@ create_tmp_dir
 download_and_check
 run_cmds './configure --with-command-group=nagcmd' 'make all' 'make install' 'make install-init' 'make install-config' 'make install-commandmode' 'make install-webconf'
 
+#EXIT AND CLEAR TEMP DIR
+exit_and_clear
+
 #Setting auto run
 set_auto_run 'nagios'
 set_auto_run 'httpd'
+/etc/init.d/httpd start
 
-#Setting nagiosadmin passwd
-echo -e 'Setting nagiosadmin passwd:
-\t/usr/bin/htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin'
+#Setting nagios alias
+test -f ~/.bashrc &&\
+cat << EOF >> ~/.bashrc
+alias chknagios='/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg'
+alias chgnagiospwd='/usr/bin/htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin'
+alias nagiosstatus='/usr/local/nagios/bin/nagiostats'
+EOF
 
-#Check nagios config
-echo -e 'Check nagios config:
-\t/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg'
-
-#Start Nagios
-echo -e 'Start Nagios:
-\t/usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg'
-
-#View nagios status
-echo -e 'View nagios status:
-/usr/local/nagios/bin/nagiostats'
-
+#Install nagios-plugins nrpe
 yum_url="http://${YUM_SERVER}/shell"
 
 cmds=(
@@ -86,8 +83,24 @@ do
 	eval "${cmd}" || eval "echo Run \"${cmd}\" fail!;exit 1"
 done
 
-#EXIT AND CLEAR TEMP DIR
-exit_and_clear
+#Setting nagiosadmin passwd
+echo -e ' ***** Attention *****
+
+ Setting nagiosadmin passwd:
+\t/usr/bin/htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin'
+
+#Check nagios config
+echo -e '
+ Check nagios config:
+\t/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg'
+
+#Start Nagios
+echo -e ' Start Nagios:
+\t/usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg'
+
+#View nagios status
+echo -e ' View nagios status:
+\t/usr/local/nagios/bin/nagiostats'
 
 }
 
