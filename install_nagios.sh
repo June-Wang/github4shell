@@ -94,14 +94,13 @@ echo -e '
 
 #Start Nagios
 echo -e '
- Start Nagios:
+ Start nagios:
 \t/usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg'
 
 #View nagios status
 echo -e '
  View nagios status:
 \t/usr/local/nagios/bin/nagiostats
-
 '
 
 #Start nagios
