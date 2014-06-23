@@ -59,8 +59,9 @@ set_auto_run 'httpd'
 /etc/init.d/httpd start
 
 #Setting nagios alias
-test -f ~/.bashrc &&\
+grep 'Setting Nagios alias' ~/.bashrc >/dev/null 2>&1 ||\
 cat << EOF >> ~/.bashrc
+#Setting Nagios alias
 alias chknagios='/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg'
 alias chgnagiospwd='/usr/bin/htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin'
 alias nagiosstatus='/usr/local/nagios/bin/nagiostats'
@@ -99,7 +100,9 @@ echo -e '
 #View nagios status
 echo -e '
  View nagios status:
-\t/usr/local/nagios/bin/nagiostats'
+\t/usr/local/nagios/bin/nagiostats
+
+'
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
