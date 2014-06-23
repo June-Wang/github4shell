@@ -104,8 +104,8 @@ echo -e '
 '
 
 #Start nagios
-err_log="~/nagios.log"
-/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg >${err_log} 2>&1 && /usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg ||\
+err_log=" ${TEMP_PATH}/nagios.log"
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg > ${err_log} 2>&1 && /usr/local/nagios/bin/nagios -d /usr/local/nagios/etc/nagios.cfg ||\
 eval "echo Start nagios fail!View detail to ${err_log};exit 1"
 
 #EXIT AND CLEAR TEMP DIR
