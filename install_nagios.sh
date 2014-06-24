@@ -58,6 +58,27 @@ set_auto_run 'nagios'
 set_auto_run 'httpd'
 /etc/init.d/httpd start
 
+#Modify nagios.cfg
+nagios_path='/usr/local/nagios'
+test -d ${nagios_path} ||\
+eval echo "${nagios_path} not exist!;exit 1"
+
+nagios_conf="${nagios_path}/etc/nagios.cfg"
+test -f ${nagios_conf} ||\
+eval "echo ${nagios_conf} not exist!;exit 1"
+
+sed -i.backup.`date -d now +"%F".$$` 's/^date_format.*$/date_format=iso8601/' ${nagios_conf}
+
+grep 'ADD NEW PATH' ${nagios_conf} >/dev/null 2>&1 ||\
+cat << EOF >> ${nagios_conf}
+#ADD NEW PATH
+cfg_dir=/usr/local/nagios/etc/servers
+cfg_dir=/usr/local/nagios/etc/others
+cfg_dir=/usr/local/nagios/etc/networks
+EOF
+
+mkdir -p /usr/local/nagios/etc/{servers,others,networks}
+
 #Setting nagios alias
 grep 'Setting Nagios alias' ~/.bashrc >/dev/null 2>&1 ||\
 cat << EOF >> ~/.bashrc
