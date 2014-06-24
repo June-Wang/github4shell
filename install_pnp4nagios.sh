@@ -43,7 +43,7 @@ download_func
 
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
-set_install_cmd 'lan'
+set_install_cmd
 
 #Install pnp4nagios-0.6.22.tar.gz
 PACKAGE='pnp4nagios-0.6.22.tar.gz'
