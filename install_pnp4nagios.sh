@@ -51,10 +51,8 @@ PACKAGE='pnp4nagios-0.6.22.tar.gz'
 #Create_tmp_dir
 create_tmp_dir
 download_and_check
-run_cmds './configure --with-nagios-user=nagios \
---with-nagios-group-nagios \
---with-rrdtool=/usr/bin/rrdtool \
---with-perfdata-dir=/usr/local/nagios/share/perfdata/' 'make all' 'make install' 'make install-webconf' 'make install-config' 'make install-init' 'make fullinstall'
+run_cmds './configure --with-nagios-user=nagios --with-nagios-group-nagios --with-rrdtool=/usr/bin/rrdtool --with-perfdata-dir=/usr/local/nagios/share/perfdata/
+' 'make all' 'make install' 'make install-webconf' 'make install-config' 'make install-init' 'make fullinstall'
 
 #Modify /usr/local/nagios/etc/nagios.cfg
 nagios_conf='/usr/local/nagios/etc/nagios.cfg'
