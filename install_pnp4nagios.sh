@@ -83,6 +83,52 @@ host_perfdata_file_processing_interval=15
 host_perfdata_file_processing_command=process-host-perfdata-file
 EOF
 
+#Custom command
+custom_path='/usr/local/nagios/etc/others'
+test -d ${custom_path} &&\
+cat << EOF >> ${custom_path}/command.cfg
+define command{
+    command_name    check_nrpe
+    command_line    \$USER1\$/check_nrpe -H \$HOSTADDRESS\$ -c \$ARG1\$ -t 60
+}
+
+define command{
+        command_name    check_mysql
+        command_line    \$USER1\$/check_mysql -H \$HOSTADDRESS\$ \$ARG1\$
+        }
+
+# 'check_nt' command definition
+define command{
+    command_name    check_nt
+    command_line    \$USER1\$/check_nt -H \$HOSTADDRESS\$ -s nagios -p 12489 -v \$ARG1\$ \$ARG2\$
+    }
+EOF
+
+cat << EOF >> ${custom_path}/pnp4nagios.cfg
+#add pnp0.6 host service
+define host {
+   name       hosts-pnp
+   action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=_HOST_
+   register   0
+}
+
+define service {
+   name       services-pnp
+   action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=\$SERVICEDESC\$
+   register   0
+}
+ 
+define command{
+       command_name    process-service-perfdata-file
+       command_line    /bin/mv /usr/local/pnp4nagios/var/service-perfdata /usr/local/pnp4nagios/var/spool/service-perfdata.\$TIMET\$
+}
+
+define command{
+       command_name    process-host-perfdata-file
+       command_line    /bin/mv /usr/local/pnp4nagios/var/host-perfdata /usr/local/pnp4nagios/var/spool/host-perfdata.\$TIMET\$
+}
+EOF
+
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
