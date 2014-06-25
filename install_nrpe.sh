@@ -82,6 +82,17 @@ create_tmp_dir
 download_and_check
 run_cmds "./configure ${NRPE_PARA}" 'make all' 'make install-plugin' 'make install-daemon' 'make install-daemon-config' 'make install-xinetd'
 
+#ADD NRPE CMD
+nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
+
+if [ -f "${nrpe_conf}" ];then
+grep 'check_swap' ${nrpe_conf} ||\
+echo 'command[check_swap]=/usr/local/nagios/libexec/check_swap -w 20% -c 10%' >> ${nrpe_conf}
+
+grep 'check_disk_root' ${nrpe_conf} ||\
+echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_conf}
+fi
+
 #CONFIG NRPE
 turn_off_syslog
 config_xinetd
