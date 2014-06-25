@@ -35,8 +35,12 @@ download_func
 
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
+
 #create_tmp_dir
 set_install_cmd 'lan'
+
+#Created user
+create_user "nagios" "bash"
 
 #Install 
 PACKAGE='nagios-plugins-2.0.2.tar.gz'
