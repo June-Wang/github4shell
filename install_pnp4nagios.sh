@@ -133,6 +133,7 @@ define command{
 EOF
 
 #Server 
+LANG=en_US.UTF-8
 server_path="/usr/local/nagios/etc/servers"
 test -d ${server_path} &&\
 cat << EOF > ${server_path}/localhost.cfg
@@ -143,7 +144,7 @@ define host{
         address                 127.0.0.1
         _owner                  系统组
         contact_groups          sysadm
-        hostgroups              mon-servers
+#        hostgroups              mon-servers
 }
 define service{
         use                     generic-service,services-pnp
@@ -151,7 +152,7 @@ define service{
         service_description     CPU负载
         check_command           check_nrpe!check_load
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service,services-pnp
@@ -159,7 +160,7 @@ define service{
         service_description     本地登录用户数
         check_command           check_nrpe!check_users
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service,services-pnp
@@ -167,7 +168,7 @@ define service{
         service_description     根分区磁盘使用率
         check_command           check_nrpe!check_disk_root
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service,services-pnp
@@ -175,7 +176,7 @@ define service{
         service_description     系统进程数
         check_command           check_nrpe!check_total_procs
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service,services-pnp
@@ -183,7 +184,7 @@ define service{
         service_description     僵尸进程数
         check_command           check_nrpe!check_zombie_procs
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service {
         use                     generic-service,services-pnp
@@ -194,7 +195,7 @@ define service {
         retry_interval          5
         register                0
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service
@@ -206,7 +207,7 @@ define service{
         register                0
         notification_options    w,u,c
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 }
 define service{
         use                     generic-service,services-pnp
@@ -218,7 +219,7 @@ define service{
         check_interval          3
         retry_check_interval    2
         notification_options    w,u,c,r
-        contact_groups          sysadm
+#        contact_groups          sysadm
         register                0
 }
 define service{
@@ -231,7 +232,7 @@ define service{
         retry_check_interval    2
         notification_options    w,u,c,r
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
         register                0
 }
 define service{
@@ -244,7 +245,7 @@ define service{
         retry_check_interval    2
         notification_options    w,u,c,r
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
         register                0
 }
 define service {
@@ -252,7 +253,7 @@ define service {
         service_description             swap交换分区使用率
         use                             generic-service,services-pnp
         check_command                   check_nrpe!check_swap
-        contact_groups                  sysadm
+#        contact_groups                  sysadm
         _owner                  系统组
         register                        1
 }
@@ -265,7 +266,7 @@ define service {
                 retry_check_interval            3
         max_check_attempts              5
         notification_options            w,u,c,r
-        contact_groups                  sysadm
+#        contact_groups                  sysadm
         _owner                  系统组
         register                        0
 }
@@ -277,7 +278,7 @@ define service {
                 check_interval                  3
         retry_check_interval            3
         max_check_attempts              10
-        contact_groups                  sysadm
+#        contact_groups                  sysadm
         _owner                          系统组
         register                        0
 }
