@@ -296,6 +296,9 @@ npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
 test -f ${npcd_cmd} && eval ${npcd_cmd} -d -f ${npcd_conf} ||\
 echo "${npcd_cmd} not found!;exit 1"
 
+pnp4nagios_php='/usr/local/pnp4nagios/share/install.php'
+test -f ${pnp4nagios_php} && mv ${pnp4nagios_php} ${pnp4nagios_php}.backup.`date -d now +"%F".$$`
+
 /etc/init.d/nagios restart
 /etc/init.d/httpd restart
 
