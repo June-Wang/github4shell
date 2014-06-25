@@ -135,7 +135,7 @@ TEMP_PATH='/usr/local/src'
 
 #SET PACKAGE
 YUM_SERVER='yum.suixingpay.com'
-YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
+YUM_PACKAGE='gcc glibc glibc-common gcc-c++'
 APT_PACKAGE='build-essential'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
