@@ -135,7 +135,8 @@ EOF
 #Server 
 server_path="${custom_path}/servers/"
 test -d ${server_path} &&\
-echo 'define host{
+cat << EOF > ${server_path}/localhost.cfg
+define host{
         use                     linux-server,hosts-pnp
         host_name               NAGIOS-SERVER
         alias                   NAGIOS服务器
@@ -279,7 +280,8 @@ define service {
         contact_groups                  sysadm
         _owner                          系统组
         register                        0
-}' > ${server_path}/localhost.cfg 
+}
+EOF
 
 if [ -d "/usr/local/pnp4nagios/etc/check_commands" ];then
 	cd /usr/local/pnp4nagios/etc/check_commands
