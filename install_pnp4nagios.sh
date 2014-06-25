@@ -284,11 +284,9 @@ define service {
 }
 EOF
 
-if [ -d "/usr/local/pnp4nagios/etc/check_commands" ];then
-	cd /usr/local/pnp4nagios/etc/check_commands
-	mv check_nrpe.cfg-sample check_nrpe.cfg
-#	cp check_nrpe.cfg /usr/local/nagios/etc/pnp/check_commands
-fi
+#check_commands_path
+check_commands_path='/usr/local/pnp4nagios/etc/check_commands'
+[ -d "${check_commands_path}" ] && ls ${check_commands_path}/*-sample|sed -r 's/^(.*)-sample/mv & \1/'|sh
 
 npcd_cmd='/usr/local/pnp4nagios/bin/npcd'
 npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
@@ -296,8 +294,13 @@ npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
 test -f ${npcd_cmd} && eval ${npcd_cmd} -d -f ${npcd_conf} ||\
 echo "${npcd_cmd} not found!;exit 1"
 
+#Remove pnp4nagios php
 pnp4nagios_php='/usr/local/pnp4nagios/share/install.php'
 test -f ${pnp4nagios_php} && mv ${pnp4nagios_php} ${pnp4nagios_php}.backup.`date -d now +"%F".$$`
+
+nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
+grep 'check_swap' ${nrpe_conf} ||\
+echo 'command[check_swap]=/usr/local/nagios/libexec/check_swap -w 20% -c 10%' >> ${nrpe_conf}
 
 /etc/init.d/nagios restart
 /etc/init.d/httpd restart
