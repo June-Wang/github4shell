@@ -103,7 +103,8 @@ do
 done
 
 #Setting nagiosadmin passwd
-echo -e ' ***** Attention *****
+echo -e '
+ ***** Attention *****
 
  Setting nagiosadmin passwd:
 \t/usr/bin/htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin'
@@ -122,6 +123,7 @@ echo -e '
 echo -e '
  View nagios status:
 \t/usr/local/nagios/bin/nagiostats
+
 '
 
 #Start nagios
