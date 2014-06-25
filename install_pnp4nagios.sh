@@ -299,8 +299,14 @@ pnp4nagios_php='/usr/local/pnp4nagios/share/install.php'
 test -f ${pnp4nagios_php} && mv ${pnp4nagios_php} ${pnp4nagios_php}.backup.`date -d now +"%F".$$`
 
 nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
+
+if [ -f "${nrpe_conf}" ];then
 grep 'check_swap' ${nrpe_conf} ||\
 echo 'command[check_swap]=/usr/local/nagios/libexec/check_swap -w 20% -c 10%' >> ${nrpe_conf}
+
+grep 'check_disk_root' ${nrpe_conf} ||\
+echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_conf}
+fi
 
 /etc/init.d/nagios restart
 /etc/init.d/httpd restart
