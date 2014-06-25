@@ -59,7 +59,7 @@ nagios_conf='/usr/local/nagios/etc/nagios.cfg'
 test -f ${nagios_conf} ||\
 eval "echo ${nagios_conf} not exist!;exit 1"
 
-sed -i.backup.`date -d now +"%F".$$` 's/^(cfg_file=.*localhost.cfg)$/#\1/' ${nagios_conf}
+sed -r -i.backup.`date -d now +"%F".$$` 's/^(cfg_file=.*localhost.cfg)$/#\1/' ${nagios_conf}
 
 grep 'Bulk Mode with NPCD:' ${nagios_conf} >/dev/null 2>&1 ||\
 cat << EOF >> ${nagios_conf}
