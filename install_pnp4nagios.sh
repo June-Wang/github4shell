@@ -143,7 +143,7 @@ define host{
         alias                   NAGIOS服务器
         address                 127.0.0.1
         _owner                  系统组
-        contact_groups          sysadm
+#        contact_groups          sysadm
 #        hostgroups              mon-servers
 }
 define service{
