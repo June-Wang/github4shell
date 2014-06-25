@@ -59,6 +59,8 @@ nagios_conf='/usr/local/nagios/etc/nagios.cfg'
 test -f ${nagios_conf} ||\
 eval "echo ${nagios_conf} not exist!;exit 1"
 
+sed -i.backup.`date -d now +"%F".$$` 's/^(cfg_file=.*localhost.cfg)$/#\1/' ${nagios_conf}
+
 grep 'Bulk Mode with NPCD:' ${nagios_conf} >/dev/null 2>&1 ||\
 cat << EOF >> ${nagios_conf}
 #Bulk Mode with NPCD:
@@ -128,6 +130,172 @@ define command{
        command_line    /bin/mv /usr/local/pnp4nagios/var/host-perfdata /usr/local/pnp4nagios/var/spool/host-perfdata.\$TIMET\$
 }
 EOF
+
+#Server 
+server_path="${custom_path}/servers/"
+test -d ${server_path} &&\
+cat << EOF >> ${server_path}/localhost.cfg
+define host{
+        use                     linux-server,hosts-pnp
+        host_name               NAGIOS-SERVER
+        alias                   NAGIOS服务器
+        address                 127.0.0.1
+        _owner                  系统组
+        contact_groups          sysadm
+        hostgroups              mon-servers
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     CPU负载
+        check_command           check_nrpe!check_load
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     本地登录用户数
+        check_command           check_nrpe!check_users
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     根分区磁盘使用率
+        check_command           check_nrpe!check_disk_root
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     系统进程数
+        check_command           check_nrpe!check_total_procs
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     僵尸进程数
+        check_command           check_nrpe!check_zombie_procs
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service {
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     CPU占用率
+        check_command           check_nrpe!check_cpu_utilization
+        max_check_attempts      10
+        retry_interval          5
+        register                0
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service
+        host_name               NAGIOS-SERVER
+        service_description     DenyHosts服务
+        check_command           check_nrpe!check_denyhosts
+        max_check_attempts      1
+        check_interval          1
+        register                0
+        notification_options    w,u,c
+        _owner                  系统组
+        contact_groups          sysadm
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     网络链接数
+        _owner                  系统组
+        check_command           check_nrpe!check_tcp_stat
+        max_check_attempts      7
+        check_interval          3
+        retry_check_interval    2
+        notification_options    w,u,c,r
+        contact_groups          sysadm
+        register                0
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     检测时钟服务器
+        check_command           check_nrpe!check_ntp_time
+        max_check_attempts      3
+        check_interval          3
+        retry_check_interval    2
+        notification_options    w,u,c,r
+        _owner                  系统组
+        contact_groups          sysadm
+        register                0
+}
+define service{
+        use                     generic-service,services-pnp
+        host_name               NAGIOS-SERVER
+        service_description     DNS服务
+        check_command           check_nrpe!check_dns
+        max_check_attempts      3
+        check_interval          3
+        retry_check_interval    2
+        notification_options    w,u,c,r
+        _owner                  系统组
+        contact_groups          sysadm
+        register                0
+}
+define service {
+        host_name                       NAGIOS-SERVER
+        service_description             swap交换分区使用率
+        use                             generic-service,services-pnp
+        check_command                   check_nrpe!check_swap
+        contact_groups                  sysadm
+        _owner                  系统组
+        register                        1
+}
+define service {
+        host_name                       NAGIOS-SERVER
+        service_description             内存使用率
+        use                             generic-service,services-pnp
+        check_command                   check_nrpe!check_mem
+        check_interval                  3
+                retry_check_interval            3
+        max_check_attempts              5
+        notification_options            w,u,c,r
+        contact_groups                  sysadm
+        _owner                  系统组
+        register                        0
+}
+define service {
+        host_name                       NAGIOS-SERVER
+        service_description             网卡流量
+        use                             generic-service,services-pnp
+        check_command                   check_nrpe!check_net_traffic
+                check_interval                  3
+        retry_check_interval            3
+        max_check_attempts              10
+        contact_groups                  sysadm
+        _owner                          系统组
+        register                        0
+}
+EOF
+
+if [ -d "/usr/local/pnp4nagios/etc/check_commands" ];then
+	cd /usr/local/pnp4nagios/etc/check_commands
+	mv check_nrpe.cfg-sample check_nrpe.cfg
+	cp check_nrpe.cfg /usr/local/nagios/etc/pnp/check_commands
+if
+
+npcd_cmd='/usr/local/pnp4nagios/bin/npcd'
+npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
+
+test -f ${npcd_cmd} && eval ${npcd_cmd} -d -f ${npcd_conf} ||\
+echo "${npcd_cmd} not found!;exit 1"
+
+/etc/init.d/nagios restart
+/etc/init.d/httpd restart
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
