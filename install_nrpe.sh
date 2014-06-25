@@ -65,11 +65,11 @@ platform=`check_platform`
 
 #FOR debian7
 NRPE_PARA=''
-if [ "${platform}" = 'x64' -a "${SYATEM}" = 'debian7' ];then
-        NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
-else
-        NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
-fi
+[ "${platform}" = 'x64' -a "${SYATEM}" = 'debian7' ] &&\
+NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu'
+
+[ "${platform}" = 'x86' -a "${SYATEM}" = 'debian7' ] &&\
+NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
 
 #Backup NRPE config
 backup_nrpe_config
