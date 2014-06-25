@@ -61,6 +61,12 @@ eval "echo ${nagios_conf} not exist!;exit 1"
 
 sed -r -i.backup.`date -d now +"%F".$$` 's/^(cfg_file=.*localhost.cfg)$/#\1/' ${nagios_conf}
 
+#ADD TO rc.local
+grep 'AUTO RUN FOR PNP4NAGIOS' /etc/rc.local >/dev/null 2>&1 ||\
+echo '#AUTO RUN FOR PNP4NAGIOS
+/usr/local/pnp4nagios/bin/npcd -d -f /usr/local/pnp4nagios/etc/npcd.cfg' >> /etc/rc.local
+
+#MODIFY nagios.cfg
 grep 'Bulk Mode with NPCD:' ${nagios_conf} >/dev/null 2>&1 ||\
 cat << EOF >> ${nagios_conf}
 
@@ -86,7 +92,7 @@ host_perfdata_file_processing_interval=15
 host_perfdata_file_processing_command=process-host-perfdata-file
 EOF
 
-#Custom command
+#ADD COMMAND
 custom_path='/usr/local/nagios/etc/others'
 test -d ${custom_path} &&\
 cat << EOF > ${custom_path}/command.cfg
@@ -132,7 +138,7 @@ define command{
 }
 EOF
 
-#Server 
+#ADD Server 
 LANG=en_US.UTF-8
 server_path="/usr/local/nagios/etc/servers"
 test -d ${server_path} &&\
