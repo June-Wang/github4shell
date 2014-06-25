@@ -286,7 +286,11 @@ EOF
 
 #check_commands_path
 check_commands_path='/usr/local/pnp4nagios/etc/check_commands'
-[ -d "${check_commands_path}" ] && ls ${check_commands_path}/*-sample|sed -r 's/^(.*)-sample/mv & \1/'|sh
+if [ -d "${check_commands_path}" ];then
+	ls ${check_commands_path}/*-sample|sed -r 's/^(.*)-sample/mv & \1/'|sh
+	cd ${check_commands_path}
+	test -f check_nrpe.cfg && cp check_nrpe.cfg check_nt.cfg && cd
+fi
 
 npcd_cmd='/usr/local/pnp4nagios/bin/npcd'
 npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
