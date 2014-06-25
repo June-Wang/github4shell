@@ -63,6 +63,7 @@ sed -i.backup.`date -d now +"%F".$$` 's/^(cfg_file=.*localhost.cfg)$/#\1/' ${nag
 
 grep 'Bulk Mode with NPCD:' ${nagios_conf} >/dev/null 2>&1 ||\
 cat << EOF >> ${nagios_conf}
+
 #Bulk Mode with NPCD:
 process_performance_data=1
 
@@ -88,7 +89,7 @@ EOF
 #Custom command
 custom_path='/usr/local/nagios/etc/others'
 test -d ${custom_path} &&\
-cat << EOF >> ${custom_path}/command.cfg
+cat << EOF > ${custom_path}/command.cfg
 define command{
     command_name    check_nrpe
     command_line    \$USER1\$/check_nrpe -H \$HOSTADDRESS\$ -c \$ARG1\$ -t 60
@@ -106,7 +107,7 @@ define command{
     }
 EOF
 
-cat << EOF >> ${custom_path}/pnp4nagios.cfg
+cat << EOF > ${custom_path}/pnp4nagios.cfg
 #add pnp0.6 host service
 define host {
    name       hosts-pnp
@@ -284,7 +285,7 @@ if [ -d "/usr/local/pnp4nagios/etc/check_commands" ];then
 	cd /usr/local/pnp4nagios/etc/check_commands
 	mv check_nrpe.cfg-sample check_nrpe.cfg
 	cp check_nrpe.cfg /usr/local/nagios/etc/pnp/check_commands
-if
+fi
 
 npcd_cmd='/usr/local/pnp4nagios/bin/npcd'
 npcd_conf='/usr/local/pnp4nagios/etc/npcd.cfg'
