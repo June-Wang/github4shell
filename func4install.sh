@@ -1,5 +1,12 @@
 #functions for install
 
+check_platform (){
+local platform_info=`uname -m`
+local platform=''
+echo ${platform_info}|grep '64' >/dev/null 2>&1 && platform='x64' || platform='x86'
+echo "${platform}"
+}
+
 check_system (){
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
