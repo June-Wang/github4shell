@@ -133,7 +133,7 @@ define command{
 EOF
 
 #Server 
-server_path="${custom_path}/servers"
+server_path="/usr/local/nagios/etc/servers"
 test -d ${server_path} &&\
 cat << EOF > ${server_path}/localhost.cfg
 define host{
