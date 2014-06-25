@@ -101,10 +101,10 @@ define command{
         }
 
 # 'check_nt' command definition
-define command{
-    command_name    check_nt
-    command_line    \$USER1\$/check_nt -H \$HOSTADDRESS\$ -s nagios -p 12489 -v \$ARG1\$ \$ARG2\$
-    }
+#define command{
+#    command_name    check_nt
+#    command_line    \$USER1\$/check_nt -H \$HOSTADDRESS\$ -s nagios -p 12489 -v \$ARG1\$ \$ARG2\$
+#    }
 EOF
 
 cat << EOF > ${custom_path}/pnp4nagios.cfg
