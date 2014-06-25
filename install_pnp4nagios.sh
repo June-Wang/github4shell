@@ -133,7 +133,7 @@ define command{
 EOF
 
 #Server 
-server_path="${custom_path}/servers/"
+server_path="${custom_path}/servers"
 test -d ${server_path} &&\
 cat << EOF > ${server_path}/localhost.cfg
 define host{
@@ -286,7 +286,7 @@ EOF
 if [ -d "/usr/local/pnp4nagios/etc/check_commands" ];then
 	cd /usr/local/pnp4nagios/etc/check_commands
 	mv check_nrpe.cfg-sample check_nrpe.cfg
-	cp check_nrpe.cfg /usr/local/nagios/etc/pnp/check_commands
+#	cp check_nrpe.cfg /usr/local/nagios/etc/pnp/check_commands
 fi
 
 npcd_cmd='/usr/local/pnp4nagios/bin/npcd'
