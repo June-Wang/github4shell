@@ -1,5 +1,12 @@
 #functions for install
 
+check_platform (){
+local platform_info=`uname -m`
+local platform=''
+echo ${platform_info}|grep '64' >/dev/null 2>&1 && platform='x64' || platform='x86'
+echo "${platform}"
+}
+
 check_system (){
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -31,21 +38,19 @@ esac
 
 set_install_cmd () {
 local install_type="$1"
-
+CONFIG_CMD='chkconfig'
 case "${SYSTEM}" in
     centos5|rhel5|rhel6)
         local install_cmd='yum --skip-broken --nogpgcheck'
         local package="${YUM_PACKAGE}"
 		local logfile='yum.log'
-		CONFIG_CMD='chkconfig'
 		ISSUE='redhat'
     ;;
     debian6|debian7)
         local install_cmd='apt-get --force-yes'
         local package="${APT_PACKAGE}"
-        eval "${install_cmd} install -y sysv-rc-conf >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+        eval "${install_cmd} install -y chkconfig >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
 		local logfile='apt.log'
-		CONFIG_CMD='sysv-rc-conf'
 		ISSUE='debian'
     ;;
     *)

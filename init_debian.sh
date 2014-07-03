@@ -4,24 +4,31 @@ yum_server='yum.suixingpay.com'
 ntp_server='ntp.suixingpay.local'
 
 #set DNS
-echo 'nameserver 192.168.29.230
-nameserver 192.168.29.229' > /etc/resolv.conf
+echo 'nameserver 192.168.56.3' > /etc/resolv.conf
+
+aptitude='aptitude -o Aptitude::Cmdline::ignore-trust-violations=true'
 
 #install package
-echo -n "Install sysv-rc-conf vim htop ... "
-aptitude install -y sysv-rc-conf vim htop >/dev/null 2>&1 || install_package='fail' && echo 'done.'
+package='chkconfig build-essential'
+echo -n "Install ${package} ... "
+eval $aptitude install -y ${package} >/dev/null 2>&1 || install_package='fail' && echo 'done.'
 if [ "${install_package}" = "fail" ];then
-        echo "Install sysv-rc-conf vim fail! Please check aptitude!" 1>&2
+        echo "Install ${package} fail! Please check aptitude!" 1>&2
         exit 1
 fi
 
 #set vim for python
+#grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
+#set ts=4" >> /etc/vimrc
+
 grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
-set ts=4" >> /etc/vimrc
+syntax on" >> /etc/vimrc
+
+#echo 'syntax on' > /root/.vimrc
 
 #set ntp
 echo -n "Set ntp ... "
-aptitude -y install ntpdate >/dev/null 2>&1 || install_ntp='fail'
+eval $aptitude -y install ntpdate >/dev/null 2>&1 || install_ntp='fail'
 if [ "${install_ntp}" = "fail" ];then
         echo "Install ntpdate fail! Please check aptitude!" 1>&2
         exit 1
@@ -52,10 +59,10 @@ fi
 echo 'done.'
 
 #tunoff services
-sysv-rc-conf --list|awk '/:on/{print $1}'|grep -E 'nfs-common|portmap|exim4|rpcbind'|\
+chkconfig --list|awk '/:on/{print $1}'|grep -E 'nfs-common|portmap|exim4|rpcbind'|\
 while read line
 do
-        sysv-rc-conf "${line}" off
+        chkconfig "${line}" off
         service "${line}" stop >/dev/null 2>&1
         echo "service ${line} stop"
 done
@@ -64,10 +71,10 @@ done
 sshd_config='/etc/ssh/sshd_config'
 test -e ${sshd_config} && sshd_service='true'
 if [ "${sshd_service}" = 'true' ];then
-	echo "set service sshd.modify ${sshd_config}"
-	grep 'UseDNS' ${sshd_config} || echo "UseDNS no" >> ${sshd_config} && \
-	sed -i -r 's/^UseDNS.*/UseDNS no/g' ${sshd_config}
-	/etc/init.d/ssh restart
+        echo "set service sshd.modify ${sshd_config}"
+        grep 'UseDNS' ${sshd_config} || echo "UseDNS no" >> ${sshd_config} && \
+        sed -i -r 's/^UseDNS.*/UseDNS no/g' ${sshd_config}
+        /etc/init.d/ssh restart
 fi
 
 echo "init service ok."

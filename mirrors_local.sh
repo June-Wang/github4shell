@@ -101,43 +101,63 @@ protect = 0
 gpgcheck = 0" > ${repo_file}
 }
 
-check_debian_version () {
-debian_release=`echo "${SYSTEM_INFO}" |\
-grep -oP 'Debian GNU/Linux\s+\d+'|awk '{print $NF}'`
-case "${debian_release}" in
-                7)
-                        DEBIAN_VERSION='wheezy'
-                ;;
-                6)
-                        DEBIAN_VERSION='squeeze'
-                ;;
-                *)
-                        echo "This script not support ${SYSTEM_INFO}" 1>&2
-                        exit 1
-                ;;
-esac
-}
-
-mirrors_for_debian () {
-local source_file="${SOURCE_DIR}/sources.list"
+backup_source_list () {
+source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
 	local my_date=`date -d "now" +"%F"`
 	mv "${source_file}" "${source_file}.${my_date}.$$"
-	echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
-deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
-deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
-deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
 else
-        echo "Can not find ${source_file},please check!" 1>&2
-        exit 1
+	echo "Can not find ${source_file},please check!" 1>&2
+#        exit 1
 fi
-	aptitude update
+}
+
+mirrors_for_debian () {
+debian_release=`echo "${SYSTEM_INFO}" |\
+cat /etc/issue|head -n1|grep -oE '[0-9]+'|head -n1`
+case "${debian_release}" in
+	7)
+		DEBIAN_VERSION='wheezy'
+		DEBIAN_ISSUE='7'
+		backup_source_list
+		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/ stable contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/ stable contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/ stable contrib main" > ${source_file}
+	;;
+	6)
+		DEBIAN_VERSION='squeeze'
+		DEBIAN_ISSUE='6'
+		backup_source_list
+		echo "deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd1/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd2/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd3/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd4/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd5/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd6/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd7/debian/ ${DEBIAN_VERSION} contrib main
+deb http://${debian_mirrors}/${DEBIAN_ISSUE}/x64/dvd8/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
+#						echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
+#deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
+#deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
+#deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
+	;;
+	*)
+		echo "This script not support ${SYSTEM_INFO}" 1>&2
+		exit 1
+	;;
+esac
+
+local apt_conf_d='/etc/apt/apt.conf.d'
+local apt_conf="${apt_conf_d}/00trustlocal"
+test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
+echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
+aptitude update
 }
 
 set_for_redhat () {
 backup_local_repo_file
 mirrors_for_epel
-mirrors_for_atom
+#mirrors_for_atom
 yum clean all
 }
 
@@ -157,7 +177,7 @@ case "${SYSTEM_INFO}" in
 'Debian'*)
 	SYSTEM='debian'
 	SOURCE_DIR='/etc/apt'
-	check_debian_version
+#	check_debian_version
 	mirrors_for_debian
         ;;
 *)

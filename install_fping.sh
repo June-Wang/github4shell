@@ -38,11 +38,11 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Install coreutils-8.21.tar.gz
-PACKAGE='coreutils-8.21.tar.gz'
+#Install fping-3.10.tar.gz
+PACKAGE='fping-3.10.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds 'export FORCE_UNSAFE_CONFIGURE=1' './configure --prefix=/' 'make' 'make install'
+run_cmds './configure --prefix=/usr' 'make' 'make install'
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
