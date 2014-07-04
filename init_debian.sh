@@ -24,7 +24,11 @@ fi
 #grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
 #syntax on" >> /etc/vimrc
 
-test -d /etc/profile.d/ && echo alias vi='vim -c \"syntax on\"' > /etc/profile.d/vim_alias.sh
+test -d /etc/profile.d/ && \
+cat << EOF > /etc/profile.d/vim_alias.sh
+alias vi='vim -c "syntax on"'
+EOF
+
 #echo 'syntax on' > /root/.vimrc
 
 #set ntp
