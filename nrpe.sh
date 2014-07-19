@@ -1,7 +1,7 @@
 #!/bin/bash
 
 nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
-nrpe_url='http://yum.suixingpay.local/shell'
+nrpe_url='http://yum.suixingpay.local/nrpe'
 test -f ${nrpe_conf} || exit 1
 grep 'check_disk_root' ${nrpe_conf} ||\
 echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_conf}
