@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='httpd php gcc glibc glibc-common gd gd-devel openssl-devel xinetd'
-APT_PACKAGE='build-essential'
+APT_PACKAGE='build-essential apache2 libapache2-mod-php5 libgd2-xpm libgd2-xpm-dev rrdtool'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
@@ -43,7 +43,21 @@ create_user "nagios" "bash"
 #Set group
 groupadd nagcmd
 usermod -G nagcmd nagios
-usermod -G nagcmd apache
+case "${SYSTEM}" in
+    centos5|rhel5|rhel6)
+	usermod -G nagcmd apache
+	HTTP='httpd'
+    ;;
+    debian6|debian7)
+	usermod -a -G nagcmd www-data
+	HTTP='apache2'
+    ;;
+    *)
+        echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
+        ;;
+esac
+#usermod -G nagcmd apache
 
 #Install nagios-3.5.1.tar.gz
 PACKAGE='nagios-3.5.1.tar.gz'
@@ -55,8 +69,8 @@ run_cmds './configure --with-command-group=nagcmd' 'make all' 'make install' 'ma
 
 #Setting auto run
 set_auto_run 'nagios'
-set_auto_run 'httpd'
-/etc/init.d/httpd start
+set_auto_run "${HTTP}"
+/etc/init.d/${HTTP} start
 
 #Modify nagios.cfg
 nagios_path='/usr/local/nagios'
@@ -98,7 +112,7 @@ install_nrpe.sh
 
 for shell in "${cmds[@]}"
 do
-	cmd="curl -s ${yum_url}/${shell}|sh"
+	cmd="curl -s ${yum_url}/${shell}|/bin/bash"
 	eval "${cmd}" || eval "echo Run \"${cmd}\" fail!;exit 1"
 done
 

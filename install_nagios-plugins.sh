@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
-APT_PACKAGE='build-essential'
+APT_PACKAGE='build-essential gawk'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
