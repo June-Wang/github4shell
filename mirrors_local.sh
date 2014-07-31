@@ -1,8 +1,8 @@
 #!/bin/bash
 
 epel_mirrors='epel.mirrors.local'
-#debian_mirrors='debian.mirrors.local'
-debian_mirrors='ftp.jp.debian.org/debian/'
+debian_mirrors='debian.mirrors.local'
+#debian_mirrors='ftp.jp.debian.org/debian/'
 atom_mirrors='atom.mirrors.local'
 
 backup_local_repo_file () {
