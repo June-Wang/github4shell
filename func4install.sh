@@ -135,7 +135,7 @@ local user="$1"
 local shell="$2"
 case "${shell}" in
     bash)
-        local user_shell='/bin/bash'
+        local user_shell='/bin/bash -m'
     ;;
         nologin)
         local user_shell='/sbin/nologin -M'

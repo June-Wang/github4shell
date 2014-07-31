@@ -311,15 +311,36 @@ test -f ${pnp4nagios_php} && mv ${pnp4nagios_php} ${pnp4nagios_php}.backup.`date
 nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
 
 if [ -f "${nrpe_conf}" ];then
-grep 'check_swap' ${nrpe_conf} ||\
+grep 'check_swap' ${nrpe_conf} >/dev/null 2>&1 ||\
 echo 'command[check_swap]=/usr/local/nagios/libexec/check_swap -w 20% -c 10%' >> ${nrpe_conf}
 
-grep 'check_disk_root' ${nrpe_conf} ||\
+grep 'check_disk_root' ${nrpe_conf} >/dev/null 2>&1 ||\
 echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_conf}
 fi
 
 /etc/init.d/nagios restart
-/etc/init.d/httpd restart
+
+case "${SYSTEM}" in
+    centos5|rhel5|rhel6)
+        HTTP='httpd'
+	apache2_conf='/etc/httpd/httpd.conf'
+    ;;
+    debian6|debian7)
+        HTTP='apache2'
+	apache2_conf='/etc/apache2/httpd.conf'
+    ;;
+    *)
+        echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
+        ;;
+esac
+
+if [ -f "${apache2_conf}" ];then
+	grep '#FOR NAGIOS CN' >/dev/null 2>&1 ||\
+	echo 'AddDefaultCharset utf-8' >> ${apache2_conf}
+fi
+
+/etc/init.d/${HTTP} restart
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
