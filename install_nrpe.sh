@@ -12,7 +12,7 @@ INSTALL_DIR="install_$$"
 INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
-YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ xinetd'
+YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ xinetd openssl-devel'
 APT_PACKAGE='build-essential libssl-dev xinetd'
 
 #SET EXIT STATUS AND COMMAND
