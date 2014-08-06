@@ -47,7 +47,7 @@ case "${SYSTEM}" in
 		ISSUE='redhat'
     ;;
     debian6|debian7)
-        local install_cmd='apt-get --force-yes'
+        local install_cmd='aptitude'
         local package="${APT_PACKAGE}"
         eval "${install_cmd} install -y chkconfig >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
 		local logfile='apt.log'
