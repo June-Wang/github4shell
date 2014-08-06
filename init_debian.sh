@@ -1,10 +1,10 @@
 #!/bin/bash
 
-yum_server='yum.suixingpay.com'
-ntp_server='ntp.suixingpay.local'
+yum_server='yum.lefu.local'
+ntp_server='ntp.lefu.local'
 
 #set DNS
-echo 'nameserver 192.168.56.3' > /etc/resolv.conf
+echo 'nameserver 192.168.16.22' > /etc/resolv.conf
 
 aptitude='aptitude -o Aptitude::Cmdline::ignore-trust-violations=true'
 
