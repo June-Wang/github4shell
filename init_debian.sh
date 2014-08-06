@@ -24,6 +24,9 @@ fi
 #grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
 #syntax on" >> /etc/vimrc
 
+test -f /etc/rc.local &&\
+sed -i 's/exit 0//g' /etc/rc.local
+
 test -d /etc/profile.d/ && \
 cat << EOF > /etc/profile.d/vim_alias.sh
 alias vi='vim -c "syntax on"'
