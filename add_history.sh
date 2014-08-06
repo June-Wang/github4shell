@@ -30,8 +30,8 @@ case "${SYSTEM}" in
 				MODIFY_SYSCONFIG='true'
         ;;
         debian6)
-                INSTALL_CMD='apt-get'
-                CONFIG_CMD='sysv-rc-conf'
+                INSTALL_CMD='aptitude'
+                CONFIG_CMD='chkconfig'
                 eval "${INSTALL_CMD} install -y ${CONFIG_CMD}" >/dev/null 2>&1 || eval "echo ${install_cmd} fail! 1>&2;exit 1"
         ;;
         *)
@@ -83,7 +83,7 @@ if [ ! -e "${his_file}" ];then
         chmod +x ${his_file}
 fi
 
-grep 'get_history.sh' /etc/crontab >/dev/null 2>&1 || echo "*/10 * * * * root ${his_file} >/dev/null" >>/etc/crontab
+grep 'get_history.sh' /etc/crontab >/dev/null 2>&1 || echo "*/5 * * * * root ${his_file} >/dev/null" >>/etc/crontab
 }
 
 set_log_server () {
@@ -96,7 +96,7 @@ fi
 
 main () {
 yum_server='yum.suixingpay.com'
-log_server='192.168.29.238'
+log_server='syslog.lefu.local'
 check_system
 set_install_cmd
 install_rsyslog
