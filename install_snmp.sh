@@ -11,7 +11,7 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
                 ;;
-		'Red Hat Enterprise Linux Server release 6'*)
+	'Red Hat Enterprise Linux Server release 6'*)
                 SYSTEM='rhel6'
                 yum_source_name='RHEL6-lan'
                 repo_file='/etc/yum.repos.d/RHEL6-lan.repo'
@@ -37,8 +37,8 @@ case "${SYSTEM}" in
                 CONFIG_CMD='chkconfig'
         ;;
         debian6|debian7)
-                INSTALL_CMD='apt-get'
-                CONFIG_CMD='sysv-rc-conf'
+                INSTALL_CMD='aptitude'
+                CONFIG_CMD='chkconfig'
                 eval "${INSTALL_CMD} install -y ${CONFIG_CMD}" >/dev/null 2>&1 || eval "echo ${install_cmd} fail! 1>&2;exit 1"
         ;;
         *)
@@ -138,5 +138,5 @@ echo_bye
 location='BJ'
 contact='admin'
 email='admin@bj.com'
-community='hisunsray'
+community='lefu'
 main
