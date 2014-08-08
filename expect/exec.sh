@@ -44,7 +44,7 @@ fi
 which expect >/dev/null 2>&1 || chk='fail'
 
 if [ "${chk}" = 'fail' ];then
-	echo "mkpasswd not find! please install expect!" 1>&2
+	echo "expect not find! please install expect!" 1>&2
 	exit 1
 fi
 
