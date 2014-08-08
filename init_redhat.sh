@@ -181,12 +181,15 @@ do
         test -e ${cron_file} && chmod -x ${cron_file}
 done
 
-#install htop
-#rpm -q htop >/dev/null 2>&1 || htop_install='fail'
-
-#if [ "${htop_install}" = 'fail' ];then
-#        curl -s http://${yum_server}/shell/install_htop.sh|/bin/bash
-#fi
+#add sysinfo
+grep 'cron_sysinfo.sh' /etc/crontab >/dev/null 2>&1 || cron_sysinfo_set='no'
+if [ "${cron_sysinfo_set}" = "no" ];then
+        sysinfo_shell='/usr/sbin/cron_sysinfo.sh'
+        wget -q http://${yum_server}/shell/cron_sysinfo.sh -O ${sysinfo_shell} ||\
+        echo "Download cron_sysinfo.sh fail!" &&\
+        echo "* * * * * root ${sysinfo_shell} > /dev/null 2>&1" >> /etc/crontab
+        test -f ${sysinfo_shell} && chmod +x ${sysinfo_shell}
+fi
 
 #close ctrl+alt+del
 test -e /etc/inittab &&\
