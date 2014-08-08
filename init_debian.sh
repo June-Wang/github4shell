@@ -66,6 +66,16 @@ else
 fi
 echo 'done.'
 
+#add sysinfo
+grep 'cron_sysinfo.sh' /etc/crontab >/dev/null 2>&1 || cron_sysinfo_set='no'
+if [ "${cron_sysinfo_set}" = "no" ];then
+	sysinfo_shell='/usr/sbin/cron_sysinfo.sh'
+	wget -q http://${yum_server}/shell/cron_sysinfo.sh -O ${sysinfo_shell} ||\
+	echo "Download cron_sysinfo.sh fail!" &&\
+	echo "* * * * * root ${sysinfo_shell} > /dev/null 2>&1" >> /etc/crontab
+	test -f ${sysinfo_shell} && chmod +x ${sysinfo_shell}
+fi
+
 #tunoff services
 chkconfig --list|awk '/:on/{print $1}'|grep -E 'nfs-common|portmap|exim4|rpcbind'|\
 while read line
