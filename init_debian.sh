@@ -9,7 +9,7 @@ echo 'nameserver 192.168.16.22' > /etc/resolv.conf
 aptitude='aptitude -o Aptitude::Cmdline::ignore-trust-violations=true'
 
 #install package
-package='chkconfig vim rsync lftp mawk htop iftop xinetd nmap tcpdump lsof sysstat ntpdate sudo redis-server'
+package='chkconfig vim rsync lftp mawk htop iftop xinetd nmap tcpdump lsof sysstat ntpdate sudo curl'
 echo -n "Install ${package} ... "
 eval $aptitude install -y ${package} >/dev/null 2>&1 || install_package='fail' && echo 'done.'
 if [ "${install_package}" = "fail" ];then
