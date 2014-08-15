@@ -4,6 +4,9 @@ epel_mirrors='epel.mirrors.local'
 debian_mirrors='debian.mirrors.local'
 atom_mirrors='atom.mirrors.local'
 
+#set DNS
+echo 'nameserver 192.168.16.22' > /etc/resolv.conf
+
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
