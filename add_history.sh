@@ -95,7 +95,7 @@ fi
 }
 
 main () {
-yum_server='yum.suixingpay.com'
+yum_server='yum.lefu.local'
 log_server='syslog.lefu.local'
 check_system
 set_install_cmd
