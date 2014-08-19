@@ -58,6 +58,15 @@ esac
 temp_file="/tmp/${package}"
 run_cmds "wget ${PACKAGE_URL}/${package} -O ${temp_file}" "eval ${install_cmd} ${temp_file}" "rm -f ${temp_file}"
 
+#CONFIG
+nagios_server='192.168.16.21'
+xinetd_check_mk='/etc/xinetd.d/check_mk'
+test -f ${xinetd_check_mk} &&\
+sed -r -i "s/.only_from.*/only_from = 127.0.0.1 ${nagios_server}/" ${xinetd_check_mk} ||\
+eval "echo ${xinetd_check_mk} not exsit!;exit 1"
+
+/etc/init.d/xinetd restart
+
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
