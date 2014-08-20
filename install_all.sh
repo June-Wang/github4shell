@@ -50,11 +50,6 @@ fail "${case}" "${url}/${file} not exist!"
 [ -f "${file}" ] && rm -f "${file}"
 }
 
-#for init in ${SOURCE} ${INIT_SCRIPT}
-#do
-#        download_exec "${init}"
-#done
-
 main () {
 check_system
 
@@ -72,12 +67,7 @@ for file in "${files[@]}"
 do
 #       message=`echo "${file}"|sed 's/sh$/ /g;s/_/ /g'`
 #       echo "${message} ..."
-#       sleep 1
-#       wget -q "${url}/${file}" || case='fail'
-#       fail "${case}" "${url}/${file} not exist!"
-#       /bin/bash "${file}"
-#       [ -f "${file}" ] && rm -f "${file}"
-download_exec "${file}"
+	download_exec "${file}"
 done
 }
 
