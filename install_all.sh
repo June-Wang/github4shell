@@ -5,15 +5,18 @@ SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
         'CentOS release 5'*)
                 SYSTEM='centos5'
-		INIT_SCRIPT='init_centos5.sh'
+                INIT_SCRIPT='init_redhat.sh'
+                SOURCE='yum_local.sh'
                 ;;
         'Red Hat Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
-		INIT_SCRIPT='init_centos5.sh'
+                INIT_SCRIPT='init_redhat.sh'
+                SOURCE='yum_local.sh'
                 ;;
         'Debian GNU/Linux 6'*)
                 SYSTEM='debian6'
-		INIT_SCRIPT='init_debian6.sh'
+                INIT_SCRIPT='init_debian.sh'
+                SOURCE='mirrors_local.sh'
                 ;;
         *)
                 SYSTEM='unknown'
@@ -24,28 +27,58 @@ esac
 }
 
 #http server
-#http_server='yum.suixingpay.com'
-http_server='192.168.29.234'
+http_server='192.168.16.22'
 url="http://${http_server}/shell"
 
 #print error
 fail () {
-	value=$1
-	message=$2
-	if [ "${value}" = "fail" ];then
-		echo "$2" 1>&2
-		exit 1
-	fi
+        value=$1
+        message=$2
+        if [ "${value}" = "fail" ];then
+                echo "$2" 1>&2
+                exit 1
+        fi
 }
 
-files=('yum_local.sh' "${INIT_SCRIPT}" 'install_nagios.sh' 'install_snmp.sh' 'modify_syslog.sh')
+#check_system 
+
+download_exec () {
+local file="$1"
+wget -q "${url}/${file}" || local case='fail'
+fail "${case}" "${url}/${file} not exist!"
+/bin/bash "${file}"
+[ -f "${file}" ] && rm -f "${file}"
+}
+
+#for init in ${SOURCE} ${INIT_SCRIPT}
+#do
+#        download_exec "${init}"
+#done
+
+main () {
+check_system
+
+files=(
+${SOURCE}
+${INIT_SCRIPT}
+install_nagios-plugins.sh
+install_nrpe.sh
+install_check_mk.sh
+add_history.sh
+install_snmp.sh
+)
+
 for file in "${files[@]}"
 do
-	message=`echo "${file}"|sed 's/sh$/ /g;s/_/ /g'`
-	echo "${message} ..."
-	sleep 1
-	wget -q "${url}/${file}" || case='fail'
-	fail "${case}" "${url}/${file} not exist!"
-	sh "${file}"
-	[ -f "${file}" ] && rm -f "${file}"
+#       message=`echo "${file}"|sed 's/sh$/ /g;s/_/ /g'`
+#       echo "${message} ..."
+#       sleep 1
+#       wget -q "${url}/${file}" || case='fail'
+#       fail "${case}" "${url}/${file} not exist!"
+#       /bin/bash "${file}"
+#       [ -f "${file}" ] && rm -f "${file}"
+download_exec "${file}"
 done
+}
+
+main
