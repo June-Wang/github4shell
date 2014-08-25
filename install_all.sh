@@ -13,8 +13,8 @@ case "${SYSTEM_INFO}" in
                 INIT_SCRIPT='init_redhat.sh'
                 SOURCE='yum_local.sh'
                 ;;
-        'Debian GNU/Linux 6'*)
-                SYSTEM='debian6'
+        'Debian GNU/Linux '*)
+                SYSTEM='debian'
                 INIT_SCRIPT='init_debian.sh'
                 SOURCE='mirrors_local.sh'
                 ;;
