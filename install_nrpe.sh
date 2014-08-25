@@ -64,11 +64,11 @@ set_install_cmd 'lan'
 platform=`check_platform`
 
 #FOR debian7
-[ "${platform}" = 'x64' -a "${SYATEM}" = 'debian7' ] &&\
+[ "${platform}" = 'x64' -a "${SYSTEM}" = 'debian7' ] &&\
 NRPE_PARA='--with-ssl-lib=/usr/lib/x86_64-linux-gnu' ||\
 NRPE_PARA='--with-ssl-lib=/usr/lib/i386-linux-gnu'
 
-[ "${SYATEM}" != 'debian7' ] && NRPE_PARA=''
+[ "${SYSTEM}" == 'debian7' ] || NRPE_PARA=''
 
 #Backup NRPE config
 backup_nrpe_config
