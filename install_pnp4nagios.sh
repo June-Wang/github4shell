@@ -327,7 +327,7 @@ case "${SYSTEM}" in
     ;;
     debian6|debian7)
         HTTP='apache2'
-	apache2_conf='/etc/apache2/httpd.conf'
+	apache2_conf='/etc/apache2/apache2.conf'
     ;;
     *)
         echo "This script not support ${SYSTEM_INFO}" 1>&2
