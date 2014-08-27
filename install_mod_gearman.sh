@@ -82,7 +82,8 @@ sed -i -r 's/^encryption=.*/encryption=no/;s/^key=/#key=/;s/^server=.*/server=12
 test -f /etc/init.d/mod_gearman_worker && sed -r -i 's|LOCKFILE=.*|LOCKFILE=/tmp/\$NAME|' /etc/init.d/mod_gearman_worker
 /etc/init.d/mod_gearman_worker restart
 grep '#mod gearman' >/dev/null 2>&1 /etc/rc.local ||\
-echo "/usr/local/sbin/gearmand -t 10 -j 0 -d" >> /etc/rc.local
+echo "#mod gearman
+/usr/local/sbin/gearmand -t 10 -j 0 -d" >> /etc/rc.local
 /usr/local/sbin/gearmand -t 10 -j 0 -d
 
 #EXIT AND CLEAR TEMP DIR
