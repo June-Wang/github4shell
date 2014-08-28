@@ -68,7 +68,7 @@ if [ -f ${nagios_conf} ];then
 	echo "#Add Mod_Gearman
 broker_module=/usr/lib/mod_gearman/mod_gearman.o config=${mod_gearman_neb_conf}" >> ${nagios_conf}
 	test -f ${mod_gearman_neb_conf} &&\
-	sed -i -r 's/^encryption=.*/encryption=no/;s/^key=/#key=/;s/^server=.*/server=127.0.0.1:4730/;s|logfile=.*|logfile=/var/log/mod_gearman/mod_gearman_neb.log|' ${mod_gearman_neb_conf}
+	sed -i -r 's/^perfdata=.*/perfdata=yes/;s/^encryption=.*/encryption=no/;s/^key=/#key=/;s/^server=.*/server=127.0.0.1:4730/;s|logfile=.*|logfile=/var/log/mod_gearman/mod_gearman_neb.log|' ${mod_gearman_neb_conf}
 	log_path='/var/log/mod_gearman/'
 	mkdir -p ${log_path} && chown nagios -R ${log_path}
 	test -f /etc/init.d/nagios && /etc/init.d/nagios restart
