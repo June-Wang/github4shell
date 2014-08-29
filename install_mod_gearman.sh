@@ -38,8 +38,8 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Install mod_gearman-1.4.12.tar.gz
-PACKAGE='mod_gearman-1.4.12.tar.gz'
+#Install mod_gearman-1.4.14.tar.gz
+PACKAGE='mod_gearman-1.4.14.tar.gz'
 create_tmp_dir
 
 #install libgear pkg
