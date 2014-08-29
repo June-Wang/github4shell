@@ -59,7 +59,7 @@ do
 done
 
 download_and_check
-run_cmds './configure --bindir=/usr/bin --sbindir=/usr/sbin --sysconfdir=/etc/' 'make' 'make install' 'make install-config'
+run_cmds './configure --bindir=/usr/bin --sbindir=/usr/sbin --sysconfdir=/etc/ --libdir=/usr/lib' 'make' 'make install' 'make install-config'
 
 #nagios setting
 nagios_conf='/usr/local/nagios/etc/nagios.cfg'
