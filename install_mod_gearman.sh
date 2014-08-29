@@ -87,7 +87,8 @@ chkconfig mod_gearman_worker on
 grep '#mod gearman' >/dev/null 2>&1 /etc/rc.local ||\
 echo "#mod gearman
 /usr/local/sbin/gearmand -t 10 -j 0 -d" >> /etc/rc.local
-/usr/local/sbin/gearmand -t 10 -j 0 -d
+pkill gearmand >/dev/null 2>&1 &&\
+eval "sleep 1;/usr/local/sbin/gearmand -t 10 -j 0 -d"
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
