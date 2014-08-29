@@ -54,7 +54,8 @@ do
 	echo -en "Install ${file} ...... "
 	wget -q "${PACKAGE_URL}/${file}" -O /tmp/${file} &&\
 	run_cmds "dpkg -i /tmp/${file}" ||\
-	eval "echo Download ${PACKAGE_URL}/${file} fail!;exit 1"
+	eval "echo Download ${PACKAGE_URL}/${file} fail!;exit 1" &&\
+	rm -f /tmp/${file}
 done
 
 download_and_check
