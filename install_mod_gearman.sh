@@ -84,8 +84,8 @@ test -f /etc/init.d/mod_gearman_worker && sed -r -i 's|LOCKFILE=.*|LOCKFILE=/tmp
 /etc/init.d/mod_gearman_worker restart
 chkconfig mod_gearman_worker on
 
-grep '#mod gearman' >/dev/null 2>&1 /etc/rc.local ||\
-echo "#mod gearman
+grep '#mod gearman job server' >/dev/null 2>&1 /etc/rc.local ||\
+echo "#mod gearman job server
 /usr/local/sbin/gearmand -t 10 -j 0 -d" >> /etc/rc.local
 pkill gearmand >/dev/null 2>&1 &&\
 eval "sleep 1;/usr/local/sbin/gearmand -t 10 -j 0 -d"
