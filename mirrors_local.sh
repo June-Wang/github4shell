@@ -2,7 +2,7 @@
 
 epel_mirrors='epel.mirrors.local'
 debian_mirrors='debian.mirrors.local'
-atom_mirrors='atom.mirrors.local'
+salt_mirrors='debian.saltstack.local'
 
 #set DNS
 echo 'nameserver 192.168.16.22' > /etc/resolv.conf
@@ -16,6 +16,15 @@ if [ -d "${SOURCE_DIR}" ];then
                 mv "${source_file}" "${source_file}.${my_date}.$$"
         done
 fi
+}
+
+mirrors_for_salt () {
+local source_list="${SOURCE_DIR}/sources.list"
+local debian_version="$1"
+grep '#Salt mirrors local' ${source_list} >/dev/null 2>&1 ||\
+echo "#Salt mirrors local
+deb http://${salt_mirrors}/debian ${debian_version}-saltstack main" >> ${source_file}
+wget -q -O- "http://${salt_mirrors}/debian-salt-team-joehealy.gpg.key" | apt-key add -
 }
 
 mirrors_for_epel () {
@@ -104,7 +113,7 @@ gpgcheck = 0" > ${repo_file}
 }
 
 backup_source_list () {
-source_file="${SOURCE_DIR}/sources.list"
+local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
         local my_date=`date -d "now" +"%F"`
         mv "${source_file}" "${source_file}.${my_date}.$$"
@@ -115,6 +124,7 @@ fi
 }
 
 mirrors_for_debian () {
+local source_file="${SOURCE_DIR}/sources.list"
 debian_release=`echo "${SYSTEM_INFO}" |\
 cat /etc/issue|head -n1|grep -oE '[0-9]+'|head -n1`
 case "${debian_release}" in
@@ -138,16 +148,15 @@ deb http://${debian_mirrors}/debian/${DEBIAN_ISSUE}/x64/dvd5/debian/ ${DEBIAN_VE
 deb http://${debian_mirrors}/debian/${DEBIAN_ISSUE}/x64/dvd6/debian/ ${DEBIAN_VERSION} contrib main
 deb http://${debian_mirrors}/debian/${DEBIAN_ISSUE}/x64/dvd7/debian/ ${DEBIAN_VERSION} contrib main
 deb http://${debian_mirrors}/debian/${DEBIAN_ISSUE}/x64/dvd8/debian/ ${DEBIAN_VERSION} contrib main" > ${source_file}
-#                                               echo "deb http://${debian_mirrors} ${DEBIAN_VERSION} main
-#deb-src http://${debian_mirrors} ${DEBIAN_VERSION} main
-#deb http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib
-#deb-src http://${debian_mirrors} ${DEBIAN_VERSION}-updates main contrib" > ${source_file}
         ;;
         *)
                 echo "This script not support ${SYSTEM_INFO}" 1>&2
                 exit 1
         ;;
 esac
+
+#Add salt mirrors
+#mirrors_for_salt "${DEBIAN_VERSION}"
 
 local apt_conf_d='/etc/apt/apt.conf.d'
 local apt_conf="${apt_conf_d}/00trustlocal"
