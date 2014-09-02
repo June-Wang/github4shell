@@ -38,8 +38,8 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
-#Install pycrypto-2.6.tar.gz
-PACKAGE='pycrypto-2.6.tar.gz'
+#Install pycrypto-2.6.1.tar.gz
+PACKAGE='pycrypto-2.6.1.tar.gz'
 create_tmp_dir
 download_and_check
 run_cmds '/usr/bin/python setup.py install'
