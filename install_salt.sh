@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++'
-APT_PACKAGE='build-essential libtool python python-dev'
+APT_PACKAGE='build-essential libtool python python-dev python-jinja2 python-yaml m2crypto'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
@@ -50,8 +50,11 @@ mkdir -p /etc/salt &&cp conf/{master,minion} /etc/salt/
 #test -f /etc/salt/minion &&
 #cp pkg/rpm/{salt-minion,salt-master,salt-syndic} /etc/init.d/ && chmod +x /etc/init.d/salt-*
 #test -f /etc/init.d/salt-minion && sed -r 's|MINION_ARGS=.*|MINION_ARGS="-c /etc/salt/minion"|' /etc/init.d/salt-minion
-echo "Start salt-minion type: /usr/bin/python /usr/bin/salt-minion -d
-Start salt-minion type: /usr/bin/python /usr/bin/salt-master -d"
+echo "#######################################
+Start salt-minion:
+/usr/bin/python /usr/bin/salt-minion -d
+Start salt-master:
+/usr/bin/python /usr/bin/salt-master -d"
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
