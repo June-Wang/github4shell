@@ -166,3 +166,20 @@ set_auto_run () {
 local project="$1"
 	eval "${CONFIG_CMD} --add ${project};${CONFIG_CMD} ${project} on"
 }
+
+fail () {
+value=$1
+message=$2
+if [ "${value}" = "fail" ];then
+        echo "$2" 1>&2
+        exit 1  
+fi      
+}
+
+download_exec () {
+local file="$1"
+wget -q "${url}/${file}" || local case='fail'
+fail "${case}" "${url}/${file} not exist!"
+/bin/bash "${file}"
+[ -f "${file}" ] && rm -f "${file}"
+}
