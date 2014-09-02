@@ -38,6 +38,21 @@ check_system
 #create_tmp_dir
 set_install_cmd 'lan'
 
+#http server
+url="http://${YUM_SERVER}/shell"
+
+files=(
+install_libzmq.sh
+install_pyzmq.sh
+install_pycrypto.sh
+install_msgpack-python.sh
+)
+
+for file in "${files[@]}"
+do
+	download_exec "${file}"
+done
+
 #Install salt-2014.1.10.tar.gz
 PACKAGE='salt-2014.1.10.tar.gz'
 create_tmp_dir
@@ -51,6 +66,8 @@ mkdir -p /etc/salt &&cp conf/{master,minion} /etc/salt/
 #cp pkg/rpm/{salt-minion,salt-master,salt-syndic} /etc/init.d/ && chmod +x /etc/init.d/salt-*
 #test -f /etc/init.d/salt-minion && sed -r 's|MINION_ARGS=.*|MINION_ARGS="-c /etc/salt/minion"|' /etc/init.d/salt-minion
 echo "#######################################
+Config:
+/etc/salt/
 Start salt-minion:
 /usr/bin/python /usr/bin/salt-minion -d
 Start salt-master:
