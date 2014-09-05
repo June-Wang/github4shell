@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='php-gd rrdtool-perl rrdtool'
-#APT_PACKAGE='build-essential'
+APT_PACKAGE='build-essential php-gd rrdtool-perl rrdtool'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
