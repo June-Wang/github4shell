@@ -61,6 +61,7 @@ install_nrpe.sh
 install_check_mk.sh
 add_history.sh
 install_snmp.sh
+install_salt.sh
 )
 
 for file in "${files[@]}"
