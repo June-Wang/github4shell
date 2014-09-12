@@ -337,7 +337,8 @@ esac
 
 if [ -f "${apache2_conf}" ];then
 	grep '#FOR NAGIOS CN' ${apache2_conf} >/dev/null 2>&1 ||\
-	echo 'AddDefaultCharset utf-8' >> ${apache2_conf}
+	echo '#FOR NAGIOS CN
+AddDefaultCharset UTF-8' >> ${apache2_conf}
 fi
 
 /etc/init.d/${HTTP} restart
