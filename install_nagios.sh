@@ -46,10 +46,12 @@ usermod -G nagcmd nagios
 case "${SYSTEM}" in
     centos5|rhel5|rhel6)
 	usermod -G nagcmd apache
+	GROUP='apache.nagcmd'
 	HTTP='httpd'
     ;;
     debian6|debian7)
 	usermod -a -G nagcmd www-data
+	GROUP='www-data.nagcmd'
 	HTTP='apache2'
     ;;
     *)
@@ -115,6 +117,11 @@ do
 	cmd="curl -s ${yum_url}/${shell}|/bin/bash"
 	eval "${cmd}" || eval "echo Run \"${cmd}\" fail!;exit 1"
 done
+
+#Setting groups
+test -d /var/lib/check_mk/ || mkdir -p /var/lib/check_mk/
+test -d /etc/check_mk/ || mkdir -p /etc/check_mk/
+chown ${GROUP} -R /var/lib/check_mk/ /etc/check_mk/ /usr/local/nagios/etc
 
 #Setting nagiosadmin passwd
 echo -e '
