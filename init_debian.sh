@@ -94,7 +94,7 @@ if [ "${cron_sysinfo_set}" = "no" ];then
 fi
 
 #tunoff services
-chkconfig --list|awk '/:on/{print $1}'|grep -E 'cups|avahi-daemon|nfs-common|portmap|exim4|rpcbind'|\
+chkconfig --list|awk '/:on/{print $1}'|grep -E 'mpt-statusd|cups|avahi-daemon|nfs-common|portmap|exim4|rpcbind'|\
 while read line
 do
         chkconfig "${line}" off
