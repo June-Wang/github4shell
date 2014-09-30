@@ -66,6 +66,12 @@ done
 user_name=`whoami`
 profile="/home/${user_name}/.profile"
 test -f ${profile} && source ${profile}
+log_path="/home/${user_name}/logs"
+test -d ${log_path} || mkdir -p ${log_path}
+err_log="${log_path}/${user_name}.${serv_name}.err"
+
+time_now=`date -d now +"%F %T"`
+echo "${time_now} restart ${serv_name}!" >> ${err_log}
 
 kill -9 ${serv_pid}
 cd ${app_path} && ./startup.sh && sleep 5s
