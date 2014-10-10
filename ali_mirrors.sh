@@ -50,8 +50,8 @@ local repo_file="${SOURCE_DIR}/base.mirrors.repo"
 echo "[base]
 name=CentOS-${redhat_version} - Base - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/os/\$basearch/
-        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/os/\$basearch/
+baseurl=http://${centos_mirrors}/centos/${redhat_version}/os/\$basearch/
+        http://mirrors.aliyuncs.com/centos/${redhat_version}/os/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=os
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -60,8 +60,8 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 [updates]
 name=CentOS-${redhat_version} - Updates - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/updates/\$basearch/
-        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/updates/\$basearch/
+baseurl=http://${centos_mirrors}/centos/${redhat_version}/updates/\$basearch/
+        http://mirrors.aliyuncs.com/centos/${redhat_version}/updates/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=updates
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -70,8 +70,8 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 [extras]
 name=CentOS-${redhat_version} - Extras - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/extras/\$basearch/
-        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/extras/\$basearch/
+baseurl=http://${centos_mirrors}/centos/${redhat_version}/extras/\$basearch/
+        http://mirrors.aliyuncs.com/centos/${redhat_version}/extras/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=extras
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -80,8 +80,8 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 [centosplus]
 name=CentOS-${redhat_version} - Plus - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/centosplus/\$basearch/
-        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/centosplus/\$basearch/
+baseurl=http://${centos_mirrors}/centos/${redhat_version}/centosplus/\$basearch/
+        http://mirrors.aliyuncs.com/centos/${redhat_version}/centosplus/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=centosplus
 gpgcheck=1
 enabled=0
@@ -91,8 +91,8 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 [contrib]
 name=CentOS-${redhat_version} - Contrib - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/contrib/\$basearch/
-        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/contrib/\$basearch/
+baseurl=http://${centos_mirrors}/centos/${redhat_version}/contrib/\$basearch/
+        http://mirrors.aliyuncs.com/centos/${redhat_version}/contrib/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=contrib
 gpgcheck=1
 enabled=0
