@@ -1,7 +1,8 @@
 #!/bin/bash
 
-epel_mirrors='epel.mirrors.local'
-debian_mirrors='debian.mirrors.local'
+centos_mirrors='mirrors.aliyun.com'
+epel_mirrors='mirrors.aliyun.com'
+debian_mirrors='mirrors.aliyun.com'
 cache_server='cache.mirrors.local'
 
 #set DNS
@@ -26,6 +27,76 @@ if [ -e ${source_file} ];then
 else
         echo "Can not find ${source_file},please check!" 1>&2
 fi
+}
+
+mirrors_for_centos () {
+local system_info=`head -n 1 /etc/issue`
+case "${system_info}" in
+        'CentOS release 5'*)
+		local redhat_version='5'
+                ;;
+        'Red Hat Enterprise Linux Server release 5'*)
+		local redhat_version='5'
+                ;;
+        'Red Hat Enterprise Linux Server release 6'*)
+		local redhat_version='6'
+                ;;
+        *)
+	echo "This script not support ${system_info}" 1>&2
+	exit 1
+                ;;
+esac
+local repo_file="${SOURCE_DIR}/base.mirrors.repo"
+echo "[base]
+name=CentOS-${redhat_version} - Base - ${centos_mirrors}
+failovermethod=priority
+baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/os/\$basearch/
+        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/os/\$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=os
+gpgcheck=1
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+ 
+#released updates 
+[updates]
+name=CentOS-${redhat_version} - Updates - ${centos_mirrors}
+failovermethod=priority
+baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/updates/\$basearch/
+        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/updates/\$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=updates
+gpgcheck=1
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+ 
+#additional packages that may be useful
+[extras]
+name=CentOS-${redhat_version} - Extras - ${centos_mirrors}
+failovermethod=priority
+baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/extras/\$basearch/
+        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/extras/\$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=extras
+gpgcheck=1
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+ 
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-${redhat_version} - Plus - ${centos_mirrors}
+failovermethod=priority
+baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/centosplus/\$basearch/
+        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/centosplus/\$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=centosplus
+gpgcheck=1
+enabled=0
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+ 
+#contrib - packages by Centos Users
+[contrib]
+name=CentOS-${redhat_version} - Contrib - ${centos_mirrors}
+failovermethod=priority
+baseurl=http://${centos_mirrors}/CentOS/${redhat_version}/contrib/\$basearch/
+        http://mirrors.aliyuncs.com/CentOS/${redhat_version}/contrib/\$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=contrib
+gpgcheck=1
+enabled=0
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}" > ${repo_file}
 }
 
 mirrors_for_epel () {
@@ -106,19 +177,32 @@ deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION} main non-free contrib
 deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-proposed-updates main non-free contrib" > ${source_file}
 
 local apt_conf_d='/etc/apt/apt.conf.d'
-local proxy_conf="${apt_conf_d}/02proxy"
-test -f ${proxy_conf} ||\
-echo 'Acquire::http { Proxy "http://'${cache_server}':3142"; };' > ${proxy_conf}
-
 local apt_conf="${apt_conf_d}/00trustlocal"
 test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
 echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
 aptitude update
 }
 
+set_proxy_for_debian () {
+local apt_conf_d='/etc/apt/apt.conf.d'
+local proxy_conf="${apt_conf_d}/02proxy"
+test -d ${apt_conf_d} &&\
+echo 'Acquire::http { Proxy "http://'${cache_server}':3142"; };' > ${proxy_conf}
+}
+
+set_proxy_for_redhat () {
+local yum_conf='/etc/yum.conf'
+if [ -f "${yum_conf}" ];then
+	sed -i '/^proxy/d' ${yum_conf} 
+	echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
+fi
+}
+
 set_for_redhat () {
 backup_local_repo_file
+mirrors_for_centos
 mirrors_for_epel
+set_proxy_for_redhat
 yum clean all
 }
 
@@ -139,6 +223,7 @@ case "${SYSTEM_INFO}" in
         SYSTEM='debian'
         SOURCE_DIR='/etc/apt'
         mirrors_for_debian
+	set_proxy_for_debian
         ;;
 *)
         SYSTEM='unknown'
