@@ -11,8 +11,15 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
                 ;;
+        'Red Hat Enterprise Linux Server release 6'*)
+                SYSTEM='rhel6'
+                YUM_SOURCE_NAME='RHEL6-lan'
+                ;;
         'Debian GNU/Linux 6'*)
                 SYSTEM='debian6'
+                ;;
+        'Debian GNU/Linux 7'*)
+                SYSTEM='debian7'
                 ;;
         *)
                 SYSTEM='unknown'
@@ -24,12 +31,12 @@ esac
 
 set_install_cmd () {
 case "${SYSTEM}" in
-        centos5|rhel5)
+        centos5|rhel5|rhel6)
                 INSTALL_CMD='yum --skip-broken --nogpgcheck'
                 CONFIG_CMD='chkconfig'
-				MODIFY_SYSCONFIG='true'
+                MODIFY_SYSCONFIG='true'
         ;;
-        debian6)
+        debian6|debian7)
                 INSTALL_CMD='aptitude'
                 CONFIG_CMD='chkconfig'
                 eval "${INSTALL_CMD} install -y ${CONFIG_CMD}" >/dev/null 2>&1 || eval "echo ${install_cmd} fail! 1>&2;exit 1"
@@ -68,9 +75,9 @@ $ActionFileDefaultTemplate myformat' >> /etc/rsyslog.conf
 fi
 
 if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
-	if [ -e /etc/sysconfig/rsyslog ];then
-		sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
-	fi
+        if [ -e /etc/sysconfig/rsyslog ];then
+                sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
+        fi
 fi
 /etc/init.d/rsyslog restart
 }
@@ -96,7 +103,7 @@ fi
 
 main () {
 yum_server='yum.lefu.local'
-log_server='syslog.lefu.local'
+log_server='192.168.16.23'
 check_system
 set_install_cmd
 install_rsyslog
