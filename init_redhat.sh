@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #dns server
-dns_server='192.168.56.3'
+dns_server='192.168.16.22'
 
 #yum server
 yum_server='yum.suixingpay.local'
