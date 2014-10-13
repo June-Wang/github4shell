@@ -206,6 +206,22 @@ set_proxy_for_redhat
 yum clean all
 }
 
+alias_yum () {
+profile_dir='/etc/profile.d'
+[ -d "${profile_dir}" ] &&\
+yum_para='yum --skip-broken --nogpgcheck'
+echo "alias yum='${yum_para}'" > ${profile_dir}/yum_alias.sh
+alias yum="${yum_para}"
+}
+
+alias_apt () {
+local apt_conf_d='/etc/apt/apt.conf.d'
+local apt_conf="${apt_conf_d}/00trustlocal"
+test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
+echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
+#aptitude update
+}
+
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
@@ -213,16 +229,19 @@ case "${SYSTEM_INFO}" in
         SYSTEM='centos'
         SOURCE_DIR='/etc/yum.repos.d'
         set_for_redhat
+	alias_yum 
         ;;
 'Red Hat Enterprise Linux Server release'*)
         SYSTEM='rhel'
         SOURCE_DIR='/etc/yum.repos.d'
         set_for_redhat
+	alias_yum 
         ;;
 'Debian'*)
         SYSTEM='debian'
         SOURCE_DIR='/etc/apt'
         mirrors_for_debian
+	alias_apt
 	set_proxy_for_debian
         ;;
 *)
