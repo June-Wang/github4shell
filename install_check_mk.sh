@@ -36,7 +36,7 @@ download_func
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
 #create_tmp_dir
-set_install_cmd 'lan'
+set_install_cmd
 
 #PACKAGE='check-mk-agent_1.2.4p5-2_all.deb'
 create_tmp_dir
