@@ -44,7 +44,8 @@ else
         echo "${pid}" > ${lock_file}
 fi
 
-serv_pid=`pgrep -u deployer java|\
+user_name=`whoami`
+serv_pid=`pgrep -u ${user_name} java|\
 while read pid
 do 
         ps -eo pid,args|\
@@ -63,7 +64,6 @@ do
         sleep 2
 done
 
-user_name=`whoami`
 profile="/home/${user_name}/.profile"
 test -f ${profile} && source ${profile}
 log_path="/home/${user_name}/logs"
