@@ -155,7 +155,11 @@ exit_and_clear () {
 #install mysql func
 set_my_cnf () {
 mysql_socket_path='/var/lib/mysql'
-        test -f /etc/my.cnf && my_cnf='/etc/my.cnf.new' || my_cnf='/etc/my.cnf'
+	my_cnf='/etc/my.cnf'
+        test -f /etc/my.cnf && backup_my='true'
+	if [ "${backup_my}" == 'true' ];then
+		mv /etc/my.cnf /etc/my.cnf.`date -d now +"%Y_%m%d.%H-%M-%S"`
+	fi
         echo "[client]
 port            = 3306
 socket          = ${mysql_socket_path}/mysql.sock
@@ -167,6 +171,7 @@ pid-file=/var/run/mysqld/mysqld.pid
 log-bin=${DB_PATH}/mysql/binlog/mysql-bin
 relay-log=${DB_PATH}/mysql/binlog/mysqld-relay-bin
 innodb_data_home_dir=${DB_PATH}/mysql/innodata
+character-set-server=utf8
 max_binlog_cache_size=8M
 max_binlog_size=1G
 expire_logs_days = 30
@@ -270,6 +275,7 @@ test ! -e /etc/profile.d/mysql_env.sh && echo 'export PATH=/usr/local/mysql/bin:
 source /etc/profile.d/mysql_env.sh
 test -e  /usr/local/mysql/scripts/mysql_install_db &&\
 /usr/local/mysql/scripts/mysql_install_db --basedir=/usr/local/mysql/ --datadir=${DB_PATH}/mysql --user=${DB_USER}
+ln -s /usr/local/mysql/bin/* /usr/bin/
 
 set_my_cnf
 set_auto_run
