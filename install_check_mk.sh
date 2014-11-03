@@ -42,7 +42,8 @@ set_install_cmd
 create_tmp_dir
 case "${ISSUE}" in
 	debian)
-        	package='check-mk-agent_1.2.4p5-2_all.deb'
+        	#package='check-mk-agent_1.2.4p5-2_all.deb'
+        	package='check-mk-agent_1.2.5i6-2_all.deb'
 		install_cmd='dpkg -i'
 	;;
 	redhat)
