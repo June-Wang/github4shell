@@ -8,7 +8,8 @@ echo -en "${apt_cmd} xinetd ..."
 eval "${apt_cmd} xinetd" >/dev/null 2>&1 || eval "echo ${apt_cmd} xinetd error!;exit 1" &&\
 echo "done."
 
-package='check-mk-agent_1.2.4p5-2_all.deb'
+#package='check-mk-agent_1.2.4p5-2_all.deb'
+package='check-mk-agent_1.2.5i6-2_all.deb'
 echo  "Install ${package} ..."
 eval "wget http://${yum_server}/tools/${package} -O /tmp/${package} >/dev/null" && dpkg -i /tmp/${package}
 
