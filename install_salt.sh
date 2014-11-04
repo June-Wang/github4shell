@@ -37,21 +37,26 @@ cat << "EOF" > /etc/init.d/salt-minion
 #
 # Salt minion
 ###################################
- 
-# LSB header
- 
-### BEGIN INIT INFO
-# Provides: salt-minion
-# Required-Start: network
-# Short-Description: salt minion control daemon
-# Description: This is a daemon that controls the salt minions
-### END INIT INFO
- 
-# chkconfig header
- 
-# chkconfig: 345 99 99
-# description:  This is a daemon that controls the salt mininons
+# /usr/bin/salt-minion
 #
+# Written by Miquel van Smoorenburg <miquels@drinkel.ow.org>.
+# Modified for Debian GNU/Linux by Ian Murdock <imurdock@gnu.ai.mit.edu>.
+# Modified for exim by Tim Cutts <timc@chiark.greenend.org.uk>
+# Modified for exim4 by Andreas Metzler <ametzler@downhill.at.eu.org>
+#                   and Marc Haber <mh+debian-packages@zugschlus.de>
+
+### BEGIN INIT INFO
+# Provides:          salt-minion
+# Required-Start:    $remote_fs $syslog $named $network $time
+# Required-Stop:     $remote_fs $syslog $named $network
+# Should-Start:      postgresql mysql clamav-daemon greylist spamassassin
+# Should-Stop:       postgresql mysql clamav-daemon greylist spamassassin
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: salt minion control daemon 
+# Description:       salt minion control daemon 
+### END INIT INFO
+
 # processname: /usr/bin/salt-minion
  
 SERVICE=salt-minion
@@ -169,21 +174,27 @@ cat << "EOF" > /etc/init.d/salt-master
 #
 # Salt Master
 ###################################
- 
-# LSB header
- 
-### BEGIN INIT INFO
-# Provides: salt-master
-# Required-Start: network
-# Short-Description: salt minion control daemon
-# Description: This is a daemon that controls the salt minions
-### END INIT INFO
- 
-# chkconfig header
- 
-# chkconfig: 345 99 99
-# description:  This is a daemon that controls the salt mininons
+
+# /usr/bin/salt-master
 #
+# Written by Miquel van Smoorenburg <miquels@drinkel.ow.org>.
+# Modified for Debian GNU/Linux by Ian Murdock <imurdock@gnu.ai.mit.edu>.
+# Modified for exim by Tim Cutts <timc@chiark.greenend.org.uk>
+# Modified for exim4 by Andreas Metzler <ametzler@downhill.at.eu.org>
+#                   and Marc Haber <mh+debian-packages@zugschlus.de>
+
+### BEGIN INIT INFO
+# Provides:          salt-master
+# Required-Start:    $remote_fs $syslog $named $network $time
+# Required-Stop:     $remote_fs $syslog $named $network
+# Should-Start:      postgresql mysql clamav-daemon greylist spamassassin
+# Should-Stop:       postgresql mysql clamav-daemon greylist spamassassin
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: salt master control daemon 
+# Description:       salt master control daemon 
+### END INIT INFO
+
 # processname: /usr/bin/salt-master
  
 SERVICE=salt-master
