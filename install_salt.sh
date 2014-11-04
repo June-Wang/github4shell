@@ -1573,12 +1573,17 @@ run_cmds '/usr/bin/python setup.py install'
 mkdir -p /etc/salt &&cp conf/{master,minion} /etc/salt/
 post_init
 echo "#######################################
-Config:
-/etc/salt/
 Start salt-minion:
-/usr/bin/python /usr/bin/salt-minion -d
+/etc/init.d/salt-minion start
 Start salt-master:
-/usr/bin/python /usr/bin/salt-master -d"
+/etc/init.d/salt-master start
+"
+#Config:
+#/etc/salt/
+#Start salt-minion:
+#/usr/bin/python /usr/bin/salt-minion -d
+#Start salt-master:
+#/usr/bin/python /usr/bin/salt-master -d"
 
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
