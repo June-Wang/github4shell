@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='php-gd rrdtool-perl rrdtool'
-#APT_PACKAGE='build-essential php-gd rrdtool-perl rrdtool'
+APT_PACKAGE='build-essential php-gd rrdtool-perl rrdtool'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
@@ -328,6 +328,7 @@ case "${SYSTEM}" in
     debian6|debian7)
         HTTP='apache2'
 	apache2_conf='/etc/apache2/apache2.conf'
+	/usr/sbin/a2enmod rewrite
     ;;
     *)
         echo "This script not support ${SYSTEM_INFO}" 1>&2
