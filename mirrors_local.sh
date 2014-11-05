@@ -1,8 +1,6 @@
 #!/bin/bash
 
-epel_mirrors='mirrors.aliyun.com'
 debian_mirrors='debian.mirrors.local'
-salt_mirrors='debian.saltstack.local'
 
 #set DNS
 echo 'nameserver 192.168.16.22' > /etc/resolv.conf
@@ -16,100 +14,6 @@ if [ -d "${SOURCE_DIR}" ];then
                 mv "${source_file}" "${source_file}.${my_date}.$$"
         done
 fi
-}
-
-mirrors_for_salt () {
-local source_list="${SOURCE_DIR}/sources.list"
-local debian_version="$1"
-grep '#Salt mirrors local' ${source_list} >/dev/null 2>&1 ||\
-echo "#Salt mirrors local
-deb http://${salt_mirrors}/debian ${debian_version}-saltstack main" >> ${source_file}
-wget -q -O- "http://${salt_mirrors}/debian-salt-team-joehealy.gpg.key" | apt-key add -
-}
-
-mirrors_for_epel () {
-local repo_file="${SOURCE_DIR}/epel.mirrors.repo"
-echo "[epel]
-name=Extra Packages for Enterprise Linux \$releasever - \$basearch
-baseurl=http://${epel_mirrors}/epel/\$releasever/\$basearch
-failovermethod=priority
-enabled=1
-gpgcheck=1
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-
-[epel-debuginfo]
-name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Debug
-baseurl=http://${epel_mirrors}/epel/\$releasever/\$basearch/debug
-failovermethod=priority
-enabled=0
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-gpgcheck=1
-
-[epel-source]
-name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Source
-baseurl=http://${epel_mirrors}/epel/\$releasever/SRPMS
-failovermethod=priority
-enabled=0
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-gpgcheck=1
-
-[epel-testing]
-name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch 
-baseurl=http://${epel_mirrors}/epel/testing/\$releasever/\$basearch
-failovermethod=priority
-enabled=0
-gpgcheck=1
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-
-[epel-testing-debuginfo]
-name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Debug
-baseurl=http://${epel_mirrors}/epel/testing/\$releasever/\$basearch
-failovermethod=priority
-enabled=0
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-gpgcheck=1
-
-[epel-testing-source]
-name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Source
-baseurl=http://${epel_mirrors}/epel/epel/testing/\$releasever/SRPMS
-failovermethod=priority
-enabled=0
-gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
-gpgcheck=1" > ${repo_file}
-}
-
-mirrors_for_alt () {
-local repo_file="${SOURCE_DIR}/alt.mirrors.repo"
-echo "[CentALT]
-name=CentALT Packages for Enterprise Linux \$releasever - \$basearch
-baseurl=http://alt.mirrors.local/\$releasever/\$basearch/
-enabled=1
-gpgcheck=0" > ${repo_file}
-}
-
-mirrors_for_atom () {
-local repo_file="${SOURCE_DIR}/atom.mirrors.repo"
-echo "[atomic]
-name = CentOS / Red Hat Enterprise Linux \$releasever - atomicrocketturtle.com
-mirrorlist = http://${atom_mirrors}/mirrorlist/atomic/centos-\$releasever-\$basearch
-enabled = 1
-priority = 1
-protect = 0
-#gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY.art.txt
-#    file:///etc/pki/rpm-gpg/RPM-GPG-KEY.atomicorp.txt
-#gpgcheck = 0
-
-# Almost Stable, release candidates for [atomic]
-[atomic-testing]
-name = CentOS / Red Hat Enterprise Linux \$releasever - atomicrocketturtle.com - (Testing)
-mirrorlist = http://${atom_mirrors}/mirrorlist/atomic-testing/centos-\$releasever-\$basearch
-enabled = 0
-priority = 1
-protect = 0
-#gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY.art.txt
-#    file:///etc/pki/rpm-gpg/RPM-GPG-KEY.atomicorp.txt
-#gpgcheck = 1
-gpgcheck = 0" > ${repo_file}
 }
 
 backup_source_list () {
@@ -155,9 +59,6 @@ deb http://${debian_mirrors}/debian/${DEBIAN_ISSUE}/x64/dvd8/debian/ ${DEBIAN_VE
         ;;
 esac
 
-#Add salt mirrors
-#mirrors_for_salt "${DEBIAN_VERSION}"
-
 local apt_conf_d='/etc/apt/apt.conf.d'
 local apt_conf="${apt_conf_d}/00trustlocal"
 test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
@@ -165,26 +66,19 @@ echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
 aptitude update
 }
 
-set_for_redhat () {
-backup_local_repo_file
-mirrors_for_epel
-#mirrors_for_atom
-yum clean all
-}
-
 main () {
 SYSTEM_INFO=`head -n 1 /etc/issue`
 case "${SYSTEM_INFO}" in
-'CentOS'*)
-        SYSTEM='centos'
-        SOURCE_DIR='/etc/yum.repos.d'
-        set_for_redhat
-        ;;
-'Red Hat Enterprise Linux Server release'*)
-        SYSTEM='rhel'
-        SOURCE_DIR='/etc/yum.repos.d'
-        set_for_redhat
-        ;;
+#'CentOS'*)
+#        SYSTEM='centos'
+#        SOURCE_DIR='/etc/yum.repos.d'
+#        set_for_redhat
+#        ;;
+#'Red Hat Enterprise Linux Server release'*)
+#        SYSTEM='rhel'
+#        SOURCE_DIR='/etc/yum.repos.d'
+#        set_for_redhat
+#        ;;
 'Debian'*)
         SYSTEM='debian'
         SOURCE_DIR='/etc/apt'
