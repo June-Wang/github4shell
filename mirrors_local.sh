@@ -1,6 +1,6 @@
 #!/bin/bash
 
-epel_mirrors='epel.mirrors.local'
+epel_mirrors='mirrors.aliyun.com'
 debian_mirrors='debian.mirrors.local'
 salt_mirrors='debian.saltstack.local'
 
@@ -31,18 +31,18 @@ mirrors_for_epel () {
 local repo_file="${SOURCE_DIR}/epel.mirrors.repo"
 echo "[epel]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch
-baseurl=http://${epel_mirrors}/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/epel/\$releasever/\$basearch
 failovermethod=priority
 enabled=1
 gpgcheck=1
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 
 [epel-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Debug
-baseurl=http://${epel_mirrors}/\$releasever/\$basearch/debug
+baseurl=http://${epel_mirrors}/epel/\$releasever/\$basearch/debug
 failovermethod=priority
 enabled=0
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-source]
@@ -50,31 +50,31 @@ name=Extra Packages for Enterprise Linux \$releasever - \$basearch - Source
 baseurl=http://${epel_mirrors}/epel/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch 
-baseurl=http://${epel_mirrors}/testing/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/epel/testing/\$releasever/\$basearch
 failovermethod=priority
 enabled=0
 gpgcheck=1
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 
 [epel-testing-debuginfo]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Debug
-baseurl=http://${epel_mirrors}/testing/\$releasever/\$basearch
+baseurl=http://${epel_mirrors}/epel/testing/\$releasever/\$basearch
 failovermethod=priority
 enabled=0
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 gpgcheck=1
 
 [epel-testing-source]
 name=Extra Packages for Enterprise Linux \$releasever - Testing - \$basearch - Source
-baseurl=http://${epel_mirrors}/epel/testing/\$releasever/SRPMS
+baseurl=http://${epel_mirrors}/epel/epel/testing/\$releasever/SRPMS
 failovermethod=priority
 enabled=0
-gpgkey=http://${epel_mirrors}/RPM-GPG-KEY-EPEL
+gpgkey=http://${epel_mirrors}/epel/RPM-GPG-KEY-EPEL
 gpgcheck=1" > ${repo_file}
 }
 
