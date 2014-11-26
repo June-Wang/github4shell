@@ -176,6 +176,18 @@ deb http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-proposed-updates main non
 deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION} main non-free contrib
 deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-proposed-updates main non-free contrib" > ${source_file}
 
+apt_path='/etc/apt/sources.list.d'
+if [ "${DEBIAN_VERSION}" == 'wheezy' ];then
+        test -d ${apt_path} &&\
+        echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > ${apt_path}/salt.list
+fi
+
+if [ "${DEBIAN_VERSION}" == 'squeeze' ];then
+        test -d ${apt_path} &&\
+        echo "deb http://debian.saltstack.com/debian squeeze-saltstack main
+deb http://backports.debian.org/debian-backports squeeze-backports main contrib non-free" > ${apt_path}/salt.list
+fi
+
 local apt_conf_d='/etc/apt/apt.conf.d'
 local apt_conf="${apt_conf_d}/00trustlocal"
 test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
