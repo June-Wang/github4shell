@@ -192,7 +192,6 @@ local apt_conf_d='/etc/apt/apt.conf.d'
 local apt_conf="${apt_conf_d}/00trustlocal"
 test -d ${apt_conf_d} || mkdir -p ${apt_conf_d}
 echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
-aptitude update
 }
 
 set_proxy_for_debian () {
@@ -255,6 +254,7 @@ case "${SYSTEM_INFO}" in
         mirrors_for_debian
 	alias_apt
 	set_proxy_for_debian
+	aptitude update
         ;;
 *)
         SYSTEM='unknown'
