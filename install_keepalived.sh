@@ -8,7 +8,7 @@ yum_para="$3"
 if [ "${yum_para}" = 'lan' ];then
 	YUM='yum --disablerepo=\* --enablerepo=centos5-lan'
 else
-	YUM='yum'
+	YUM='yum --skip-broken --nogpgcheck'
 fi
 keepalived_url="http://${yum_server}/tools/${file_name}"
 }
@@ -146,6 +146,6 @@ echo_bye "${my_project}"
 #local install path
 local_path='/usr/local/src'
 install_dir="install_$$"
-receive_para="$1"
+receive_para="lvs"
 
 main
