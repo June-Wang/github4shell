@@ -13,7 +13,7 @@ INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
 
 #SET PACKAGE
 YUM_PACKAGE='httpd php gcc glibc glibc-common gd gd-devel openssl-devel xinetd'
-APT_PACKAGE='build-essential apache2 libapache2-mod-php5 libgd2-xpm libgd2-xpm-dev rrdtool'
+APT_PACKAGE='build-essential apache2 libapache2-mod-php5 libgd2-xpm libgd2-xpm-dev rrdtool libapache2-mod-python'
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
