@@ -8,7 +8,7 @@ yum_para="$3"
 if [ "${yum_para}" = 'lan' ];then
 	YUM='yum --disablerepo=\* --enablerepo=centos5-lan'
 else
-	YUM='yum'
+	YUM='yum --skip-broken --nogpgcheck'
 fi
 package_url="http://${yum_server}/tools/${file_name}"
 }
