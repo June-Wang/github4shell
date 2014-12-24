@@ -8,6 +8,16 @@ cache_server='cache.mirrors.local'
 #set DNS
 echo 'nameserver 192.168.16.22' > /etc/resolv.conf
 
+alias_yum () {
+profile_dir='/etc/profile.d'
+[ -d "${profile_dir}" ] &&\
+yum_para='yum --skip-broken --nogpgcheck'
+#echo "alias yum='yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}'" > ${profile_dir}/yum_alias.sh
+echo "alias yum='${yum_para}'" > ${profile_dir}/yum_alias.sh
+#alias yum="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
+alias yum="${yum_para}"
+}
+
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
@@ -214,15 +224,8 @@ backup_local_repo_file
 mirrors_for_centos
 mirrors_for_epel
 set_proxy_for_redhat
+alias_yum
 yum clean all
-}
-
-alias_yum () {
-profile_dir='/etc/profile.d'
-[ -d "${profile_dir}" ] &&\
-yum_para='yum --skip-broken --nogpgcheck'
-echo "alias yum='${yum_para}'" > ${profile_dir}/yum_alias.sh
-alias yum="${yum_para}"
 }
 
 alias_apt () {
@@ -240,13 +243,11 @@ case "${SYSTEM_INFO}" in
         SYSTEM='centos'
         SOURCE_DIR='/etc/yum.repos.d'
         set_for_redhat
-	alias_yum 
         ;;
 'Red Hat Enterprise Linux Server release'*)
         SYSTEM='rhel'
         SOURCE_DIR='/etc/yum.repos.d'
         set_for_redhat
-	alias_yum 
         ;;
 'Debian'*)
         SYSTEM='debian'
