@@ -37,7 +37,7 @@ download_func
 check_system
 
 #create_tmp_dir
-set_install_cmd 'lan'
+set_install_cmd 'net'
 
 #Created user
 create_user "nagios" "bash"
