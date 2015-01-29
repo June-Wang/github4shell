@@ -59,7 +59,7 @@ download_func
 
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
-set_install_cmd 'lan'
+set_install_cmd 'net'
 
 platform=`check_platform`
 
