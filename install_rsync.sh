@@ -36,7 +36,7 @@ download_func
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
 #create_tmp_dir
-set_install_cmd 'lan'
+set_install_cmd 'net'
 
 #PACKAGE='fping-3.10.tar.gz'
 create_tmp_dir
