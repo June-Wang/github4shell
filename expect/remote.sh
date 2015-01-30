@@ -13,7 +13,11 @@ trap "rm -f ${pipefile}"  EXIT
 thold=5
 seq ${thold} >&3
 
-log_path="./logs/`dirname "$0"`"
+shell_name=`echo $0|awk -F'/' '{print $(NF)}'`
+#echo $shell_name
+#exit 
+
+log_path="./logs/${shell_name}"
 test -d ${log_path} || mkdir -p ${log_path}
 
 #echo -en "\n"
@@ -22,7 +26,7 @@ while read host user password
 do
     read -u 3
         (
-                sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -n $user@$host "$cmd"
+                sshpass -p "${password}" ssh -o StrictHostKeyChecking=no -n $user@$host "$cmd" > ${log_path}/${host}.log 2>&1
                 echo >&3
         )&
 done
