@@ -40,12 +40,12 @@ mydate=`date -d now +"%Y%m%d%H%M%S"`
 #add to dns
 test -f /etc/resolv.conf && echo "nameserver ${dns_server}" > /etc/resolv.conf
 
-alias yum='yum --skip-broken --nogpgcheck'
+yum='yum --skip-broken --nogpgcheck'
 
-yum install -y wget rsync lftp vim >/dev/null 2>&1 || eval "echo YUM Failed!;exit 1"
+$yum install -y wget rsync lftp vim >/dev/null 2>&1 || eval "echo YUM Failed!;exit 1"
 
 #set ntp
-yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
+$yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
 if [ "${install_ntp}" = "fail" ];then
         echo "yum fail! ntp install fail!" 1>&2
         exit 1
