@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #log server
-syslog_server='syslog.suixingpay.local'
+syslog_server='syslog.server.local'
 
 #yum server
-yum_server='yum.suixingpay.local'
+yum_server='yum.server.local'
 
 check_system () {
 system_info=`head -n 1 /etc/issue`

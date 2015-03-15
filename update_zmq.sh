@@ -1,6 +1,6 @@
 #!/bin/bash
 
-YUM_SERVER='yum.lefu.local'
+YUM_SERVER='yum.server.local'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
 INSTALL_PATH="/tmp/tmp.$$"

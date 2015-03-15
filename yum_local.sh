@@ -106,7 +106,7 @@ yum clean all
 }
 
 main () {
-yum_server='yum.suixingpay.local'
+yum_server='yum.server.local'
 #proxy_server='squid.proxy.local'
 #proxy_port='3128'
 check_system

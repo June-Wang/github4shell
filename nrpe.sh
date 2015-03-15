@@ -1,7 +1,7 @@
 #!/bin/bash
 
 nrpe_conf='/usr/local/nagios/etc/nrpe.cfg'
-nrpe_url='http://yum.suixingpay.local/nrpe'
+nrpe_url='http://yum.server.local/nrpe'
 test -f ${nrpe_conf} || exit 1
 grep 'check_disk_root' ${nrpe_conf} ||\
 echo 'command[check_disk_root]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /' >> ${nrpe_conf}
@@ -21,7 +21,7 @@ wget "${nrpe_url}/check_lsof.sh" -O /usr/local/nagios/libexec/check_lsof.sh
 chmod +x /usr/local/nagios/libexec/check_lsof.sh
 
 grep 'check_ntp_time' ${nrpe_conf}||\
-echo 'command[check_ntp_time]=/usr/local/nagios/libexec/check_ntp_time -H ntp.suixingpay.local -w 0.5 -c 1' >> ${nrpe_conf}
+echo 'command[check_ntp_time]=/usr/local/nagios/libexec/check_ntp_time -H ntp.server.local -w 0.5 -c 1' >> ${nrpe_conf}
 
 grep 'check_bond0' ${nrpe_conf} ||\
 echo 'command[check_bond0]=/usr/local/nagios/libexec/check_bond.sh -d bond0' >> ${nrpe_conf}

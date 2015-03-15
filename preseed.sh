@@ -8,7 +8,7 @@ init_debian.sh
 
 for shell in "${cmds[@]}"
 do
-    curl http://yum.suixingpay.local/shell/${shell}|/bin/bash -x
+    curl http://yum.server.local/shell/${shell}|/bin/bash -x
 done
 
-#wget http://yum.suixingpay.local/shell/binding_bond.sh -O /root/binding_bond.sh
+#wget http://yum.server.local/shell/binding_bond.sh -O /root/binding_bond.sh

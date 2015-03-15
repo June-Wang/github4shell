@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #set download server
-YUM_SERVER='yum.lefu.local'
+YUM_SERVER='yum.server.local'
 
 usage (){
         program_name=`basename $0`

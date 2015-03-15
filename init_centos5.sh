@@ -7,7 +7,7 @@ dns_server='192.168.29.229'
 yum_server='yum.suixingpay.com'
 
 #ntp server
-ntp_server='ntp.suixingpay.local'
+ntp_server='ntp.server.local'
 
 system_info=`head -n 1 /etc/issue`
 case "${system_info}" in

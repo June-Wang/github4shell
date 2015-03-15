@@ -1,10 +1,10 @@
 #!/bin/bash
 
-yum_server='yum.lefu.local'
-ntp_server='ntp.lefu.local'
+yum_server='yum.server.local'
+ntp_server='ntp.server.local'
 
 #set DNS
-echo 'nameserver 192.168.16.22' > /etc/resolv.conf
+echo 'nameserver 192.168.1.201' > /etc/resolv.conf
 
 aptitude='aptitude -o Aptitude::Cmdline::ignore-trust-violations=true'
 

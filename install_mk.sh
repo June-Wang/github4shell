@@ -1,7 +1,7 @@
 #!/bin/bash
 
 nagios_server='192.168.16.21'
-yum_server='yum.lefu.local'
+yum_server='yum.server.local'
 
 apt_cmd='aptitude install -y'
 echo -en "${apt_cmd} xinetd ..."

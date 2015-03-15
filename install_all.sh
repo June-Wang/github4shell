@@ -27,7 +27,7 @@ esac
 }
 
 #http server
-http_server='192.168.16.22'
+http_server='192.168.1.201'
 url="http://${http_server}/shell"
 
 #print error

@@ -6,7 +6,7 @@ debian_mirrors='mirrors.aliyun.com'
 cache_server='cache.mirrors.local'
 
 #set DNS
-echo 'nameserver 192.168.16.22' > /etc/resolv.conf
+echo 'nameserver 192.168.1.201' > /etc/resolv.conf
 
 alias_yum () {
 profile_dir='/etc/profile.d'

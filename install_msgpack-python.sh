@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SET ENV
-YUM_SERVER='yum.lefu.local'
+YUM_SERVER='yum.server.local'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
 #SET TEMP PATH

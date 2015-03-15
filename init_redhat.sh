@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #dns server
-dns_server='192.168.16.22'
+dns_server='192.168.1.201'
 
 #yum server
-yum_server='yum.suixingpay.local'
+yum_server='yum.server.local'
 
 #ntp server
-ntp_server='ntp.suixingpay.local'
+ntp_server='ntp.server.local'
 
 system_info=`head -n 1 /etc/issue`
 case "${system_info}" in

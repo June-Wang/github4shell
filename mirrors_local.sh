@@ -3,7 +3,7 @@
 debian_mirrors='debian.mirrors.local'
 
 #set DNS
-echo 'nameserver 192.168.16.22' > /etc/resolv.conf
+echo 'nameserver 192.168.1.201' > /etc/resolv.conf
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`

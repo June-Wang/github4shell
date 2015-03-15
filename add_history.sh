@@ -102,7 +102,7 @@ fi
 }
 
 main () {
-yum_server='yum.lefu.local'
+yum_server='yum.server.local'
 log_server='192.168.16.23'
 check_system
 set_install_cmd
