@@ -1,0 +1,58 @@
+#default centos5.8-x86
+default menu.c32
+#include debian-installer/amd64/boot-screens/menu.cfg
+#default debian-installer/amd64/boot-screens/vesamenu.c32
+prompt 0
+timeout 60
+#display boot.msg
+
+MENU TITLE PXELINUX MENU
+MENU WIDTH 80
+MENU MARGIN 10
+MENU ROWS 12
+MENU TABMSGROW 18
+MENU CMDLINEROW 19
+MENU ENDROW 24
+MENU TIMEOUTROW 20
+
+LABEL localhost
+MENU LABEL localhost
+LOCALBOOT 0
+
+#label centos5.8-x64
+#MENU LABEL Centos5.8 x64
+#kernel OS/centos/5.8/x64/centos5.8-x64-vmlinuz
+#append initrd=OS/centos/5.8/x64/centos5.8-x64-initrd.img
+
+#label RHEL5.8-x64
+#MENU LABEL Red Hat Enterprise 5.8 x64
+#kernel OS/RHEL/5.8/x64/vmlinuz
+#append initrd=OS/RHEL/5.8/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.1.201/ks/rhel5.8x64.cfg noipv
+
+label RHEL5.8-x64-X
+MENU LABEL Red Hat Enterprise 5.8 x64 for X window
+kernel OS/RHEL/5.8/x64/vmlinuz
+append initrd=OS/RHEL/5.8/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.1.201/ks/rhel5.8x64forXwindow.cfg noipv
+
+#label RHEL6.4-x64
+#MENU LABEL Red Hat Enterprise 6.4 x64
+#kernel OS/RHEL/6.4/x64/vmlinuz
+#append initrd=OS/RHEL/6.4/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.1.201/ks/rhel6.4x64.cfg noipv
+
+#label RHEL6.4-x64
+#MENU LABEL Red Hat Enterprise 6.4 x64 for X window
+#kernel OS/RHEL/6.4/x64/vmlinuz
+#append initrd=OS/RHEL/6.4/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.1.201/ks/rhel6.4x64forXwindow.cfg noipv
+
+label RHEL6.6-x64
+MENU LABEL Red Hat Enterprise 6.6 x64
+kernel OS/RHEL/6.6/x64/vmlinuz
+append initrd=OS/RHEL/6.6/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.1.201/ks/rhel6.6x64.cfg noipv
+
+#label Debian7.3-x64
+#MENU LABEL Debian 7.3.0 x64
+#kernel OS/debian/7.3/x64/vmlinuz
+#kernel debian-installer/amd64/linux
+#append vga=normal locale=en_US.UTF-8 console-setup/layoutcode=en_US debian-installer/keymap=us ramdisk_size=1 netcfg/choose_interface=eth0 netcfg/no_default_route=true auto=true priority=critical console-setup/ask_detect=false initrd=debian-installer/amd64/initrd.gz preseed/url=http://192.168.1.201/seed/debian7.3x64.cfg -- quiet
+#append vga=normal locale=en_US.UTF-8 console-setup/layoutcode=en_US debian-installer/keymap=us ramdisk_size=1 netcfg/choose_interface=eth0 netcfg/no_default_route=true auto=true priority=critical console-setup/ask_detect=false initrd=OS/debian/7.3/x64/initrd.gz preseed/url=http://192.168.1.201/seed/debian7.3x64.cfg -- quiet
+#append initrd=OS/debian/7.3/x64/initrd.gz ramdisk_size=1 auto=true priority=critical interface=auto netcfg/no_default_route=true preseed/url=http://192.168.1.201/seed/debian7.3x64.cfg
