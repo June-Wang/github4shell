@@ -1,0 +1,64 @@
+#default centos5.8-x86
+default menu.c32
+prompt 0
+timeout 60
+
+MENU TITLE PXELINUX MENU
+MENU WIDTH 80
+MENU MARGIN 10
+MENU ROWS 12
+MENU TABMSGROW 18
+MENU CMDLINEROW 19
+MENU ENDROW 24
+MENU TIMEOUTROW 20
+
+LABEL localhost
+MENU LABEL localhost
+LOCALBOOT 0
+
+#label centos5.8-x64
+#MENU LABEL Centos5.8 x64
+#kernel OS/centos/5.8/x64/centos5.8-x64-vmlinuz
+#append initrd=OS/centos/5.8/x64/centos5.8-x64-initrd.img
+
+label RHEL5.8-x64
+MENU LABEL Red Hat Enterprise 5.8 x64 KS
+kernel OS/RHEL/5.8/x64/vmlinuz
+append initrd=OS/RHEL/5.8/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/rhel5.8x64.cfg noipv
+
+label RHEL5.8-x64-X
+MENU LABEL Red Hat Enterprise 5.8 x64 for X window KS
+kernel OS/RHEL/5.8/x64/vmlinuz
+append initrd=OS/RHEL/5.8/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/rhel5.8x64forXwindow.cfg noipv
+
+label RHEL6.4-x64
+MENU LABEL Red Hat Enterprise 6.4 x64 KS
+kernel OS/RHEL/6.4/x64/vmlinuz
+append initrd=OS/RHEL/6.4/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/rhel6.4x64.cfg noipv
+#append initrd=OS/RHEL/6.4/x64/initrd.img unsupported_hardware text ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/rhel6.4x64.cfg noipv
+
+
+label Centos6.5-x64
+MENU LABEL Centos 6.5 x64 KS
+kernel OS/centos/6.5/x64/vmlinuz
+append initrd=OS/centos/6.5/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/centos6.5x64.cfg noipv
+
+label RHEL6.4-x64
+MENU LABEL Red Hat Enterprise 6.4 x64 for X window KS
+kernel OS/RHEL/6.4/x64/vmlinuz
+append initrd=OS/RHEL/6.4/x64/initrd.img ksdevice=eth0 load_ramdisk=1 network ks=http://192.168.56.3/ks/rhel6.4x64forXwindow.cfg noipv
+
+label Debian6-x64
+MENU LABEL Debian 6 x64
+kernel OS/debian/6/x64/linux
+append vga=normal initrd=OS/debian/6/x64/initrd.gz auto=true interface=auto netcfg/dhcp_timeout=60 netcfg/no_default_route=true netcfg/get_nameservers=192.168.56.3 priority=critical preseed/url=http://192.168.56.3/seed/debian6x64.cfg DEBCONF_DEBUG=5 -- quiet
+
+label Debian7.5-x64
+MENU LABEL Debian 7 x64
+kernel OS/debian/7/x64/linux
+append vga=normal initrd=OS/debian/7/x64/initrd.gz auto=true interface=auto netcfg/dhcp_timeout=60 netcfg/no_default_route=true netcfg/get_nameservers=192.168.56.3 priority=critical preseed/url=http://192.168.56.3/seed/debian7x64.cfg -- quiet
+
+LABEL ESXI5.5
+MENU LABEL ESXI 5.5 X64
+kernel OS/vmware/5.5/x64/mboot.c32
+append -c OS/vmware/5.5/cfg/boot.cfg
