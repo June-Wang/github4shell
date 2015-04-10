@@ -21,7 +21,7 @@ ${NIC2}
 
 for nic in "${NIC_DEV[@]}"
 do
-	ifconfig -s|grep -Ev '^Iface'|grep "${nic}" >/dev/null 2>&1 ||\
+	ifconfig -a|grep "${nic}" >/dev/null 2>&1 ||\
 	eval "echo \"${nic} not exist!please tap ifconfig -a\" 1>&2;exit 1"
 done
 
@@ -62,7 +62,7 @@ GATEWAY=${gateway}
 BOOTPROTO=static
 ONBOOT=yes" >${bond_conf}
 
-mod_conf='/etc/modprobe.conf'
+mod_conf='/etc/modprobe.d/binding.conf'
 
 if [ -f "${mod_conf}" ];then
         grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
