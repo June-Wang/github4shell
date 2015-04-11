@@ -40,7 +40,9 @@ do
 ONBOOT=yes
 MASTER=${BOND}
 SLAVE=yes
-BOOTPROTO=none" > ${nic_conf}
+BOOTPROTO=none
+USERCTL=no
+NM_CONTROLLED=no" > ${nic_conf}
         fi
 done
 
@@ -59,8 +61,11 @@ IPADDR=${BOND_IP}
 NETWORK=${network}
 NETMASK=255.255.255.0
 GATEWAY=${gateway}
-BOOTPROTO=static
-ONBOOT=yes" >${bond_conf}
+#BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=none
+USERCTL=no" >${bond_conf}
 
 mod_conf='/etc/modprobe.d/binding.conf'
 
