@@ -69,7 +69,7 @@ USERCTL=no" >${bond_conf}
 
 mod_conf='/etc/modprobe.d/binding.conf'
 
-if [ -f "${mod_conf}" ];then
+#if [ -f "${mod_conf}" ];then
         grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
         if [ "${set_bond}" == 'no' ];then
         echo "
@@ -77,7 +77,7 @@ if [ -f "${mod_conf}" ];then
 alias ${BOND} bonding
 options ${BOND} miimon=100 mode=1" >> ${mod_conf}
         fi
-fi
+#fi
 
 modprobe bonding
 service network restart
