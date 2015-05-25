@@ -10,6 +10,6 @@ do
 done|sort -u|sort -k2|\
 while read port path
 do
-        serv_name=`echo $path|awk -F'/' '{print $3}'`
+        serv_name=`echo $path|awk -F'/' '{print $4}'`
         echo "check_tcp_${serv_name}_${port} /usr/local/nagios/libexec/check_tcp -w 2 -c 3 -t 4 -p ${port}"
 done >> ${mrpe_conf}
