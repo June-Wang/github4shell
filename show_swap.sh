@@ -1,9 +1,9 @@
 #!/bin/bash
 
 user=`whoami`
-id=`id ${user} -u`
+uid=`id ${user} -u`
 
-if [ "${id}" != '0' ];then
+if [ "${uid}" != '0' ];then
 	echo "Sorry!You must be root to run this script!" 1>&2
 	exit 1
 fi
