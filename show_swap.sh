@@ -1,6 +1,13 @@
 #!/bin/bash
 
-#echo -en "PID\tSwap\tProc_Name\n"
+user=`whoami`
+id=`id ${user} -u`
+
+if [ "${id}" != '0' ];then
+	echo "Sorry!You must be root to run this script!" 1>&2
+	exit 1
+fi
+
 printf "%-5s\t%15s\t%20s\n" PID Swap Proc_Name
 find /proc/ -maxdepth 2 -name "smaps"|\
 while read smaps
