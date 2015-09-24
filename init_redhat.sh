@@ -84,6 +84,7 @@ if [ -f "${sysctl_cf}" ];then
         if [ "${sysctl_init}" = 'fail' ]; then 
                 /sbin/sysctl -a > /etc/sysctl.conf.${mydate}
                 echo '#init _BEGIN_
+net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_fin_timeout = 30
 #net.ipv4.tcp_tw_reuse = 1
 #net.ipv4.tcp_tw_recycle = 1
