@@ -69,7 +69,7 @@ if [ -e /etc/rsyslog.conf ];then
                 if [ "${set_time}" = 'noset' ];then
                         sed -i '/$ActionFileDefaultTemplate/d' /etc/rsyslog.conf
                         echo '#SET Standard timestamp
-$template myformat,"%$NOW% %TIMESTAMP% %hostname% %syslogtag% %msg%"
+$template myformat,"%$NOW% %TIMESTAMP:8:15% %HOSTNAME% %fromhost-ip% %syslogtag% %msg%\n"
 $ActionFileDefaultTemplate myformat' >> /etc/rsyslog.conf
                 fi
 fi

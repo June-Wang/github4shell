@@ -129,7 +129,7 @@ main () {
 TEMP_PATH='/usr/local/src'
 
 #SET PACKAGE
-YUM_SERVER='yum.suixingpay.com'
+YUM_SERVER='yum.server.local'
 YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ pam-devel'
 APT_PACKAGE='build-essential'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
@@ -145,7 +145,7 @@ trap "rm -rf ${INSTALL_PATH}"  EXIT
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
 #create_tmp_dir
-set_install_cmd 'lan'
+set_install_cmd 'net'
 
 #Stop sshd service and clear old version
 SSH_SERVICE="/etc/init.d/sshd"
@@ -161,18 +161,18 @@ run_cmds './configure' 'make' 'make install'
 exit_and_clear
 
 #Install openssl-0.9.8y
-PACKAGE='openssl-0.9.8y.tar.gz'
+PACKAGE='openssl-0.9.8zg.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './config' 'make' 'make install'
+run_cmds './config --prefix=/usr/ shared' 'make' 'make install'
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
 #install
-PACKAGE='openssh-6.4p1.tar.gz'
+PACKAGE='openssh-6.9p1.tar.gz'
 create_tmp_dir
 download_and_check
-run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh --with-pam --with-md5-passwords' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd'
+run_cmds './configure --prefix=/usr --sysconfdir=/etc/ssh --with-pam --with-md5-passwords' 'make' 'make install' 'cp contrib/redhat/sshd.init /etc/init.d/sshd' 'cp contrib/redhat/sshd.pam /etc/pam.d/sshd'
 #EXIT AND CLEAR TEMP DIR
 exit_and_clear
 
@@ -192,17 +192,17 @@ PasswordAuthentication yes
 " >> ${SSH_CONFIG}
 
 #Add PAM model for sshd
-SSHD4PAM_CONFIG='/etc/pam.d/sshd'
-test -f ${SSHD4PAM_CONFIG} ||\ 
-echo '#%PAM-1.0
-auth       include      system-auth
-account    required     pam_nologin.so
-account    include      system-auth
-password   include      system-auth
-session    optional     pam_keyinit.so force revoke
-session    include      system-auth
-session    required     pam_loginuid.so
-' > ${SSHD4PAM_CONFIG}
+#SSHD4PAM_CONFIG='/etc/pam.d/sshd'
+#test -f ${SSHD4PAM_CONFIG} ||\ 
+#echo '#%PAM-1.0
+#auth       include      system-auth
+#account    required     pam_nologin.so
+#account    include      system-auth
+#password   include      system-auth
+#session    optional     pam_keyinit.so force revoke
+#session    include      system-auth
+#session    required     pam_loginuid.so
+#' > ${SSHD4PAM_CONFIG}
 
 SSH_CONFIG="/etc/ssh/ssh_config"
 test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\

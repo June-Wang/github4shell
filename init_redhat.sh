@@ -84,6 +84,7 @@ if [ -f "${sysctl_cf}" ];then
         if [ "${sysctl_init}" = 'fail' ]; then 
                 /sbin/sysctl -a > /etc/sysctl.conf.${mydate}
                 echo '#init _BEGIN_
+net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_fin_timeout = 30
 #net.ipv4.tcp_tw_reuse = 1
 #net.ipv4.tcp_tw_recycle = 1
@@ -103,6 +104,7 @@ if [ -f "${sysctl_cf}" ];then
 #net.core.somaxconn = 262144
 #net.ipv4.tcp_max_orphans = 262144
 #net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_timestamps = 0
 #SET sysctl.conf _END_' >> ${sysctl_cf}
                 /sbin/sysctl -a > ~/set_sysctl.log 2>&1
                 echo "sysctl set OK!!"
@@ -157,6 +159,9 @@ fi
 ssh_cf="/etc/ssh/sshd_config"
 if [ -f "${ssh_cf}" ];then
         sed -i "s/#UseDNS yes/UseDNS no/;s/^GSSAPIAuthentication.*$/GSSAPIAuthentication no/" $ssh_cf
+	grep 'SSH vulnerabilities' ${ssh_cf} >/dev/null 2>&1 || echo '#SSH vulnerabilities
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+MACs hmac-sha1,hmac-ripemd160' >> ${ssh_cf}
         service sshd restart
 echo "init sshd ok."
 else
