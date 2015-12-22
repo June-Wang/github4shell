@@ -42,6 +42,10 @@ create_tmp_dir
 #download_and_check
 #run_cmds './configure --prefix=/usr' 'make' 'make install'
 
+test -d /etc/tripwire/ &&\
+find /etc/tripwire/ -type f |grep -v '.txt'|\
+xargs -r -i rm -f "{}"
+
 date_now=`date -d now +"%F"`
 pol_file='/etc/tripwire/twpol.txt'
 test -f ${pol_file} && cp ${pol_file} ${pol_file}.${date_now}.$$
