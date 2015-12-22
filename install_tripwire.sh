@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SET ENV
-YUM_SERVER='10.19.3.191'
+YUM_SERVER='yum.server.local'
 PACKAGE_URL="http://${YUM_SERVER}/tools"
 
 #SET TEMP PATH
