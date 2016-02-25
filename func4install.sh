@@ -14,7 +14,7 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='centos5'
                 YUM_SOURCE_NAME='centos5-lan'
                 ;;
-        'Red Hat Enterprise Linux Server release 5'*)
+        'Enterprise Linux Enterprise Linux Server release 5'*)
                 SYSTEM='rhel5'
                 YUM_SOURCE_NAME='RHEL5-lan'
                 ;;

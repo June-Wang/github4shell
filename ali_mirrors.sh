@@ -6,7 +6,8 @@ debian_mirrors='mirrors.aliyun.com'
 cache_server='cache.mirrors.local'
 
 #set DNS
-echo 'nameserver 192.168.1.201' > /etc/resolv.conf
+#grep 'cache.mirrors.local' /etc/hosts >/dev/null 2>&1 ||\
+#echo 'cache.mirrors.local x.x.x.x' >> /etc/hosts
 
 alias_yum () {
 profile_dir='/etc/profile.d'
@@ -43,17 +44,17 @@ mirrors_for_centos () {
 local system_info=`head -n 1 /etc/issue`
 case "${system_info}" in
         'CentOS release 5'*)
-		local redhat_version='5'
+                local redhat_version='5'
                 ;;
-        'Red Hat Enterprise Linux Server release 5'*)
-		local redhat_version='5'
+        'Enterprise Linux Enterprise Linux Server release 5'*)
+                local redhat_version='5'
                 ;;
         'Red Hat Enterprise Linux Server release 6'*)
-		local redhat_version='6'
+                local redhat_version='6'
                 ;;
         *)
-	echo "This script not support ${system_info}" 1>&2
-	exit 1
+        echo "This script not support ${system_info}" 1>&2
+        exit 1
                 ;;
 esac
 local repo_file="${SOURCE_DIR}/base.mirrors.repo"
@@ -214,8 +215,8 @@ echo 'Acquire::http { Proxy "http://'${cache_server}':3142"; };' > ${proxy_conf}
 set_proxy_for_redhat () {
 local yum_conf='/etc/yum.conf'
 if [ -f "${yum_conf}" ];then
-	sed -i '/^proxy/d' ${yum_conf} 
-	echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
+        sed -i '/^proxy/d' ${yum_conf} 
+        echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
 fi
 }
 
@@ -249,13 +250,18 @@ case "${SYSTEM_INFO}" in
         SOURCE_DIR='/etc/yum.repos.d'
         set_for_redhat
         ;;
+'Enterprise Linux Enterprise Linux Server release'*)
+        SYSTEM='rhel'
+        SOURCE_DIR='/etc/yum.repos.d'
+        set_for_redhat
+        ;;
 'Debian'*)
         SYSTEM='debian'
         SOURCE_DIR='/etc/apt'
         mirrors_for_debian
-	alias_apt
-	set_proxy_for_debian
-	aptitude update
+        alias_apt
+        set_proxy_for_debian
+        aptitude update
         ;;
 *)
         SYSTEM='unknown'
