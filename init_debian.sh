@@ -17,19 +17,12 @@ if [ "${install_package}" = "fail" ];then
         exit 1
 fi
 
-#set vim for python
-#grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
-#set ts=4" >> /etc/vimrc
-
-#grep -E '^#SET VIM' /etc/vimrc >/dev/null 2>&1 || echo "#SET VIM
-#syntax on" >> /etc/vimrc
-
 test -f /etc/rc.local &&\
 sed -i 's/exit 0//g' /etc/rc.local
 
 test -d /etc/profile.d/ && \
 cat << EOF > /etc/profile.d/vim_alias.sh
-alias vi='vim -c "syntax on"'
+alias vi='vim -c "syntax on" -c "set ts=4"'
 EOF
 
 #echo 'syntax on' > /root/.vimrc
