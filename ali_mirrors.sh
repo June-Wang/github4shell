@@ -46,6 +46,9 @@ case "${system_info}" in
         'CentOS release 5'*)
                 local redhat_version='5'
                 ;;
+        'CentOS release 6'*)
+                local redhat_version='6'
+                ;;
         'Enterprise Linux Enterprise Linux Server release 5'*)
                 local redhat_version='5'
                 ;;
