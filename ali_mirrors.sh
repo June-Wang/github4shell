@@ -6,8 +6,8 @@ debian_mirrors='mirrors.aliyun.com'
 cache_server='cache.mirrors.local'
 
 #set DNS
-#grep 'cache.mirrors.local' /etc/hosts >/dev/null 2>&1 ||\
-#echo 'cache.mirrors.local x.x.x.x' >> /etc/hosts
+grep 'cache.mirrors.local' /etc/hosts >/dev/null 2>&1 ||\
+echo 'x.x.x.x cache.mirrors.local' >> /etc/hosts
 
 alias_yum () {
 profile_dir='/etc/profile.d'
@@ -46,14 +46,17 @@ case "${system_info}" in
         'CentOS release 5'*)
                 local redhat_version='5'
                 ;;
-        'CentOS release 6'*)
-                local redhat_version='6'
-                ;;
         'Enterprise Linux Enterprise Linux Server release 5'*)
                 local redhat_version='5'
                 ;;
         'Red Hat Enterprise Linux Server release 6'*)
                 local redhat_version='6'
+                ;;
+        'CentOS release 6'*)
+                local redhat_version='6'
+                ;;
+        'CentOS release 7'*)
+                local redhat_version='7'
                 ;;
         *)
         echo "This script not support ${system_info}" 1>&2
@@ -65,7 +68,6 @@ echo "[base]
 name=CentOS-${redhat_version} - Base - ${centos_mirrors}
 failovermethod=priority
 baseurl=http://${centos_mirrors}/centos/${redhat_version}/os/\$basearch/
-        http://mirrors.aliyuncs.com/centos/${redhat_version}/os/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=os
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -75,7 +77,6 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 name=CentOS-${redhat_version} - Updates - ${centos_mirrors}
 failovermethod=priority
 baseurl=http://${centos_mirrors}/centos/${redhat_version}/updates/\$basearch/
-        http://mirrors.aliyuncs.com/centos/${redhat_version}/updates/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=updates
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -85,7 +86,6 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 name=CentOS-${redhat_version} - Extras - ${centos_mirrors}
 failovermethod=priority
 baseurl=http://${centos_mirrors}/centos/${redhat_version}/extras/\$basearch/
-        http://mirrors.aliyuncs.com/centos/${redhat_version}/extras/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=extras
 gpgcheck=1
 gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
@@ -95,7 +95,6 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 name=CentOS-${redhat_version} - Plus - ${centos_mirrors}
 failovermethod=priority
 baseurl=http://${centos_mirrors}/centos/${redhat_version}/centosplus/\$basearch/
-        http://mirrors.aliyuncs.com/centos/${redhat_version}/centosplus/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=centosplus
 gpgcheck=1
 enabled=0
@@ -106,7 +105,6 @@ gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
 name=CentOS-${redhat_version} - Contrib - ${centos_mirrors}
 failovermethod=priority
 baseurl=http://${centos_mirrors}/centos/${redhat_version}/contrib/\$basearch/
-        http://mirrors.aliyuncs.com/centos/${redhat_version}/contrib/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=contrib
 gpgcheck=1
 enabled=0
