@@ -15,6 +15,10 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='rhel6'
                 YUM_SOURCE_NAME='RHEL6-lan'
                 ;;
+        'CentOS release 6'*)
+                SYSTEM='rhel6'
+                YUM_SOURCE_NAME='RHEL6-lan'
+                ;;
         'Debian GNU/Linux 6'*)
                 SYSTEM='debian6'
                 ;;
@@ -69,7 +73,7 @@ if [ -e /etc/rsyslog.conf ];then
                 if [ "${set_time}" = 'noset' ];then
                         sed -i '/$ActionFileDefaultTemplate/d' /etc/rsyslog.conf
                         echo '#SET Standard timestamp
-$template myformat,"%$NOW% %TIMESTAMP:8:15% %HOSTNAME% %fromhost-ip% %syslogtag% %msg%\n"
+$template myformat,"%$NOW% %TIMESTAMP:8:15% %HOSTNAME% %syslogtag% %msg%\n"
 $ActionFileDefaultTemplate myformat' >> /etc/rsyslog.conf
                 fi
 fi
