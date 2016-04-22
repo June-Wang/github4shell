@@ -1,5 +1,6 @@
 #!/bin/bash
 
+master_ip='10.54.1.110'
 id=`ifconfig eth0|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -v '255'|head -n 1`
 
 test -z "${id}" &&\
@@ -12,4 +13,7 @@ test -f /etc/salt/minion || exit 1
 echo "master: salt.lefu.local
 id: ${id}" > /etc/salt/minion 
 
-/etc/init.d/salt-minion restart
+grep 'salt.lefu.local' /etc/hosts ||\
+echo '10.54.1.110 salt.lefu.local' >> /etc/hosts
+
+service salt-minion restart
