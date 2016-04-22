@@ -1,7 +1,7 @@
 #!/bin/bash
 
 master_ip='10.54.1.110'
-id=`ifconfig eth0|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -v '255'|head -n 1`
+id=`ifconfig -a|grep -E -A1 'eth0|bond0'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '127\.|255'`
 
 test -z "${id}" &&\
 eval "echo eth0 not found!;exit 1"
