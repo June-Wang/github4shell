@@ -22,6 +22,10 @@ case "${SYSTEM_INFO}" in
                 SYSTEM='rhel6'
                 YUM_SOURCE_NAME='RHEL6-lan'
                 ;;
+        'CentOS release 6'*)
+                SYSTEM='rhel6'
+                YUM_SOURCE_NAME='RHEL6-lan'
+                ;;
         'Debian GNU/Linux 6'*)
                 SYSTEM='debian6'
                 ;;
