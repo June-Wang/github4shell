@@ -2,7 +2,7 @@
 
 report_path='/var/lib/tripwire/report/'
 report_date=`date -d "-1day" +"%Y%m%d"`
-output_path="/var/log/tripwire/report/${report_date}"
+output_path="/var/log/tripwire/report/"
 
 host_name=`hostname`
 ip=`/sbin/ifconfig -a|grep 'inet addr'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255'|head -n1`
