@@ -5,7 +5,8 @@ report_date=`date -d "-1day" +"%Y%m%d"`
 output_path="/var/log/tripwire/report/${report_date}"
 
 host_name=`hostname`
-ip=`/sbin/ifconfig eth0|awk -F'[\t ]+[a-z|A-Z]+:' '/inet addr:/ {print $2}'`
+#ip=`/sbin/ifconfig eth0|awk -F'[\t ]+[a-z|A-Z]+:' '/inet addr:/ {print $2}'`
+ip=`/sbin/ifconfig -a|grep 'inet addr'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255'|head -n1`
 file_name="${ip}-${host_name}-${report_date}"
 output_file="${output_path}/${file_name}.txt"
 
