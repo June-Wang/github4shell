@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum_server='10.54.1.112'
+yum_server='yum.server.local'
 
 wget_cmd="wget http://${yum_server}/shell/output_tripwire.sh"
 eval ${wget_cmd} -O /sbin/output_tripwire.sh ||\
