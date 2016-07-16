@@ -21,7 +21,7 @@ ${NIC2}
 
 for nic in "${NIC_DEV[@]}"
 do
-	ifconfig -a|grep "${nic}" >/dev/null 2>&1 ||\
+	ip addr show|grep "${nic}" >/dev/null 2>&1 ||\
 	eval "echo \"${nic} not exist!please tap ifconfig -a\" 1>&2;exit 1"
 done
 

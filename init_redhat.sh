@@ -175,7 +175,7 @@ fi
 
 #tunoff services
 chkconfig --list|awk '/:on/{print $1}'|\
-grep -E 'rhsmcertd|certmonger|rhsmcertd|NetworkManager|rpcbind|portreserve|autofs|auditd|cpuspeed|postfix|ip6tables|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
+grep -E 'rhnsd|rhsmcertd|certmonger|rhsmcertd|NetworkManager|rpcbind|portreserve|autofs|auditd|cpuspeed|postfix|ip6tables|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
 while read line
 do
         chkconfig "${line}" off

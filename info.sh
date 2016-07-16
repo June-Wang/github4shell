@@ -1,8 +1,8 @@
 #!/bin/bash
 
 [ -n "$1" ] && ip="$1" || \
-#ip=`/sbin/ifconfig eth0|awk -F'[\t ]+[a-z|A-Z]+:' '/inet addr:/ {print $2}'`
-ip=`ifconfig -a|grep -E -A1 'eth0|bond0'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '127\.|255'`
+#ip=`ifconfig -a|grep -E -A1 'eth0|bond0'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '127\.|255'`
+ip=`ip addr show|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '127\.|255'|awk '{ORS=";";print}'`
 host_name=`hostname`
 file=`basename "$0"|awk -F'.' '{print $1}'`
 tmp="/tmp/${ip}.${file}"
