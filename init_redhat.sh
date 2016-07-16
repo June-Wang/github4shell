@@ -23,6 +23,10 @@ case "${system_info}" in
                 system='rhel6'
                 yum_source_name='RHEL6-lan'
                 ;;
+		'CentOS release 6'*)
+                system='rhel6'
+                yum_source_name='RHEL6-lan'
+                ;;
         *)
                 system='unknown'
                 echo "This script not support ${system_info}" 1>&2
