@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #dns server
-dns_server='192.168.1.201'
+dns_server='192.168.254.2'
 
 #yum server
 yum_server='yum.server.local'
@@ -11,27 +11,27 @@ ntp_server='ntp.server.local'
 
 system_info=`head -n 1 /etc/issue`
 case "${system_info}" in
-        'CentOS release 5'*)
-                system='centos5'
-                yum_source_name='centos5-lan'
-                ;;
-        'Red Hat Enterprise Linux Server release 5'*)
-                system='rhel5'
-                yum_source_name='RHEL5-lan'
-                ;;
-        'Red Hat Enterprise Linux Server release 6'*)
-                system='rhel6'
-                yum_source_name='RHEL6-lan'
-                ;;
+		'CentOS release 5'*)
+				system='centos5'
+				yum_source_name='centos5-lan'
+				;;
+		'Red Hat Enterprise Linux Server release 5'*)
+				system='rhel5'
+				yum_source_name='RHEL5-lan'
+				;;
+		'Red Hat Enterprise Linux Server release 6'*)
+				system='rhel6'
+				yum_source_name='RHEL6-lan'
+				;;
 		'CentOS release 6'*)
-                system='rhel6'
-                yum_source_name='RHEL6-lan'
-                ;;
-        *)
-                system='unknown'
-                echo "This script not support ${system_info}" 1>&2
-                exit 1
-                ;;
+				system='rhel6'
+				yum_source_name='RHEL6-lan'
+				;;
+		*)
+				system='unknown'
+				echo "This script not support ${system_info}" 1>&2
+				exit 1
+				;;
 esac
 
 mark_file="/etc/init_${system}.info"
@@ -51,14 +51,14 @@ $yum install -y wget rsync lftp vim >/dev/null 2>&1 || eval "echo YUM Failed!;ex
 #set ntp
 $yum -y install ntp >/dev/null 2>&1 || install_ntp='fail'
 if [ "${install_ntp}" = "fail" ];then
-        echo "yum fail! ntp install fail!" 1>&2
-        exit 1
+		echo "yum fail! ntp install fail!" 1>&2
+		exit 1
 else
-        grep 'ntpdate' /etc/crontab >/dev/null 2>&1 || ntp_set='no'
-        if [ "${ntp_set}" = "no" ];then
-                echo "*/15 * * * * root ntpdate ${ntp_server} > /dev/null 2>&1" >> /etc/crontab
-                service crond restart
-        fi
+		grep 'ntpdate' /etc/crontab >/dev/null 2>&1 || ntp_set='no'
+		if [ "${ntp_set}" = "no" ];then
+				echo "*/15 * * * * root ntpdate ${ntp_server} > /dev/null 2>&1" >> /etc/crontab
+				service crond restart
+		fi
 fi
 
 #set ulimit
@@ -84,17 +84,17 @@ fi
 #set sysctl
 sysctl_cf='/etc/sysctl.conf'
 if [ -f "${sysctl_cf}" ];then
-        grep -E '^#SET sysctl.conf _END_' >/dev/null ${sysctl_cf} || sysctl_init='fail'
-        if [ "${sysctl_init}" = 'fail' ]; then 
-                /sbin/sysctl -a > /etc/sysctl.conf.${mydate}
-                echo '#init _BEGIN_
+		grep -E '^#SET sysctl.conf _END_' >/dev/null ${sysctl_cf} || sysctl_init='fail'
+		if [ "${sysctl_init}" = 'fail' ]; then 
+				/sbin/sysctl -a > /etc/sysctl.conf.${mydate}
+				echo '#init _BEGIN_
 net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_fin_timeout = 30
 #net.ipv4.tcp_tw_reuse = 1
 #net.ipv4.tcp_tw_recycle = 1
 #net.ipv4.tcp_syncookies = 1
 #net.ipv4.tcp_keepalive_time = 300
-#net.ipv4.ip_local_port_range = 4000    65000
+#net.ipv4.ip_local_port_range = 4000	65000
 #net.ipv4.tcp_max_tw_buckets = 36000
 #net.ipv4.route.gc_timeout = 100
 #net.ipv4.tcp_syn_retries = 2
@@ -110,19 +110,19 @@ net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_max_syn_backlog = 262144
 net.ipv4.tcp_timestamps = 0
 #SET sysctl.conf _END_' >> ${sysctl_cf}
-                /sbin/sysctl -a > ~/set_sysctl.log 2>&1
-                echo "sysctl set OK!!"
-        fi
+				/sbin/sysctl -a > ~/set_sysctl.log 2>&1
+				echo "sysctl set OK!!"
+		fi
 fi
 
 #disable ipv6
 keys=('alias net-pf-10 off' 'alias ipv6 off' 'options ipv6 disable=1')
 conf='/etc/modprobe.conf'
 if [ -f "${conf}" ];then
-        for key in "${keys[@]}"
-        do
-                grep "${key}" ${conf} >/dev/null 2>&1 || echo "${key}" >> ${conf}
-        done
+		for key in "${keys[@]}"
+		do
+				grep "${key}" ${conf} >/dev/null 2>&1 || echo "${key}" >> ${conf}
+		done
 fi
 
 /sbin/chkconfig --list|grep 'ip6tables' >/dev/null 2>&1 && /sbin/chkconfig ip6tables off
@@ -130,9 +130,9 @@ echo "ipv6 is disabled!"
 
 #disable selinux
 if [ -f "/etc/selinux/config" ];then
-        cp /etc/selinux/config /etc/selinux/config.${mydate}
-        sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
-        echo "selinux is disabled,you must reboot!" 1>&2
+		cp /etc/selinux/config /etc/selinux/config.${mydate}
+		sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
+		echo "selinux is disabled,you must reboot!" 1>&2
 fi
 
 #vim
@@ -148,29 +148,29 @@ syntax on" >> /etc/vimrc
 #global
 echo "set global.sh to /etc/profile.d/"
 if [ -d "/etc/profile.d/" ];then
-        cd /etc/profile.d
-        wget -q http://${yum_server}/shell/global.sh || install_env='fail'
-        if [ "${install_env}" = "fail" ];then
-                echo "http://${yum_server}/shell/global.sh not exist!" 1>&2
-                exit 1
-        fi
+		cd /etc/profile.d
+		wget -q http://${yum_server}/shell/global.sh || install_env='fail'
+		if [ "${install_env}" = "fail" ];then
+				echo "http://${yum_server}/shell/global.sh not exist!" 1>&2
+				exit 1
+		fi
 else
-        echo "/etc/profile.d/ not exist!" 1>&2
-        exit 1
+		echo "/etc/profile.d/ not exist!" 1>&2
+		exit 1
 fi
 
 #init_ssh
 ssh_cf="/etc/ssh/sshd_config"
 if [ -f "${ssh_cf}" ];then
-        sed -i "s/#UseDNS yes/UseDNS no/;s/^GSSAPIAuthentication.*$/GSSAPIAuthentication no/" $ssh_cf
-	grep 'SSH vulnerabilities' ${ssh_cf} >/dev/null 2>&1 || echo '#SSH vulnerabilities
+		sed -i "s/#UseDNS yes/UseDNS no/;s/^GSSAPIAuthentication.*$/GSSAPIAuthentication no/" $ssh_cf
+		grep 'SSH vulnerabilities' ${ssh_cf} >/dev/null 2>&1 || echo '#SSH vulnerabilities
 Ciphers aes128-ctr,aes192-ctr,aes256-ctr
 MACs hmac-sha1,hmac-ripemd160' >> ${ssh_cf}
-        service sshd restart
+		service sshd restart
 echo "init sshd ok."
 else
-        echo "${ssh_cf} not find!"
-        exit 1
+		echo "${ssh_cf} not find!"
+		exit 1
 fi
 
 #tunoff services
@@ -178,26 +178,26 @@ chkconfig --list|awk '/:on/{print $1}'|\
 grep -E 'rhnsd|rhsmcertd|certmonger|rhsmcertd|NetworkManager|rpcbind|portreserve|autofs|auditd|cpuspeed|postfix|ip6tables|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
 while read line
 do
-        chkconfig "${line}" off
-        service "${line}" stop >/dev/null 2>&1
-        echo "service ${line} stop"
+		chkconfig "${line}" off
+		service "${line}" stop >/dev/null 2>&1
+		echo "service ${line} stop"
 done
 echo "init service ok."
 
 #rm cron job
 for cron_file in /etc/cron.daily/makewhatis.cron /etc/cron.weekly/makewhatis.cron /etc/cron.daily/mlocate.cron
 do
-        test -e ${cron_file} && chmod -x ${cron_file}
+		test -e ${cron_file} && chmod -x ${cron_file}
 done
 
 #add sysinfo
 grep 'cron_sysinfo.sh' /etc/crontab >/dev/null 2>&1 || cron_sysinfo_set='no'
 if [ "${cron_sysinfo_set}" = "no" ];then
-        sysinfo_shell='/usr/sbin/cron_sysinfo.sh'
-        wget -q http://${yum_server}/shell/cron_sysinfo.sh -O ${sysinfo_shell} ||\
-        echo "Download cron_sysinfo.sh fail!" &&\
-        echo "* * * * * root ${sysinfo_shell} > /dev/null 2>&1" >> /etc/crontab
-        test -f ${sysinfo_shell} && chmod +x ${sysinfo_shell}
+		sysinfo_shell='/usr/sbin/cron_sysinfo.sh'
+		wget -q http://${yum_server}/shell/cron_sysinfo.sh -O ${sysinfo_shell} ||\
+		echo "Download cron_sysinfo.sh fail!" &&\
+		echo "* * * * * root ${sysinfo_shell} > /dev/null 2>&1" >> /etc/crontab
+		test -f ${sysinfo_shell} && chmod +x ${sysinfo_shell}
 fi
 
 #close ctrl+alt+del
