@@ -61,6 +61,9 @@ if [ ! -e "${his_file}" ];then
 fi
 
 grep 'get_history.sh' /etc/crontab >/dev/null 2>&1 || echo "*/5 * * * * root ${his_file} >/dev/null" >>/etc/crontab
+
+test -f /etc/profile.d/global.sh ||\
+wget -q http://${yum_server}/shell/global.sh -O /etc/profile.d/global.sh
 }
 
 main () {
