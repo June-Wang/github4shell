@@ -1,75 +1,26 @@
 #!/bin/bash
 
-check_system (){
-SYSTEM_INFO=`head -n 1 /etc/issue`
-case "${SYSTEM_INFO}" in
-        'CentOS release 5'*)
-                SYSTEM='centos5'
-                INIT_SCRIPT='init_redhat.sh'
-                SOURCE='yum_local.sh'
-                ;;
-        'Red Hat Enterprise Linux Server release 5'*)
-                SYSTEM='rhel5'
-                INIT_SCRIPT='init_redhat.sh'
-                SOURCE='yum_local.sh'
-                ;;
-        'Debian GNU/Linux '*)
-                SYSTEM='debian'
-                INIT_SCRIPT='init_debian.sh'
-                SOURCE='mirrors_local.sh'
-                ;;
-        *)
-                SYSTEM='unknown'
-                echo "This script not support ${SYSTEM_INFO}" 1>&2
-                exit 1
-                ;;
-esac
-}
+YUM_SERVER='xxx.xxx.xxx.xxx'
 
-#http server
-http_server='192.168.1.201'
-url="http://${http_server}/shell"
-
-#print error
-fail () {
-        value=$1
-        message=$2
-        if [ "${value}" = "fail" ];then
-                echo "$2" 1>&2
-                exit 1
-        fi
-}
-
-#check_system 
-
-download_exec () {
-local file="$1"
-wget -q "${url}/${file}" || local case='fail'
-fail "${case}" "${url}/${file} not exist!"
-/bin/bash "${file}"
-[ -f "${file}" ] && rm -f "${file}"
-}
-
-main () {
-check_system
-
-files=(
-${SOURCE}
-${INIT_SCRIPT}
-install_nagios-plugins.sh
-install_nrpe.sh
-install_check_mk.sh
+cmds=(
+init_redhat.sh
+ali_mirrors.sh
 add_history.sh
-install_snmp.sh
-install_salt.sh
+add_sysinfo.sh
+install_tripwire.sh
+add_tripwire.sh
 )
 
-for file in "${files[@]}"
+for shell in "${cmds[@]}"
 do
-#       message=`echo "${file}"|sed 's/sh$/ /g;s/_/ /g'`
-#       echo "${message} ..."
-	download_exec "${file}"
+        curl http://${YUM_SERVER}/shell/${shell}|/bin/bash
+        echo "${shell}" |grep 'ali_mirrors' >/dev/null 2>&1 &&\
+        yum --skip-broken --nogpgcheck install -y wget
 done
-}
 
-main
+ls /usr/bin/yum >/dev/null 2>&1 && \
+yum --skip-broken --nogpgcheck install -y \
+lrzsz check-mk-agent htop salt-minion mawk vim
+
+#salt
+curl http://${YUM_SERVER}/shell/modify_salt.sh|/bin/bash
