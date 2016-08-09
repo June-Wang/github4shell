@@ -34,7 +34,7 @@ if [ ! -e /etc/init.d/rsyslog ];then
        eval "${INSTALL_CMD} install -y rsyslog"
 fi
 
-log_profile='etc/rsyslog.d/rsyslog.format.conf'
+log_profile='/etc/rsyslog.d/rsyslog.format.conf'
 test -d /etc/rsyslog.d/ &&\
 echo 'local4.=debug                                           -/var/log/history.log
 #SET Standard timestamp
@@ -48,7 +48,7 @@ if [ "${MODIFY_SYSCONFIG}" = 'true' ];then
                 sed -i -r 's/^(SYSLOGD_OPTIONS).*/\1=\"-c 3\"/' /etc/sysconfig/rsyslog
         fi
 fi
-/etc/init.d/rsyslog restart
+service rsyslog restart
 eval "${CONFIG_CMD} rsyslog on"
 }
 
@@ -68,7 +68,7 @@ wget -q http://${yum_server}/shell/global.sh -O /etc/profile.d/global.sh
 
 main () {
 yum_server='yum.server.local'
-log_server='syslog.server.local'
+log_server='10.211.16.252'
 check_system
 set_install_cmd
 install_rsyslog
