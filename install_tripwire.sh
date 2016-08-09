@@ -1,46 +1,36 @@
 #!/bin/bash
 
-#SET ENV
-YUM_SERVER='yum.server.local'
-PACKAGE_URL="http://${YUM_SERVER}/tools"
+check_system (){
+ls /usr/bin/yum >/dev/null 2>&1 && SYSTEM='redhat'
+ls /usr/bin/apt-get >/dev/null 2>&1 && SYSTEM='debian'
+}
 
-#SET TEMP PATH
-TEMP_PATH='/usr/local/src'
-
-#SET TEMP DIR
-INSTALL_DIR="install_$$"
-INSTALL_PATH="${TEMP_PATH}/${INSTALL_DIR}"
-
-#SET PACKAGE
-YUM_PACKAGE='tripwire'
-APT_PACKAGE='tripwire'
-
-#SET EXIT STATUS AND COMMAND
-trap "exit 1"           HUP INT PIPE QUIT TERM
-trap "rm -rf ${INSTALL_PATH}"  EXIT
-
-download_func () {
-local func_shell='func4install.sh'
-local func_url="http://${YUM_SERVER}/shell/${func_shell}"
-local tmp_file="/tmp/${func_shell}"
-
-wget -q ${func_url} -O ${tmp_file} && source ${tmp_file} ||\
-eval "echo Can not access ${func_url}! 1>&2;exit 1"
-rm -f ${tmp_file}
+set_install_cmd () {
+case "${SYSTEM}" in
+        redhat)
+                INSTALL_CMD='yum --skip-broken --nogpgcheck'
+                CONFIG_CMD='chkconfig'
+                MODIFY_SYSCONFIG='true'
+        ;;
+        debian)
+                INSTALL_CMD='aptitude'
+                CONFIG_CMD='chkconfig'
+                eval "${INSTALL_CMD} install -y ${CONFIG_CMD}" >/dev/null 2>&1 || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+        ;;
+        *)
+                echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
+        ;;
+esac
 }
 
 main () {
-#DOWNLOAD FUNC FOR INSTALL
-download_func
-
 #CHECK SYSTEM AND CREATE TEMP DIR
 check_system
 #create_tmp_dir
-set_install_cmd 'net'
+set_install_cmd
 
-create_tmp_dir
-#download_and_check
-#run_cmds './configure --prefix=/usr' 'make' 'make install'
+${INSTALL_CMD} install -y tripwire
 
 test -d /etc/tripwire/ &&\
 find /etc/tripwire/ -type f |grep -v '.txt'|\
@@ -196,16 +186,13 @@ SIG_HI        = 100 ;                # Critical files that are
 }
 EOF
 
-if [ ${ISSUE} = 'redhat' ];then
-	/usr/sbin/tripwire-setup-keyfiles
+if [ ${SYSTEM} = 'redhat' ];then
+        /usr/sbin/tripwire-setup-keyfiles
 else
-	/usr/sbin/tripwire --update-policy --secure-mode low /etc/tripwire/twpol.txt
+        /usr/sbin/tripwire --update-policy --secure-mode low /etc/tripwire/twpol.txt
 fi
 
 /usr/sbin/tripwire --init && /usr/sbin/tripwire --check
-
-#EXIT AND CLEAR TEMP DIR
-exit_and_clear
 
 }
 
