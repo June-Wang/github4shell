@@ -193,6 +193,8 @@ else
 fi
 
 /usr/sbin/tripwire --init && /usr/sbin/tripwire --check
+grep 'tripwire --check' /etc/crontab >/dev/null 2>&1 || \
+echo '0 1 * * * root /usr/sbin/tripwire --check >/dev/null' >> /etc/crontab
 
 }
 
