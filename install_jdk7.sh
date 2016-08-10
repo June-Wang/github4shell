@@ -12,6 +12,11 @@ echo -en '下载\t'
 echo -en "${jdk_pkg}"
 echo -en '\t->\t'
 
+#异常退出删除临时文件
+temp_file="/tmp/${jdk_pkg}"
+trap "exit 1"           HUP INT PIPE QUIT TERM
+trap "test -f ${temp_file} && rm -f ${temp_file}"  EXIT
+
 wget -q ${url} -O /tmp/${jdk_pkg} && echo ok ||\
 eval "echo fail;exit 1"
 
