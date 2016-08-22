@@ -7,62 +7,39 @@ cache_server='cache.mirrors.local'
 
 #set DNS
 grep 'cache.mirrors.local' /etc/hosts >/dev/null 2>&1 ||\
-echo 'x.x.x.x cache.mirrors.local' >> /etc/hosts
+echo '10.211.16.250 cache.mirrors.local' >> /etc/hosts
 
 alias_yum () {
 profile_dir='/etc/profile.d'
 [ -d "${profile_dir}" ] &&\
 yum_para='yum --skip-broken --nogpgcheck'
-#echo "alias yum='yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}'" > ${profile_dir}/yum_alias.sh
 echo "alias yum='${yum_para}'" > ${profile_dir}/yum_alias.sh
-#alias yum="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${yum_source_name}"
 alias yum="${yum_para}"
 }
 
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
-        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS.*-lan.repo|RHEL.*-lan.repo'|\
-        while read source_file
-        do
-                mv "${source_file}" "${source_file}.${my_date}.$$"
-        done
+    find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS.*-lan.repo|RHEL.*-lan.repo'|\
+    while read source_file
+    do
+        mv "${source_file}" "${source_file}.${my_date}.$$"
+    done
 fi
 }
 
 backup_source_list () {
 local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
-        local my_date=`date -d "now" +"%F"`
-        mv "${source_file}" "${source_file}.${my_date}.$$"
+    local my_date=`date -d "now" +"%F"`
+    mv "${source_file}" "${source_file}.${my_date}.$$"
 else
-        echo "Can not find ${source_file},please check!" 1>&2
+    echo "Can not find ${source_file},please check!" 1>&2
 fi
 }
 
 mirrors_for_centos () {
-local system_info=`head -n 1 /etc/issue`
-case "${system_info}" in
-        'CentOS release 5'*)
-                local redhat_version='5'
-                ;;
-        'Enterprise Linux Enterprise Linux Server release 5'*)
-                local redhat_version='5'
-                ;;
-        'Red Hat Enterprise Linux Server release 6'*)
-                local redhat_version='6'
-                ;;
-        'CentOS release 6'*)
-                local redhat_version='6'
-                ;;
-        'CentOS release 7'*)
-                local redhat_version='7'
-                ;;
-        *)
-        echo "This script not support ${system_info}" 1>&2
-        exit 1
-                ;;
-esac
+local redhat_version=`grep -oP '\d' /etc/redhat-release|head -n1`
 local repo_file="${SOURCE_DIR}/base.mirrors.repo"
 echo "[base]
 name=CentOS-${redhat_version} - Base - ${centos_mirrors}
@@ -164,21 +141,24 @@ gpgcheck=1" > ${repo_file}
 
 mirrors_for_debian () {
 local source_file="${SOURCE_DIR}/sources.list"
-debian_release=`echo "${SYSTEM_INFO}" |\
-cat /etc/issue|head -n1|grep -oE '[0-9]+'|head -n1`
+debian_release=`grep -oP '\d' /etc/debian_version |head -n1`
 case "${debian_release}" in
-        7)
-                DEBIAN_VERSION='wheezy'
-                DEBIAN_ISSUE='7'
-        ;;
-        6)
-                DEBIAN_VERSION='squeeze'
-                DEBIAN_ISSUE='6'
-        ;;
-        *)
-                echo "This script not support ${SYSTEM_INFO}" 1>&2
-                exit 1
-        ;;
+    8)
+        DEBIAN_VERSION='jessie'
+        DEBIAN_ISSUE='8'
+    ;;
+    7)
+        DEBIAN_VERSION='wheezy'
+        DEBIAN_ISSUE='7'
+    ;;
+    6)
+        DEBIAN_VERSION='squeeze'
+        DEBIAN_ISSUE='6'
+    ;;
+    *)
+        echo "This script not support ${SYSTEM_INFO}" 1>&2
+        exit 1
+    ;;
 esac
 
 backup_source_list
@@ -190,13 +170,13 @@ deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-proposed-updates main
 
 apt_path='/etc/apt/sources.list.d'
 if [ "${DEBIAN_VERSION}" == 'wheezy' ];then
-        test -d ${apt_path} &&\
-        echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > ${apt_path}/salt.list
+    test -d ${apt_path} &&\
+    echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > ${apt_path}/salt.list
 fi
 
 if [ "${DEBIAN_VERSION}" == 'squeeze' ];then
-        test -d ${apt_path} &&\
-        echo "deb http://debian.saltstack.com/debian squeeze-saltstack main
+    test -d ${apt_path} &&\
+    echo "deb http://debian.saltstack.com/debian squeeze-saltstack main
 deb http://backports.debian.org/debian-backports squeeze-backports main contrib non-free" > ${apt_path}/salt.list
 fi
 
@@ -216,8 +196,8 @@ echo 'Acquire::http { Proxy "http://'${cache_server}':3142"; };' > ${proxy_conf}
 set_proxy_for_redhat () {
 local yum_conf='/etc/yum.conf'
 if [ -f "${yum_conf}" ];then
-        sed -i '/^proxy/d' ${yum_conf} 
-        echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
+    sed -i '/^proxy/d' ${yum_conf} 
+    echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
 fi
 }
 
@@ -239,36 +219,28 @@ echo 'Aptitude::Cmdline::ignore-trust-violations "true";' > ${apt_conf}
 }
 
 main () {
-SYSTEM_INFO=`head -n 1 /etc/issue`
-case "${SYSTEM_INFO}" in
-'CentOS'*)
-        SYSTEM='centos'
-        SOURCE_DIR='/etc/yum.repos.d'
-        set_for_redhat
-        ;;
-'Red Hat Enterprise Linux Server release'*)
-        SYSTEM='rhel'
-        SOURCE_DIR='/etc/yum.repos.d'
-        set_for_redhat
-        ;;
-'Enterprise Linux Enterprise Linux Server release'*)
-        SYSTEM='rhel'
-        SOURCE_DIR='/etc/yum.repos.d'
-        set_for_redhat
-        ;;
-'Debian'*)
-        SYSTEM='debian'
-        SOURCE_DIR='/etc/apt'
-        mirrors_for_debian
-        alias_apt
-        set_proxy_for_debian
-        aptitude update
-        ;;
+ls /etc/debian_version >/dev/null 2>&1 && OS='debian'
+ls /etc/redhat-release >/dev/null 2>&1 && OS='redhat'
+
+case "${OS}" in
+redhat)
+    SYSTEM='rhel'
+    SOURCE_DIR='/etc/yum.repos.d'
+    set_for_redhat
+    ;;
+debian)
+    SYSTEM='debian'
+    SOURCE_DIR='/etc/apt'
+    mirrors_for_debian
+    alias_apt
+    set_proxy_for_debian
+    aptitude update
+    ;;
 *)
-        SYSTEM='unknown'
-        echo "This script not support ${SYSTEM_INFO}"1>&2
-        exit 1
-        ;;
+    SYSTEM='unknown'
+    echo "This script not support ${SYSTEM_INFO}"1>&2
+    exit 1
+    ;;
 esac
 }
 
