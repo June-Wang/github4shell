@@ -166,7 +166,7 @@ else
 fi
 
 eval "${cmd}"|awk '{print $1}'|\
-grep -E 'rhnsd|rhsmcertd|certmonger|rhsmcertd|NetworkManager|rpcbind|portreserve|autofs|cpuspeed|postfix|ip6tables|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail'|\
+grep -E 'rhnsd|rhsmcertd|certmonger|rhsmcertd|NetworkManager|rpcbind|portreserve|autofs|cpuspeed|postfix|ip6tables|mdmonitor|pcscd|iptables|bluetooth|nfslock|portmap|ntpd|cups|avahi-daemon|yum-updatesd|sendmail|firewalld'|\
 sed 's/\.service//'|\
 while read line
 do
