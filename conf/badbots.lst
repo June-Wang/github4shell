@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------
+# User-Agent strings that are worth blocking with the following rule
+# in haproxy to prevent your content being stolen, stop spammers and
+# to limit your bandwidth usage.
+#
+#  acl badbots hdr_reg(User-Agent) -i -f /etc/haproxy/badbots.lst
+#  block if badbots
+#
+# By Danny Sheehan  
+# http://www.setuptips.com
+# -----------------------------------------------------------------
+Baiduspider
+Sosospider
+Sogou
+ZumBot
+Yandex
+MJ12bot
+rojerbot
+Exabot
+dotbot
+gigabot
+AhrefsBot
+accelobot
+searchmetrics
+awcheckBot
+CompSpyBot
+EasouSpider
+purebot
+Ezooms
+SurveyBot
+sitebot
+dotnetdotcom
+dotbot
+SolomonoBot
+ZmEu
+lipperhey
+WBSearchBot
+Snoopy
+AhrefsBot
+DinoPing
+dataprovider\.com
+discoverybot
+www\.integromedb\.org
+360Spider
+80legs
+YamanaLab-Robot
+ip\-web\-crawler\.com
+Aboundex
+Sleuth
+NCBot
+JikeSpider
+Curious
+visaduhoc\.info
+SemrushBot
+archive\.org_bot
+Dow\ Jones\ Searchbot
+SISTRIX
+brandwatch\.net
+magpie\-crawler
+YoudaoBot
+TurnitinBot
+aiHitBot
+PeoplePal
+EzineArticlesLinkScanner
+ProCogSEOBot
+ScreenerBot
+PagesInventory
+SeznamBot
+libwww-perl
+^Lynx
+^PHP
+^Wget
+^Nutch
+^Java
+^curl
+^PEAR
+^SEOstats
+^Python\-urllib
+^python\-requests
+^HTTP_Request
+^HTTP_Request2
+Zend_Http_Client
+Jakarta\ Commons-HttpClient
+The\ Incutio\ XML-RPC\ PHP\ Library
+YisouSpider
+SEOENGWorldBot
+Netseer
+Riddler
+CLIPish
+proximic
+Mail\.RU_Bot
+WebCapture
+Indy\ Library
+Add\ Catalog
+Butterfly
+SocialSearcher
+xpymep\.exe
+linkdex\.com
+lindex\.com
+YodaoBot
+^POGS
+WebInDetail\.com
+WEBSITEtheWEB\.COM
+CatchBot
+NextGenSearchBot
+BacklinkCrawler
+^rarely\ used
+^DomainCrawler
+ltbot
+NetcraftSurveyAgent
+#
+COMODO
+Comodo-Certificates-Spider
+OpenWebIndex
+FTRF\:\ Friendly
+^ia_archiver
+Wotbot
+QuerySeekerSpider
+netEstate\ NE\ Crawler
+Synapse
+news\ bot
+#
