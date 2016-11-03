@@ -95,6 +95,7 @@ frontend web_https
 
     #url finsys.xxx.com 自动跳转 finsys.xxx.com/portal
     #redirect prefix https://finsys.xxx.com/portal code 301 if { hdr(host) -i finsys.xxx.com }
+    #redirect prefix https://finsys.bangronghui.com/portal code 301 if !url_portal url_finsys
 
 backend jf_7082
     balance roundrobin    
