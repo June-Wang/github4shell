@@ -93,6 +93,9 @@ frontend web_https
     use_backend jfm_7081        if jfm
     use_backend jfmanager_7080      if jfmanager
 
+    #url finsys.xxx.com 自动跳转 finsys.xxx.com/portal
+    #redirect prefix https://finsys.xxx.com/portal code 301 if { hdr(host) -i finsys.xxx.com }
+
 backend jf_7082
     balance roundrobin    
     cookie SERVERID insert indirect nocache
