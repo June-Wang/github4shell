@@ -12,14 +12,16 @@ global
     tune.bufsize 40960
 
 defaults
-    mode        http
-    log         global
-    option      httplog
-    option      dontlognull
+    mode            http
+    log             global
+    option          httplog
+    option          dontlognull
+    option abortonclose
+    option httpclose
     option http-server-close
     option forwardfor       except 127.0.0.0/8
-    option      redispatch
-    retries     3
+    option          redispatch
+    retries         3
     timeout http-request    10s
     timeout queue       1m
     timeout connect     10s
@@ -27,7 +29,7 @@ defaults
     timeout server      1m
     timeout http-keep-alive 10s
     timeout check       10s
-    maxconn     10000
+    maxconn         10000
 
 listen statistics
     mode http
@@ -42,10 +44,10 @@ listen statistics
 frontend weblb   
     bind *:80
     mode http
-    #option logasap
-    #option httplog
     #option httpclose
+    option forceclose
     log global
+    #redirect scheme https code 301 if !{ ssl_fc }
     redirect scheme https if !{ ssl_fc }
 
 frontend web_https
@@ -53,8 +55,7 @@ frontend web_https
     mode http
 
     log global
-    #option httplog
-    #option forceclose    
+    option forceclose        
 
     #解决url带中文IE返回400错误
     option accept-invalid-http-request
@@ -71,7 +72,7 @@ frontend web_https
 
     #block if badbots
     http-request deny if badbots
-
+    
     acl url_static       path_beg       -i /static-content
     acl url_css     path_beg    -i /static
     acl url_jolokia       path_beg       -i /jolokia
@@ -80,10 +81,10 @@ frontend web_https
     acl jfmanager hdr_beg(host) -i jfmanager.8f8.com
 
     #防盗链
-    acl ref hdr(Referer) -m dom 8f8.com 
+    acl ref hdr(Referer) -m dom 8f8.com    
     acl is_image  path_end    .jpg .jpeg .gif .bmp .png
     http-request deny if !ref is_image
-
+    
     #block if url_jolokia
     http-request deny if url_jolokia
 
@@ -95,19 +96,19 @@ frontend web_https
     use_backend jfmanager_7080    if jfmanager
 
 backend jf_7082
-    balance roundrobin    
+    balance roundrobin        
     cookie SERVERID insert indirect nocache
     server  tomcat132 10.211.26.132:7082 cookie jf01 check inter 2000 rise 3 fall 3 weight 1
     server  tomcat133 10.211.26.133:7082 cookie jf02 check inter 2000 rise 3 fall 3 weight 1
 
 backend jfm_7081
-    balance roundrobin    
+    balance roundrobin        
     cookie SERVERID insert indirect nocache
     server  tomcat132 10.211.26.132:7081 cookie jfm01 check inter 2000 rise 3 fall 3 weight 1
     server  tomcat133 10.211.26.133:7081 cookie jfm02 check inter 2000 rise 3 fall 3 weight 1
 
 backend jfmanager_7080
-    balance roundrobin    
+    balance roundrobin        
     cookie SERVERID insert indirect nocache
     server  tomcat132 10.211.26.132:7080 cookie jfmanager01 check inter 2000 rise 3 fall 3 weight 1
     server  tomcat133 10.211.26.133:7080 cookie jfmanager02 check inter 2000 rise 3 fall 3 weight 1
@@ -121,5 +122,5 @@ backend varnish_6081
     balance     leastconn
     option httpchk HEAD /static-content/check_varnish/varnish.html
     server      varnish01 127.0.0.1:6081 check inter 2000 rise 3 fall 3 weight 1
-    server      varnish02 10.211.26.68:6081 check inter 2000 rise 3 fall 3 weight 1
-#    server      static132 10.211.26.133:51001 check inter 2000 rise 3 fall 3 weight 1 backup
+    server      varnish02 10.211.26.69:6081 check inter 2000 rise 3 fall 3 weight 1
+#    server        static132 10.211.26.132:51001 check inter 2000 rise 3 fall 3 weight 1 backup
