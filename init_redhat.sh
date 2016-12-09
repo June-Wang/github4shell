@@ -112,7 +112,7 @@ echo "ok" 1>&2
 echo -en '设置vim别名'
 echo -en '\t->\t'
 #vim
-sed -i "8 s/^/alias vi='vim'/" /root/.bashrc
+#sed -i "8 s/^/alias vi='vim'/" /root/.bashrc
 #echo 'syntax on' > /root/.vimrc
 echo "alias vi='vim'"  >> /etc/profile.d/vim_alias.sh
 grep -E '^set ts=4' /etc/vimrc >/dev/null 2>&1 ||\
@@ -159,7 +159,7 @@ echo -en '关闭系统服务'
 echo -en '\t->\t'
 #turn off services
 test -f /usr/bin/systemctl && mark='systemd'
-if [ ${mark} == 'systemd' ];then
+if [ "${mark}" == 'systemd' ];then
         cmd='systemctl list-unit-files|grep enabled'
 else
         cmd='chkconfig --list|grep :on'
