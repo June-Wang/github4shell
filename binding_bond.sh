@@ -61,10 +61,10 @@ IPADDR=${BOND_IP}
 NETWORK=${network}
 NETMASK=255.255.255.0
 GATEWAY=${gateway}
-#BOOTPROTO=static
+BOOTPROTO=static
+TYPE=Ethernet
 ONBOOT=yes
 NM_CONTROLLED=no
-BOOTPROTO=none
 USERCTL=no
 BONDING_ OPTS=\" miimon= 100 mode= 1\"" >${bond_conf}
 
