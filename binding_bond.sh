@@ -61,25 +61,26 @@ IPADDR=${BOND_IP}
 NETWORK=${network}
 NETMASK=255.255.255.0
 GATEWAY=${gateway}
-#BOOTPROTO=static
+BOOTPROTO=static
+TYPE=Ethernet
 ONBOOT=yes
 NM_CONTROLLED=no
-BOOTPROTO=none
-USERCTL=no" >${bond_conf}
+USERCTL=no
+BONDING_ OPTS=\" miimon= 100 mode= 1\"" >${bond_conf}
 
-mod_conf='/etc/modprobe.d/binding.conf'
+#mod_conf='/etc/modprobe.d/binding.conf'
 
-#if [ -f "${mod_conf}" ];then
-        grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
-        if [ "${set_bond}" == 'no' ];then
-        echo "
+##if [ -f "${mod_conf}" ];then
+#        grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
+#        if [ "${set_bond}" == 'no' ];then
+#        echo "
 #-=SET ${BOND} BEGIN=-
-alias ${BOND} bonding
-options ${BOND} miimon=100 mode=1" >> ${mod_conf}
-        fi
-#fi
+#alias ${BOND} bonding
+#options ${BOND} miimon=100 mode=1" >> ${mod_conf}
+#        fi
+##fi
 
-modprobe bonding
+#modprobe bonding
 service network restart
 cat /proc/net/bonding/${BOND}
 ifconfig ${BOND}
