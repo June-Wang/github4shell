@@ -12,6 +12,6 @@ do
         if [ "${host}" == '1' ];then
                 grep "$ip\"" lefu-HLG.kdb.csv|sed -r 's|".[^"]*"|"'${pwd}'"|3'
         else
-                echo "\"${ip}\",\"$user\",\"$pwd\",\"\",\"\""
+                echo "\"${ip}\",\"$user\",\"$pwd\",\"cmd://\\\"C:\\\\SecureCRT\\\\SecureCRT.exe\\\" {TITLE} /L {USERNAME} /PASSWORD {PASSWORD}\",\"\""
         fi
 done
