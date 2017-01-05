@@ -99,7 +99,7 @@ do
         sed -r -i "s|^dir.*|dir ${redis_cluster_path}/data/|" ${TEMP_FILE}
         sed -r -i "s|^appendfilename.*|appendfilename appendonly-${id}.aof|" ${TEMP_FILE}
         sed -r -i "s|^cluster-config-file.*|cluster-config-file ${redis_cluster_path}/conf/nodes-${id}.conf|" ${TEMP_FILE}
-        test -f ${TEMP_FILE} && cp ${TEMP_FILE} ${config_file}
+        test -f ${TEMP_FILE} && cat ${TEMP_FILE}|sort -u > ${config_file}
 done
 echo 'OK!'
 
