@@ -10,7 +10,7 @@ PORTS='6380 6381 6382'
 
 #SET TEMP DIR
 INSTALL_DIR="/tmp/install_$$"
-TEMP_FILE="/tmp.redis.conf.$$"
+TEMP_FILE="/tmp/redis.conf.$$"
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
