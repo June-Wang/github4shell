@@ -16,25 +16,25 @@ set_install_cmd () {
 local install_type="$1"
 CONFIG_CMD='chkconfig'
 case "${OS}" in
-    redhat)
-        local install_cmd='yum --skip-broken --nogpgcheck'
-        local package="${YUM_PACKAGE}"
+	redhat)
+	local install_cmd='yum --skip-broken --nogpgcheck'
+	local package="${YUM_PACKAGE}"
 		local logfile='yum.log'
-    ;;
-    debian)
-        local install_cmd='aptitude'
-        local package="${APT_PACKAGE}"
-        eval "${install_cmd} install -y chkconfig >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
+	;;
+	debian)
+	local install_cmd='aptitude'
+	local package="${APT_PACKAGE}"
+	eval "${install_cmd} install -y chkconfig >/dev/null 2>&1" || eval "echo ${install_cmd} fail! 1>&2;exit 1"
 		local logfile='apt.log'
-    ;;
-    *)
-        echo "This script not support ${SYSTEM_INFO}" 1>&2
-                exit 1
-        ;;
+	;;
+	*)
+	echo "This script not support ${SYSTEM_INFO}" 1>&2
+		exit 1
+	;;
 esac
 
 if [ "${OS}" = 'redhat' -a "${install_type}" = 'lan' ];then
-        install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
+	install_cmd="yum --skip-broken --nogpgcheck --disablerepo=\* --enablerepo=${YUM_SOURCE_NAME}"
 fi
 
 local log_file="${TEMP_PATH}/${logfile}"
@@ -45,8 +45,8 @@ if [ -n "${package}" ];then
 fi
 
 if [ "${install_stat}" = "fail" ];then
-        echo -e "${install_cmd} not available!\nview error please type: less ${log_file}" 1>&2
-        exit 1
+	echo -e "${install_cmd} not available!\nview error please type: less ${log_file}" 1>&2
+	exit 1
 fi
 echo "done."
 }
@@ -54,8 +54,8 @@ echo "done."
 create_tmp_dir () {
 mkdir -p "${INSTALL_PATH}" && cd "${INSTALL_PATH}" || local mkdir_dir='fail'
 if [ "${mkdir_dir}" = "fail"  ];then
-        echo "mkdir ${INSTALL_PATH} fail!" 1>&2
-        exit 1
+	echo "mkdir ${INSTALL_PATH} fail!" 1>&2
+	exit 1
 fi
 }
 
@@ -66,12 +66,12 @@ test -d "${INSTALL_PATH}" && rm -rf "${INSTALL_PATH}"
 download_file () {
 local   url="$1"
 
-        echo -n "Download ${url} ...... "
-        wget -q "${url}"  && echo 'done.' || local download='fail'
-        if [ "${download}" = "fail" ];then
-                echo "fail!" 1>&2 && del_tmp
-                exit 1
-        fi
+	echo -n "Download ${url} ...... "
+	wget -q "${url}"  && echo 'done.' || local download='fail'
+	if [ "${download}" = "fail" ];then
+		echo "fail!" 1>&2 && del_tmp
+		exit 1
+	fi
 }
 
 check_file () {
@@ -91,41 +91,41 @@ echo -n "Compile ${file} please wait ...... "
 
 run_cmds () {
 local   cmd_log="${TEMP_PATH}/install_${PACKAGE}.log"
-        test -f "${cmd_log}" && rm -f ${cmd_log}
-        for cmd in "$@"
-        do
-                ${cmd} >> "${cmd_log}" 2>&1 || compile='fail'
-                if [ "${compile}" = 'fail' ]; then
-                        echo "run ${cmd} error! please type: less ${cmd_log}" 1>&2 && del_tmp
-                        exit 1
-                fi
-        done
-        echo "done."
-#               cd ..
+	test -f "${cmd_log}" && rm -f ${cmd_log}
+	for cmd in "$@"
+	do
+		${cmd} >> "${cmd_log}" 2>&1 || compile='fail'
+		if [ "${compile}" = 'fail' ]; then
+			echo "run ${cmd} error! please type: less ${cmd_log}" 1>&2 && del_tmp
+			exit 1
+		fi
+	done
+	echo "done."
+#		   cd ..
 }
 
 download_and_check () {
-        download_file "${PACKAGE_URL}/${PACKAGE}"
-        check_file "${PACKAGE}"
+	download_file "${PACKAGE_URL}/${PACKAGE}"
+	check_file "${PACKAGE}"
 }
 
 create_user () {
 local user="$1"
 local shell="$2"
 case "${shell}" in
-    bash)
-        local user_shell='/bin/bash -m'
-    ;;
-        nologin)
-        local user_shell='/sbin/nologin -M'
-        ;;
-        ksh)
-        local user_shell='/bin/ksh'
-        ;;
-    *)
-        echo "This script not support ${shell}" 1>&2
-                exit 1
-        ;;
+	bash)
+	local user_shell='/bin/bash -m'
+	;;
+	nologin)
+	local user_shell='/sbin/nologin -M'
+	;;
+	ksh)
+	local user_shell='/bin/ksh'
+	;;
+	*)
+	echo "This script not support ${shell}" 1>&2
+		exit 1
+	;;
 esac
 
 id "${user}" >/dev/null 2>&1 ||\
@@ -133,12 +133,12 @@ id "${user}" >/dev/null 2>&1 ||\
 }
 
 echo_bye () {
-        echo "Install ${PACKAGE} complete!"
+	echo "Install ${PACKAGE} complete!"
 }
 
 exit_and_clear () {
-                del_tmp
-                echo_bye
+	del_tmp
+	echo_bye
 }
 
 set_auto_run () {
@@ -150,9 +150,9 @@ fail () {
 value=$1
 message=$2
 if [ "${value}" = "fail" ];then
-        echo "$2" 1>&2
-        exit 1  
-fi      
+	echo "$2" 1>&2
+	exit 1  
+fi	  
 }
 
 download_exec () {
