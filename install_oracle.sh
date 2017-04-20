@@ -1,6 +1,6 @@
 #!/bin/bash
 
-oracle_pkg='oracle11.2.0.4.tar.gz'
+oracle_pkg='oracle11.2.0.4.161018.tar.gz'
 log='/tmp/install_oracle.log'
 
 echo -en 'yum安装oracle必要的依赖包'
@@ -33,13 +33,13 @@ echo 'ok'
 
 echo -en '创建oracle用户及用户组'
 echo -en '\t->\t'
-groupadd -g 1000 oinstall >> ${log} 2>&1 || \
+groupadd -g 5000 oinstall >> ${log} 2>&1 || \
 echo 'oinstall组已存在'
-groupadd -g 1200 dba >> ${log} 2>&1 || \
+groupadd -g 5200 dba >> ${log} 2>&1 || \
 echo 'dba组已存在'
-groupadd -g 1300 oper >> ${log} 2>&1 || \
+groupadd -g 5300 oper >> ${log} 2>&1 || \
 echo 'oper组已存在'
-useradd -m -u 1001 -g oinstall -G dba -d /home/oracle -s /bin/bash -c "Oracle Software Owner" oracle >> ${log} 2>&1 || \
+useradd -m -u 5001 -g oinstall -G dba -d /home/oracle -s /bin/bash -c "Oracle Software Owner" oracle >> ${log} 2>&1 || \
 echo 'oracle用户已存在'
 #passwd oracle
 echo 'Oracle账户创建完毕'
@@ -57,7 +57,7 @@ echo 'ok'
 
 #mkdir -p /u01/app/oracle/product/11.2.0/dbhome_1
 echo -en '目录授权'
-echo -en '\t->\t\'
+echo -en '\t->\t'
 test -d /u01 && chown -R oracle:oinstall /u01 || \
 eval "echo 目录/u01不存在;exit 1"
 chmod -R 775 /u01
@@ -164,7 +164,7 @@ echo 'login配置完毕'
 
 echo -en '删除临时文件'
 echo -en '\t->\t'
-test -f /oracle11.2.0.4.tar.gz && rm -f /oracle11.2.0.4.tar.gz ||\
+test -f /${oracle_pkg} && rm -f /${oracle_pkg} ||\
 eval "echo 删除临时文件失败;exit 1"
 
 echo 'ok'
