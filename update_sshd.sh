@@ -1,22 +1,90 @@
 #!/bin/bash
 
-yum_server='yum.suixingpay.com'
+wget http://10.211.16.250/tools/openssh-7.2p2.tar.gz -O \
+/tmp/openssh-7.2p2.tar.gz || \
+echo 'download openssh-7.2p2.tar.gz fail!'
+rpm -e `rpm -qa openssh` --allmatches --nodeps
 
-pkgs=(
-'openssh-6.1p1-5.el5.1.x86_64.rpm'
-'openssh-server-6.1p1-5.el5.1.x86_64.rpm'
-'openssh-clients-6.1p1-5.el5.1.x86_64.rpm'
-'libedit0-3.0-1.20090722cvs.el5.x86_64.rpm'
-)
+yum --skip-broken --nogpgcheck install -y openssl openssl-devel zlib-devel dropbear gcc glibc glibc-common make cmake gcc-c++ pam-devel ||\
+eval 'echo yum install fail!;exit 1'
 
-trap "exit 1"           HUP INT PIPE QUIT TERM
-trap "rm -f /tmp/*.rpm"  EXIT
+test -d /etc/dropbear ||\
+mkdir -p /etc/dropbear
 
-for pkg in "${pkgs[@]}"
-do
-	wget -q http://${yum_server}/tools/${pkg} -O /tmp/${pkg} || eval "echo Can not download ${pkg}!;exit 1"
-done
+test -f /etc/dropbear/dropbear_dss_host_key ||\
+/usr/bin/dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
 
-cd /tmp/
+test -f /etc/dropbear/dropbear_rsa_host_key ||\
+/usr/bin/dropbearkey -t rsa -s 4096 -f /etc/dropbear/dropbear_rsa_host_key
 
-rpm -Uvh ${pkgs[@]} 
+/usr/sbin/dropbear -p 2222
+
+ls /tmp/openssh-7.2p2.tar.gz && \
+cd /tmp/ ||\
+eval 'echo /tmp/openssh-7.2p2.tar.gz not found!;exit 1'
+
+tar -zxvf openssh-7.2p2.tar.gz &&\
+cd openssh-7.2p2 ||\
+eval 'echo unpack openssh-7.2p2.tar.gz error!;exit 1'
+
+./configure --prefix=/usr --sysconfdir=/etc/ssh  --with-pam --with-zlib --with-md5-passwords && \
+make && make install
+
+"update_sshd.sh" 56L, 1800C written                                                                                                                  
+ansible@yum:/var/www/html/shell$ cat  update_sshd.sh         
+#!/bin/bash
+
+wget http://10.211.16.250/tools/openssh-7.2p2.tar.gz -O \
+/tmp/openssh-7.2p2.tar.gz || \
+echo 'download openssh-7.2p2.tar.gz fail!'
+rpm -e `rpm -qa openssh` --allmatches --nodeps
+
+yum --skip-broken --nogpgcheck install -y openssl openssl-devel zlib-devel dropbear gcc glibc glibc-common make cmake gcc-c++ pam-devel ||\
+eval 'echo yum install fail!;exit 1'
+
+test -d /etc/dropbear ||\
+mkdir -p /etc/dropbear
+
+test -f /etc/dropbear/dropbear_dss_host_key ||\
+/usr/bin/dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
+
+test -f /etc/dropbear/dropbear_rsa_host_key ||\
+/usr/bin/dropbearkey -t rsa -s 4096 -f /etc/dropbear/dropbear_rsa_host_key
+
+/usr/sbin/dropbear -p 2222
+
+ls /tmp/openssh-7.2p2.tar.gz && \
+cd /tmp/ ||\
+eval 'echo /tmp/openssh-7.2p2.tar.gz not found!;exit 1' 
+
+tar -zxvf openssh-7.2p2.tar.gz &&\
+cd openssh-7.2p2 ||\
+eval 'echo unpack openssh-7.2p2.tar.gz error!;exit 1'
+
+./configure --prefix=/usr --sysconfdir=/etc/ssh  --with-pam --with-zlib --with-md5-passwords && \
+make && make install
+
+ls /etc/init.d/sshd >/dev/null 2>&1 && \
+mv /etc/init.d/sshd /tmp/sshd.init.$$ 
+cp contrib/redhat/sshd.init /etc/init.d/sshd
+
+SSH_CONFIG="/etc/ssh/sshd_config"
+test -f ${SSH_CONFIG} && sed -r -i 's/^(GSSAPI*)/#\1/g;s/^(UsePAM*)/#\1/g;s/^(UseDNS*)/#\1/g' ${SSH_CONFIG} ||\
+eval "echo ${SSH_CONFIG} not found!;exit 1"
+
+grep -E '^#-=SET SSHD=-' ${SSH_CONFIG} ||\
+echo '#-=SET SSHD=-
+UseDNS no   
+UsePAM yes
+PasswordAuthentication yes
+PermitRootLogin yes 
+PermitEmptyPasswords no
+PasswordAuthentication yes' >> ${SSH_CONFIG}
+
+SSH_CONFIG="/etc/ssh/ssh_config"
+test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
+eval "echo ${SSH_CONFIG} not found!;exit 1"
+
+rm -rf /tmp/openssh*
+
+service sshd start && chkconfig sshd on
