@@ -1,4 +1,6 @@
 #!/bin/bash
+#SET LOCAL
+export LC_ALL=C
 
 #dns server
 dns_server='10.211.16.250'
