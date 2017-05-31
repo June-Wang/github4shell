@@ -35,7 +35,7 @@ fi
 if [ "${version}" == '7' ];then
 test -f /etc/sysconfig/network-scripts/ifcfg-eno16780032 &&\
 cp /etc/sysconfig/network-scripts/ifcfg-eno16780032 /etc/sysconfig/network-scripts/ifcfg-ens192 &&\
-mv /etc/sysconfig/network-scripts/ifcfg-eno16780032 /tmp/network-scripts/ifcfg-eno16780032.bak.${now}
+mv /etc/sysconfig/network-scripts/ifcfg-eno16780032 /tmp/ifcfg-eno16780032.bak.${now}
 sed -i -r "s/eno16780032/ens192/g;s/^IPADDR=.*$/IPADDR=/${ip}/g;s/^GATEWAY=.*/GATEWAY=${net}254/g" /etc/sysconfig/network-scripts/ifcfg-ens192
 fi
 
