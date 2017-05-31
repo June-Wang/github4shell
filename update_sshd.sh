@@ -85,6 +85,7 @@ SSH_CONFIG="/etc/ssh/ssh_config"
 test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
 eval "echo ${SSH_CONFIG} not found!;exit 1"
 
+chmod 600 /etc/ssh/ssh_.*_key
 rm -rf /tmp/openssh*
 
 service sshd start && chkconfig sshd on
