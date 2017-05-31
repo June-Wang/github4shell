@@ -2,7 +2,8 @@
 
 wget http://10.211.16.250/tools/openssh-7.2p2.tar.gz -O \
 /tmp/openssh-7.2p2.tar.gz || \
-echo 'download openssh-7.2p2.tar.gz fail!'
+eval "echo download openssh-7.2p2.tar.gz fail!;exit 1"
+
 rpm -e `rpm -qa openssh` --allmatches --nodeps
 
 yum --skip-broken --nogpgcheck install -y openssl openssl-devel zlib-devel dropbear gcc glibc glibc-common make cmake gcc-c++ pam-devel ||\
