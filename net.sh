@@ -41,6 +41,7 @@ sed -i -r "s|^IPADDR=.*$|IPADDR=${ip}|g;s|^GATEWAY=.*|GATEWAY=${net}254|g" /etc/
 fi
 
 test -f /tmp/net.sh && rm -f /tmp/net.sh
+test -f /etc/rc.d/rc.local && chmod +x /etc/rc.d/rc.local
 
 echo '
 curl -s http://yum.server.local/shell/init.sh|/bin/bash
