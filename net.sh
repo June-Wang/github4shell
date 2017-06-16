@@ -46,6 +46,7 @@ test -f /etc/rc.d/rc.local && chmod +x /etc/rc.d/rc.local
 echo '
 curl -s http://yum.server.local/shell/init.sh|/bin/bash
 sed -i "/init.sh/d;/sed/d" /etc/rc.local
+sed -i "/init.sh/d;/sed/d" /etc/rc.d/rc.local
 ' >> /etc/rc.local
 
 reboot
