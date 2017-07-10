@@ -4,6 +4,7 @@ awk -F: '$3>=500 && $NF!="/sbin/nologin" || $1=="root"{print $1,$6}' /etc/passwd
 while read user path
 do
         his_file="$path/.bash_history"
+		test -f ${his_file} && /usr/bin/chattr -a ${his_file}
         if [ -s "${his_file}" ];then
                 count=`cat ${his_file}|wc -l`
                 cat ${his_file}|\
@@ -23,5 +24,6 @@ do
                                  logger -t history[$$] -p local4.debug "${user} ${cmd}"
                         done
         sed -i "1,${count}d" ${his_file}
+		/usr/bin/chattr +a ${his_file}
         fi
 done
