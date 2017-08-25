@@ -20,72 +20,72 @@ alias yum="${yum_para}"
 backup_local_repo_file () {
 local my_date=`date -d "now" +"%F"`
 if [ -d "${SOURCE_DIR}" ];then
-    find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS.*-lan.repo|RHEL.*-lan.repo'|\
-    while read source_file
-    do
-        mv "${source_file}" "${source_file}.${my_date}.$$"
-    done
+        find ${SOURCE_DIR} -type f -name "*.repo"|grep -Ev 'CENTOS.*-lan.repo|RHEL.*-lan.repo'|\
+        while read source_file
+        do
+                mv "${source_file}" "${source_file}.${my_date}.$$"
+        done
 fi
 }
 
 backup_source_list () {
 local source_file="${SOURCE_DIR}/sources.list"
 if [ -e ${source_file} ];then
-    local my_date=`date -d "now" +"%F"`
-    mv "${source_file}" "${source_file}.${my_date}.$$"
+        local my_date=`date -d "now" +"%F"`
+        mv "${source_file}" "${source_file}.${my_date}.$$"
 else
-    echo "Can not find ${source_file},please check!" 1>&2
+        echo "Can not find ${source_file},please check!" 1>&2
 fi
 }
 
 mirrors_for_centos () {
-local redhat_version=`grep -oP '\d' /etc/redhat-release|head -n1`
+#local redhat_version=`grep -oP '\d' /etc/redhat-release|head -n1`
 local repo_file="${SOURCE_DIR}/base.mirrors.repo"
 echo "[base]
-name=CentOS-${redhat_version} - Base - ${centos_mirrors}
+name=CentOS-\$releasever - Base - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/centos/${redhat_version}/os/\$basearch/
+baseurl=http://${centos_mirrors}/centos/\$releasever/os/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=os
 gpgcheck=1
-gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-\$releasever
  
 #released updates 
 [updates]
-name=CentOS-${redhat_version} - Updates - ${centos_mirrors}
+name=CentOS-\$releasever - Updates - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/centos/${redhat_version}/updates/\$basearch/
+baseurl=http://${centos_mirrors}/centos/\$releasever/updates/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=updates
 gpgcheck=1
-gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-\$releasever
  
 #additional packages that may be useful
 [extras]
-name=CentOS-${redhat_version} - Extras - ${centos_mirrors}
+name=CentOS-\$releasever - Extras - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/centos/${redhat_version}/extras/\$basearch/
+baseurl=http://${centos_mirrors}/centos/\$releasever/extras/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=extras
 gpgcheck=1
-gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-\$releasever
  
 #additional packages that extend functionality of existing packages
 [centosplus]
-name=CentOS-${redhat_version} - Plus - ${centos_mirrors}
+name=CentOS-\$releasever - Plus - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/centos/${redhat_version}/centosplus/\$basearch/
+baseurl=http://${centos_mirrors}/centos/\$releasever/centosplus/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=centosplus
 gpgcheck=1
 enabled=0
-gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-\$releasever
  
 #contrib - packages by Centos Users
 [contrib]
-name=CentOS-${redhat_version} - Contrib - ${centos_mirrors}
+name=CentOS-\$releasever - Contrib - ${centos_mirrors}
 failovermethod=priority
-baseurl=http://${centos_mirrors}/centos/${redhat_version}/contrib/\$basearch/
+baseurl=http://${centos_mirrors}/centos/\$releasever/contrib/\$basearch/
 #mirrorlist=http://mirrorlist.centos.org/?release=6&arch=\$basearch&repo=contrib
 gpgcheck=1
 enabled=0
-gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-${redhat_version}" > ${repo_file}
+gpgkey=http://${centos_mirrors}/centos/RPM-GPG-KEY-CentOS-\$releasever" > ${repo_file}
 }
 
 mirrors_for_epel () {
@@ -143,22 +143,22 @@ mirrors_for_debian () {
 local source_file="${SOURCE_DIR}/sources.list"
 debian_release=`grep -oP '\d' /etc/debian_version |head -n1`
 case "${debian_release}" in
-    8)
-        DEBIAN_VERSION='jessie'
-        DEBIAN_ISSUE='8'
-    ;;
-    7)
-        DEBIAN_VERSION='wheezy'
-        DEBIAN_ISSUE='7'
-    ;;
-    6)
-        DEBIAN_VERSION='squeeze'
-        DEBIAN_ISSUE='6'
-    ;;
-    *)
-        echo "This script not support ${SYSTEM_INFO}" 1>&2
-        exit 1
-    ;;
+        8)
+                DEBIAN_VERSION='jessie'
+                DEBIAN_ISSUE='8'
+        ;;
+        7)
+                DEBIAN_VERSION='wheezy'
+                DEBIAN_ISSUE='7'
+        ;;
+        6)
+                DEBIAN_VERSION='squeeze'
+                DEBIAN_ISSUE='6'
+        ;;
+        *)
+                echo "This script not support ${SYSTEM_INFO}" 1>&2
+                exit 1
+        ;;
 esac
 
 backup_source_list
@@ -170,13 +170,13 @@ deb-src http://${debian_mirrors}/debian/ ${DEBIAN_VERSION}-proposed-updates main
 
 apt_path='/etc/apt/sources.list.d'
 if [ "${DEBIAN_VERSION}" == 'wheezy' ];then
-    test -d ${apt_path} &&\
-    echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > ${apt_path}/salt.list
+        test -d ${apt_path} &&\
+        echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > ${apt_path}/salt.list
 fi
 
 if [ "${DEBIAN_VERSION}" == 'squeeze' ];then
-    test -d ${apt_path} &&\
-    echo "deb http://debian.saltstack.com/debian squeeze-saltstack main
+        test -d ${apt_path} &&\
+        echo "deb http://debian.saltstack.com/debian squeeze-saltstack main
 deb http://backports.debian.org/debian-backports squeeze-backports main contrib non-free" > ${apt_path}/salt.list
 fi
 
@@ -196,8 +196,8 @@ echo 'Acquire::http { Proxy "http://'${cache_server}':3142"; };' > ${proxy_conf}
 set_proxy_for_redhat () {
 local yum_conf='/etc/yum.conf'
 if [ -f "${yum_conf}" ];then
-    sed -i '/^proxy/d' ${yum_conf} 
-    echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
+        sed -i '/^proxy/d' ${yum_conf} 
+        echo "proxy=http://${cache_server}:3142" >> ${yum_conf}
 fi
 }
 
@@ -224,23 +224,23 @@ ls /etc/redhat-release >/dev/null 2>&1 && OS='redhat'
 
 case "${OS}" in
 redhat)
-    SYSTEM='rhel'
-    SOURCE_DIR='/etc/yum.repos.d'
-    set_for_redhat
-    ;;
+        SYSTEM='rhel'
+        SOURCE_DIR='/etc/yum.repos.d'
+        set_for_redhat
+        ;;
 debian)
-    SYSTEM='debian'
-    SOURCE_DIR='/etc/apt'
-    mirrors_for_debian
-    alias_apt
-    set_proxy_for_debian
-    aptitude update
-    ;;
+        SYSTEM='debian'
+        SOURCE_DIR='/etc/apt'
+        mirrors_for_debian
+        alias_apt
+        set_proxy_for_debian
+        aptitude update
+        ;;
 *)
-    SYSTEM='unknown'
-    echo "This script not support ${SYSTEM_INFO}"1>&2
-    exit 1
-    ;;
+        SYSTEM='unknown'
+        echo "This script not support ${SYSTEM_INFO}"1>&2
+        exit 1
+        ;;
 esac
 }
 
