@@ -130,27 +130,11 @@ cat >> /etc/security/limits.conf <<EOF
 #for oracle limits
 oracle  soft nproc   16384
 oracle  hard nproc   16384
-oracle  soft nofile  1024000
-oracle  hard nofile  1024000
+oracle  soft nofile  10240
+oracle  hard nofile  10240
 EOF
 
 echo 'limits.conf配置完毕'
-
-grep 'for oracle profile' /etc/profile >/dev/null 2>&1 &&\
-echo 'profile已配置' ||\
-cat >> /etc/profile <<EOF
-#for oracle profile
-if [ \$USER = "oracle" ]; then 
-    if [ \$SHELL = "/bin/ksh" ]; then
-        ulimit -p 16384
-        ulimit -n 65536
-    else
-        ulimit -u 16384 -n 65536
-    fi
-fi
-EOF
-
-echo 'profile配置完毕'
 
 grep 'for oracle login' /etc/pam.d/login >/dev/null 2>&1 &&\
 echo 'login已配置' ||\
