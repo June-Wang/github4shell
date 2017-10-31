@@ -103,7 +103,7 @@ test -f /etc/profile.d/luajit.sh &&\
 source /etc/profile.d/luajit.sh ||\
 eval "echo /etc/profile.d/luajit.sh not found!;exit 1"
  
-./configure --prefix=/usr/local/nginx --with-http_stub_status_module \
+./configure --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module \
 --add-module=${lua_nginx_module_path} \
 --add-module=${nginx_sticky_module_path} \
 --add-module=${ngx_devel_kit_path} > /tmp/install_${pkg}.log 2>&1 ||\
