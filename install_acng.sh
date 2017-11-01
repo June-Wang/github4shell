@@ -197,7 +197,7 @@ INSTALL_DIR="install_$$"
 #SET GLOBAL VAR
 MY_PROJECT='apt-cacher-ng'
 PACKAGE='apt-cacher-ng-0.7.7.tar.gz'
-YUM_SERVER='yum.suixingpay.com'
+YUM_SERVER='yum.server.local'
 YUM_PACKAGE='gcc glibc glibc-common make cmake gcc-c++ zlib zlib-devel bzip2-libs bzip2-devel pkgconfig fuse fuse-devel'
 
 trap "exit 1"           HUP INT PIPE QUIT TERM
