@@ -1,7 +1,7 @@
 #!/bin/bash
 
 yum_server='10.211.16.250'
-yum_package='xinetd nrpe nagios-plugins'
+yum_package='xinetd nrpe nagios-plugins-perl'
 
 ls /usr/bin/yum >/dev/null 2>&1 ||\
 eval "echo 未安装yum!;exit 1"
