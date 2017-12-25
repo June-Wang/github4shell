@@ -79,7 +79,10 @@ if [ -f "${sysctl_cf}" ];then
 #net.ipv4.tcp_max_orphans = 262144
 #net.ipv4.tcp_max_syn_backlog = 262144
 net.ipv4.tcp_timestamps = 0
+#SEC
 kernel.modules_disabled = 1
+kernel.kptr_restrict = 1
+vm.mmap_min_addr = 65536
 #SET sysctl.conf _END_' >> ${sysctl_cf}
                 /sbin/sysctl -a > ~/set_sysctl.log 2>&1
         fi
