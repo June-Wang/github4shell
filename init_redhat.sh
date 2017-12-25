@@ -59,7 +59,6 @@ if [ -f "${sysctl_cf}" ];then
         if [ "${sysctl_init}" = 'fail' ]; then 
                 /sbin/sysctl -a > /etc/sysctl.conf.${mydate}
                 echo '#init _BEGIN_
-net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_fin_timeout = 30
 #net.ipv4.tcp_tw_reuse = 1
 #net.ipv4.tcp_tw_recycle = 1
@@ -80,6 +79,7 @@ net.ipv4.tcp_timestamps = 0
 #net.ipv4.tcp_max_orphans = 262144
 #net.ipv4.tcp_max_syn_backlog = 262144
 net.ipv4.tcp_timestamps = 0
+kernel.modules_disabled = 1
 #SET sysctl.conf _END_' >> ${sysctl_cf}
                 /sbin/sysctl -a > ~/set_sysctl.log 2>&1
         fi
