@@ -48,5 +48,9 @@ export JAVA_HOME JAVA_BIN PATH CLASSPATH" > /etc/profile.d/jdk_env.sh && \
 echo ok ||\
 eval "echo fail;exit 1"
 
+test -f /etc/profile.d/jdk_env.sh &&\
+source /etc/profile.d/jdk_env.sh
+sed -r -i.bak 's|^securerandom.source=.*|securerandom.source=file:/dev/./urandom|' $JAVA_HOME/jre/lib/security/java.security
+
 echo '激活JDK配置，请断开当前会话，并重新登陆!'
 echo bye
