@@ -51,6 +51,10 @@ PermitRootLogin yes
 PermitEmptyPasswords no
 PasswordAuthentication yes' >> ${SSH_CONFIG}
 
+grep -E '^UseDNS|^UsePAM' ${SSH_CONFIG} ||\
+echo 'UseDNS no   
+UsePAM yes' >> ${SSH_CONFIG}
+
 SSH_CONFIG="/etc/ssh/ssh_config"
 test -f ${SSH_CONFIG} && sed -i 's/GSSAPIAuthentication/#GSSAPIAuthentication/;s/^Host/#Host/' ${SSH_CONFIG} ||\
 eval "echo ${SSH_CONFIG} not found!;exit 1"
