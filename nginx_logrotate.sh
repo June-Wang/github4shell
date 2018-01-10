@@ -24,7 +24,8 @@ file_suffix=`date -d "-1 day" +"%F"`
 find ${nginx_log_path}/ -mindepth 1 -maxdepth 1 -type f -name '*.log'|\
 while read log
 do
-        mv ${nginx_log_path}/${log} ${backup_path}/${log}.${file_suffix}
+	file=`basename ${log}`
+	mv ${nginx_log_path}/${file} ${backup_path}/${file}.${file_suffix}
 done
 
 kill -USR1 `cat ${nginx_pid}` && exit 0 ||\
