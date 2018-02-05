@@ -144,6 +144,10 @@ else
         exit 1
 fi
 
+#关闭对挂载文件系统的检测
+test -f /etc/updatedb.conf &&\
+sed -r -i 's/^PRUNE_BIND_MOUNTS.*$/PRUNE_BIND_MOUNTS = "no"/' /etc/updatedb.conf
+
 echo -en '初始化sshd服务'
 echo -en '\t->\t'
 #init_ssh
