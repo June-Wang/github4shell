@@ -3,7 +3,6 @@
 YUM_SERVER='x.x.x.x'
 
 cmds=(
-update_sshd.sh
 init_redhat.sh
 ali_mirrors.sh
 add_history.sh
