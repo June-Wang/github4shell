@@ -4,12 +4,13 @@ YUM_SERVER='yum.server.local'
 
 ls /usr/bin/yum >/dev/null 2>&1 && \
 yum --skip-broken --nogpgcheck install -y \
-htop salt-minion mawk 
+htop salt-minion mawk
 
 cmds=(
 install_tripwire.sh
 add_tripwire.sh
 id.sh
+update_sshd.sh
 )
 
 for shell in "${cmds[@]}"
