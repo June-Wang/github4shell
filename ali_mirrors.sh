@@ -201,12 +201,21 @@ if [ -f "${yum_conf}" ];then
 fi
 }
 
+get_redhat_version () {
+local release_file='/etc/redhat-release'
+test -f ${release_file} &&\
+local yum_releasever=`rpm -qf /etc/redhat-release|head -n1|xargs -r -i rpm -q --qf %{version} '{}'|sed 's/Server//'`
+echo ${yum_releasever}
+}
+
 set_for_redhat () {
 backup_local_repo_file
 mirrors_for_centos
 mirrors_for_epel
 set_proxy_for_redhat
 alias_yum
+local version=`get_redhat_version`
+sed -i "s/\$releasever/${version}/g" ${SOURCE_DIR}/*.repo
 yum clean all
 }
 
