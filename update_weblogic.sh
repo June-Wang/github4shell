@@ -1,5 +1,6 @@
 #!/bin/bash
 
+yum_server='x.x.x.x'
 id weblogic >/dev/null 2>&1 && user_id='weblogic'
 id brh >/dev/null 2>&1 && user_id='brh'
 
@@ -18,7 +19,7 @@ mkdir -p ${cache_path}
 test -d ${cache_path} &&\
 chown ${user_id}.${user_id} ${cache_path}
 
-url='http://10.211.16.250/patch/weblogic/CVE-2017-10271p26519424_1036_Generic.zip'
+url="http://${yum_server}/patch/weblogic/CVE-2017-10271p26519424_1036_Generic.zip"
 package=`echo ${url}|awk -F'/' '{print $NF}'`
 wget ${url} -O ${cache_path}/${package}
 
