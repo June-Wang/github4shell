@@ -105,8 +105,10 @@ cd_to_path "${pkg_path}"
 test -f /etc/profile.d/luajit.sh &&\
 source /etc/profile.d/luajit.sh ||\
 eval "echo /etc/profile.d/luajit.sh not found!;exit 1"
+
+path2install='/usr/local/nginx'
  
-./configure --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module \
+./configure --prefix=${path2install} --with-http_stub_status_module --with-http_ssl_module \
 --add-module=${lua_nginx_module_path} \
 --add-module=${nginx_sticky_module_path} \
 --add-module=${ngx_devel_kit_path} > /tmp/install_${pkg}.log 2>&1 ||\
@@ -124,5 +126,6 @@ echo '/usr/local/lib' > /etc/ld.so.conf.d/ex_module.conf
 useradd -s /sbin/nologin nginx
 ln -sf /usr/local/nginx/sbin/nginx  /usr/sbin
 
-nginx -t && nginx -V ||\
-eval "echo nginx 安装失败!;exit 1"
+test -d ${path2install} && chown nginx.nginx -R ${path2install}
+
+nginx -t && nginx -V 
