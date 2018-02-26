@@ -3,6 +3,7 @@
 ip="$1"
 net=`echo ${ip}|awk -F'.' '{print $3}'`
 host=`echo ${ip}|awk -F'.' '{print $4}'`
+gateway=`echo "${ip}"|grep -oP '(\d{1,3}\.){3}'|xargs -r -i echo '{}254'`
 
 test -f /etc/sysconfig/network-scripts/ifcfg-eth0 && \
 cp /etc/sysconfig/network-scripts/ifcfg-eth0 /tmp/ifcfg-eth0.$$
@@ -16,7 +17,7 @@ NM_CONTROLLED=yes
 BOOTPROTO=static
 IPADDR=${ip}
 PREFIX=24
-GATEWAY=${net}" > /etc/sysconfig/network-scripts/ifcfg-eth0
+GATEWAY=${gateway}" > /etc/sysconfig/network-scripts/ifcfg-eth0
 
 sed -r -i "s/^HOSTNAME.*$/HOSTNAME=HOST${host}/" /etc/sysconfig/network
 sed -r -i "s/127.0.0.1   localhost/127.0.0.1  ${host} localhost/" /etc/hosts
