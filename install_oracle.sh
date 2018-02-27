@@ -26,8 +26,7 @@ make  \
 openmotif  \
 sysstat  \
 unixODBC \
-unixODBC-devel \
-pdksh >${log} 2>&1 ||\
+unixODBC-devel >${log} 2>&1 ||\
 eval "echo yum安装失败;exit 1" && \
 echo 'ok'
 
