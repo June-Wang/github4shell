@@ -1,0 +1,17 @@
+# default: on
+# description: mysqlchk
+service mysqlchk
+{
+        flags           = REUSE
+        socket_type     = stream
+        port            = 9200
+        wait            = no
+        user            = root
+        server          = /usr/local/bin/mysqlchk.sh
+        log_on_failure  += USERID
+        disable         = no
+#        only_from       = 0.0.0.0/0
+# recommended to put the IPs that need
+# to connect exclusively (security purposes)
+        per_source      = UNLIMITED
+}
