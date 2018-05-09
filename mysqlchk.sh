@@ -42,7 +42,8 @@ query=`$MYSQL_BIN $MYSQL_OPTS --host=$MYSQL_HOST --port=$MYSQL_PORT -e "$CHECK_Q
 test -z "${query}" && return_fail
 status=`echo ${query}|awk '{print $NF}'`
 
-if [ "$status" == '0' ]; then
+#if [ "$status" == '0' ]; then
+if [ "$status" == ${CHECK_OPT} ]; then
         return_ok
 else
                 return_fail
