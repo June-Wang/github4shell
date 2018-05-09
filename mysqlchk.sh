@@ -18,8 +18,10 @@ MYSQL_HOST="127.0.0.1"
 MYSQL_PORT="3306"
 MYSQL_OPTS="--skip-column-names -s -A -C"
 MYSQL_BIN="/usr/bin/mysql"
-CHECK_OPT='Com_show_table_status'
-CHECK_QUERY="show global status where variable_name='${CHECK_OPT}'"
+#CHECK_OPT='Com_show_table_status'
+#CHECK_QUERY="show global status where variable_name='${CHECK_OPT}'"
+CHECK_OPT='bfb'
+CHECK_QUERY="SHOW DATABASES like '${CHECK_OPT}'"
 return_ok()
 {
     echo -e "HTTP/1.1 200 OK\r\n"
