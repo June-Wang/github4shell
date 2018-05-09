@@ -9,9 +9,9 @@ service mysqlchk
         user            = root
         server          = /usr/local/bin/mysqlchk.sh
         log_on_failure  += USERID
+        log_on_success  =
         disable         = no
 #        only_from       = 0.0.0.0/0
-# recommended to put the IPs that need
-# to connect exclusively (security purposes)
+        log_type = FILE /dev/null
         per_source      = UNLIMITED
 }
