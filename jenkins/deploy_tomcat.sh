@@ -11,7 +11,7 @@ eval "echo lftp 命令未找到!;exit 1"
 
 show_env () {
 echo '环境变量'
-env|grep -E 'USER|JAVA|PATH|HOME|CLASSPATH'|sort
+env|grep -E 'USER|JAVA|PATH|HOME|CLASSPATH|PWD'|sort
 }
 
 stop_tomcat () {
