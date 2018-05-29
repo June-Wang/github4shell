@@ -9,7 +9,8 @@ global
 
     stats socket /var/lib/haproxy/stats
     tune.ssl.default-dh-param  1024    
-    tune.bufsize 40960
+    ssl-default-bind-options no-sslv3
+    #tune.bufsize 40960
 
 defaults
     mode            http
