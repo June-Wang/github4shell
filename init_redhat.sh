@@ -85,20 +85,9 @@ net.ipv4.tcp_timestamps = 0
 fi
 echo 'ok'
 
-#echo -en '禁用ipv6'
-#echo -en '\t->\t'
-#disable ipv6
-#keys=('alias net-pf-10 off' 'alias ipv6 off' 'options ipv6 disable=1')
-#conf='/etc/modprobe.conf'
-#if [ -f "${conf}" ];then
-#        for key in "${keys[@]}"
-#        do
-#                grep "${key}" ${conf} >/dev/null 2>&1 || echo "${key}" >> ${conf}
-#        done
-#fi
-
-#/sbin/chkconfig --list|grep 'ip6tables' >/dev/null 2>&1 && /sbin/chkconfig ip6tables off
-#echo 'ok'
+test -f /etc/rsyslog.conf &&\
+sed -r -i '/messages$/s/info/err/' /etc/rsyslog.conf
+service rsyslog restart
 
 echo -en '禁用selinux'
 echo -en '\t->\t'
