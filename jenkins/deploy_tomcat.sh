@@ -76,7 +76,7 @@ eval "echo tomcat启动成功!" ||\
 eval "echo tomcat启动失败!;exit 1"
 }
 
-rm_bakcup () {
+rm_backup () {
 echo "清除备份文件"
 test -d ~/archive/${pro} &&\
 find ~/archive/${pro} -maxdepth 1 -mindepth 1 -type d|sort -r|sed '1,5d'|xargs -r -i rm -rf '{}'
@@ -91,7 +91,7 @@ sleep 2s
 backup_tomcat
 deploy_tomcat
 start_tomcat
-rm_bakcup
+rm_backup
 echo "${pro}部署完毕!"
 }
 
