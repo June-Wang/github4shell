@@ -6,12 +6,12 @@ BOND="$3"
 BOND_IP="$4"
 
 usage () {
-	echo -en "$0 [dev1] [dev2] [bond] [IP]\nFor example: $0 eth0 eth1 bond0 192.168.10.18\n" 1>&2
-	exit 1
+        echo -en "$0 [dev1] [dev2] [bond] [IP]\nFor example: $0 eth0 eth1 bond0 192.168.10.18\n" 1>&2
+        exit 1
 }
 
 if [ -z "${NIC1}" -o -z "${NIC2}" -o -z "${BOND}" -o -z "${BOND_IP}" ];then
-	usage
+        usage
 fi
 
 NIC_DEV=(
@@ -21,8 +21,8 @@ ${NIC2}
 
 for nic in "${NIC_DEV[@]}"
 do
-	ip addr show|grep "${nic}" >/dev/null 2>&1 ||\
-	eval "echo \"${nic} not exist!please tap ifconfig -a\" 1>&2;exit 1"
+        ip addr show|grep "${nic}" >/dev/null 2>&1 ||\
+        eval "echo \"${nic} not exist!please tap ifconfig -a\" 1>&2;exit 1"
 done
 
 echo "${BOND_IP}"|grep -oP '^\d{1,3}(\.\d{1,3}){3}$' ||\
@@ -61,26 +61,25 @@ IPADDR=${BOND_IP}
 NETWORK=${network}
 NETMASK=255.255.255.0
 GATEWAY=${gateway}
-BOOTPROTO=static
-TYPE=Ethernet
+#BOOTPROTO=static
 ONBOOT=yes
 NM_CONTROLLED=no
-USERCTL=no
-BONDING_ OPTS=\" miimon= 100 mode= 1\"" >${bond_conf}
+BOOTPROTO=none
+USERCTL=no" >${bond_conf}
 
-#mod_conf='/etc/modprobe.d/binding.conf'
+mod_conf='/etc/modprobe.d/binding.conf'
 
-##if [ -f "${mod_conf}" ];then
-#        grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
-#        if [ "${set_bond}" == 'no' ];then
-#        echo "
+#if [ -f "${mod_conf}" ];then
+grep -E "^#-=SET ${BOND} BEGIN=-" ${mod_conf} >/dev/null 2>&1 || set_bond='no'
+if [ "${set_bond}" == 'no' ];then
+echo "
 #-=SET ${BOND} BEGIN=-
-#alias ${BOND} bonding
-#options ${BOND} miimon=100 mode=1" >> ${mod_conf}
-#        fi
-##fi
+alias ${BOND} bonding
+options ${BOND} miimon=100 mode=1" >> ${mod_conf}
+fi
+#fi
 
-#modprobe bonding
+modprobe bonding
 service network restart
 cat /proc/net/bonding/${BOND}
 ifconfig ${BOND}
