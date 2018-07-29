@@ -52,7 +52,7 @@ then
 
     # Information about distribution
     echo "<<<lnx_distro:sep(124):persist($UNTIL)>>>"
-    for f in {/etc/{debian_version,lsb-release,redhat-release,SuSE-release},/usr/share/cma/version} ; do
+    for f in {/etc/{oracle-release,debian_version,gentoo-release,lsb-release,redhat-release,SuSE-release},/usr/share/cma/version} ; do
         if [ -e $f ] ; then
             echo -n "$f|" ; tr \\n \| < $f | sed 's/|$//' ; echo
         fi
@@ -77,12 +77,12 @@ then
         uname -r
     fi
     if type lspci > /dev/null ; then
-        echo "<<<lnx_vga:sep(58):persist($UNTIL)>>>"
+        echo "<<<lnx_video:sep(58):persist($UNTIL)>>>"
         lspci  -v -s  $(lspci | grep VGA | cut -d" " -f 1)
     fi
 
     # Some networking information
-    if type ip ; then
+    if type ip > /dev/null ; then
         echo "<<<lnx_ip_a:persist($UNTIL)>>>"
         ip a
         echo "<<<lnx_ip_r:persist($UNTIL)>>>"
@@ -90,4 +90,3 @@ then
     fi
 
 fi
-
