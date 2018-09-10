@@ -1,0 +1,18 @@
+GET _search
+{
+  "query": { 
+    "bool": { 
+      "must": [
+        { "match": { "level":   "ERROR"        }}
+      ],
+      "filter": {
+       "range": {
+      "@timestamp": {
+      "gte": "now-1h",
+      "lt": "now"
+      } 
+        }   
+    }
+    }
+  }
+}
