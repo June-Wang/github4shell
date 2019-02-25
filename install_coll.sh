@@ -1,6 +1,11 @@
 #!/bin/bash
 
-#pkg_url='https://github.com/Graylog2/collector-sidecar/releases/download/0.1.6/collector-sidecar_0.1.6-1_amd64.deb'
+coll_server="127.0.0.1"
+tag="mongo_log"
+
+[ -z "${tag}" -o -z "${coll_server}" ] &&\
+eval "echo tag or coll_server is null!;exit 1"
+
 pkg_url='https://github.com/Graylog2/collector-sidecar/releases/download/0.1.8/collector-sidecar_0.1.8-1_amd64.deb'
 tmp_file='/tmp/collector-sidecar.deb'
 
@@ -18,7 +23,6 @@ sudo /usr/bin/graylog-collector-sidecar -service install
 
 sudo systemctl enable collector-sidecar.service
 
-coll_server='172.24.0.70'
 ip=`/sbin/ip addr list|grep -A1 eth0|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
 coll_config='/etc/graylog/collector-sidecar/collector_sidecar.yml'
 test -f ${coll_config} &&\
@@ -34,7 +38,7 @@ log_path: /var/log/graylog/collector-sidecar
 log_rotation_time: 86400
 log_max_age: 604800
 tags:
-    - jump_log
+    - ${tag}
 #    - apache
 backends:
     - name: nxlog
@@ -45,3 +49,4 @@ backends:
       enabled: true
       binary_path: /usr/bin/filebeat
       configuration_path: /etc/graylog/collector-sidecar/generated/filebeat.yml" > ${coll_config}
+service collector-sidecar restart
