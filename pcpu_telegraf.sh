@@ -21,5 +21,4 @@ do
     echo "pcpu_info,host=${hostname},server=${ip},user=${user},proc_name=${args},pid=${pid} pcpu=${pcpu},mem_rss=${rss},vsize=${vsize} ${timetamp}"
 done > ${tmp}
 
-test -f ${tmp} &&\ 
-cat ${tmp}
+test -f ${tmp} && cat ${tmp}
