@@ -8,7 +8,8 @@ hostname=`hostname`
 ip=`/sbin/ip addr list|grep -E "${dev_name}$"|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
 timetamp=`date -d now +"%s%N"`
 
-netstat -ant|grep -Ev 'LISTEN|State$'|\
+#netstat -ant|grep -Ev 'LISTEN|State$'|\
+netstat -ant|grep -Ev 'State$'|\
 awk '{print $(NF-2),$(NF-1),$(NF)}'|\
 sed -r 's/:/\t/g'|\
 awk -v hostname="${hostname}" -v ip="${ip}" -v timetamp="${timetamp}" \
