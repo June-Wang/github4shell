@@ -5,5 +5,5 @@ then
   let utc_time = parse_date(to_string($message.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
   //let time_local = format_date(utc_time,"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","+08:00");
   let time_local = format_date(utc_time,"yyyy-MM-dd HH:mm:ss","+08:00");
-  set_field("time_local", time_local);
+  set_field("time_local_bj", time_local);
 end
