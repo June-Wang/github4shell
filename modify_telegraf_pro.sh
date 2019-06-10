@@ -1,11 +1,8 @@
 #!/bin/bash
 
-users=`ps -eo user|sort -u|grep -v 'USER'|awk 'BEGIN{ORS="|"}{print $1}'|sed -r 's/.$//'`
-#echo ${users}
-#exit 
+pattern=`awk -F':' 'BEGIN{ORS="|"}{print $1}' /etc/passwd|sed 's/.$//;s/-/|/g'`
 
-config='/etc/telegraf/telegraf.conf'
-test -f ${config} &&\
-echo "${users}"|xargs -r -i sed -r -i 's/pattern =.*/pattern = "{}"/' ${config} &&\
-sed -r -i 's/user =(.*)/#user =\1/' ${config}
+telegraf_config='/etc/telegraf/telegraf.conf'
+test -f ${telegraf_config} &&\
+echo "${pattern}"|xargs -r -i sed -r -i 's/pattern = .*$/pattern = "{}"/g' ${telegraf_config}
 service telegraf restart
