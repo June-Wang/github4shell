@@ -20,6 +20,6 @@ do
 done |sed 's/#/\"/g'|\
 while read line
 do
-    echo -n ${line}|nc -w0 -u ${graylog_server} 12201
+    echo -n ${line}|nc -w1 -u ${graylog_server} 12201
     #echo  ${line}
 done
