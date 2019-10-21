@@ -1,0 +1,127 @@
+global
+    log     127.0.0.1 local6 err
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     50000
+    user    haproxy
+    group       haproxy
+    daemon
+
+    stats socket /var/lib/haproxy/stats
+    tune.ssl.default-dh-param  1024    
+    ssl-default-bind-options no-sslv3
+    #tune.bufsize 40960
+
+defaults
+    mode            http
+    log             global
+    option          httplog
+    option          dontlognull
+    option abortonclose
+    option httpclose
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option          redispatch
+    retries         3
+    timeout http-request    10s
+    timeout queue       1m
+    timeout connect     10s
+    timeout client      1m
+    timeout server      1m
+    timeout http-keep-alive 10s
+    timeout check       10s
+    maxconn         10000
+
+listen statistics
+    mode http
+    bind *:3753    
+    stats enable   
+    stats auth admin:admin    
+    stats uri /admin    
+    stats hide-version    
+    stats admin if TRUE       
+    stats refresh 30s    
+
+frontend weblb   
+    bind *:80
+    mode http
+    #option httpclose
+    option forceclose
+    log global
+    #redirect scheme https code 301 if !{ ssl_fc }
+    redirect scheme https if !{ ssl_fc }
+
+frontend web_https
+    bind *:443 ssl crt /etc/haproxy/bfb-key/jf.8f8.com.pem 
+    mode http
+
+    log global
+    option forceclose        
+
+    #解决url带中文IE返回400错误
+    option accept-invalid-http-request
+
+    #使后端server获取到客户端的真实IP
+    option forwardfor
+
+    #gzip on
+    compression algo gzip
+    compression type text/css text/javascript application/javascript text/plain text/xml application/json
+
+    #deny bad robot
+    acl badbots hdr_reg(User-Agent) -i -f /etc/haproxy/badbots.lst
+
+    #block if badbots
+    http-request deny if badbots
+    
+    acl url_static       path_beg       -i /static-content
+    acl url_css     path_beg    -i /static
+    acl url_jolokia       path_beg       -i /jolokia
+    acl jf hdr_beg(host) -i jf.8f8.com
+    acl jfm hdr_beg(host) -i jfm.8f8.com
+    acl jfmanager hdr_beg(host) -i jfmanager.8f8.com
+
+    #防盗链
+    acl ref hdr(Referer) -m dom 8f8.com    
+    acl is_image  path_end    .jpg .jpeg .gif .bmp .png
+    http-request deny if !ref is_image
+    
+    #block if url_jolokia
+    http-request deny if url_jolokia
+
+    #use_backend static_51001    if url_static
+    #use_backend varnish_6081    if url_static
+    use_backend varnish_6081    if url_static or url_css
+    use_backend jf_7082        if jf
+    use_backend jfm_7081        if jfm
+    use_backend jfmanager_7080    if jfmanager
+
+backend jf_7082
+    balance roundrobin        
+    cookie SERVERID insert indirect nocache
+    server  tomcat132 10.211.26.132:7082 cookie jf01 check inter 2000 rise 3 fall 3 weight 1
+    server  tomcat133 10.211.26.133:7082 cookie jf02 check inter 2000 rise 3 fall 3 weight 1
+
+backend jfm_7081
+    balance roundrobin        
+    cookie SERVERID insert indirect nocache
+    server  tomcat132 10.211.26.132:7081 cookie jfm01 check inter 2000 rise 3 fall 3 weight 1
+    server  tomcat133 10.211.26.133:7081 cookie jfm02 check inter 2000 rise 3 fall 3 weight 1
+
+backend jfmanager_7080
+    balance roundrobin        
+    cookie SERVERID insert indirect nocache
+    server  tomcat132 10.211.26.132:7080 cookie jfmanager01 check inter 2000 rise 3 fall 3 weight 1
+    server  tomcat133 10.211.26.133:7080 cookie jfmanager02 check inter 2000 rise 3 fall 3 weight 1
+
+#backend static_51001
+#    balance     roundrobin
+#    server      static132 10.211.26.132:51001 check
+#    server      static133 10.211.26.133:51001 check
+
+backend varnish_6081
+    balance     leastconn
+    option httpchk HEAD /static-content/check_varnish/varnish.html
+    server      varnish01 127.0.0.1:6081 check inter 2000 rise 3 fall 3 weight 1
+    server      varnish02 10.211.26.69:6081 check inter 2000 rise 3 fall 3 weight 1
+#    server        static132 10.211.26.132:51001 check inter 2000 rise 3 fall 3 weight 1 backup
