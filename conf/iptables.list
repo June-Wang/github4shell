@@ -1,2 +1,0 @@
-iptables -t nat -I PREROUTING -p tcp --dport 3389 -j DNAT --to 10.0.1.123
-iptables -t nat -I POSTROUTING -p tcp --dport 3389 -j MASQUERADE

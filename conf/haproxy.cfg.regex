@@ -1,5 +1,0 @@
-backend brh_web_8080
-    balance roundrobin        
-    cookie SERVERID insert indirect nocache
-    reqrep ^([^\ :]*)\ /(.*)     \1\ /brh-web/\2
-    server  brh01 127.0.0.1:8080 cookie inter01 check inter 2000 rise 3 fall 3 weight 1
