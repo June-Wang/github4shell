@@ -14,4 +14,6 @@ wget ${url} -O ${path}/${file} &&\
 test -f ${path}/${file} && chmod +x ${path}/${file} && ls -lth ${path}/${file}
 
 grep "${file}" /etc/crontab >/dev/null 2>&1 ||\
-echo "* * * * * root ${path}/${file} eth0 ${graylog_server} >/dev/null 2>&1" >> /etc/crontab
+echo "* * * * * root timeout 2 ${path}/${file} eth0 ${graylog_server} >/dev/null 2>&1" >> /etc/crontab
+
+#sed -r '/pcpu_graylog/s|(^.+root.+pcpu_graylog.sh)(.+$)|* * * * * root timeout 2 /usr/local/bin/pcpu_graylog.sh \2|' /etc/crontab
