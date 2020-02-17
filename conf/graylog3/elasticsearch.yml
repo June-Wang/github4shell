@@ -11,8 +11,10 @@ node.data: false
 bootstrap.system_call_filter: false
 http.cors.enabled: true
 http.cors.allow-origin: "*"
+#for 6.8
 path.data: /var/lib/elasticsearch
 path.logs: /var/log/elasticsearch
 gateway.recover_after_nodes: 3
 gateway.expected_nodes: 3
 gateway.recover_after_time: 5m
+xpack.monitoring.enabled: false
