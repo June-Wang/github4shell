@@ -64,3 +64,54 @@ then
   set_field("threat_ids", intel.otx_threat_ids);
   set_field("threat_names", intel.otx_threat_names);
 end
+
+rule "drop MYSQL_SLOW_QUERY_TIME"
+when
+  has_field("MYSQL_SLOW_QUERY_TIME")
+then
+  remove_field(field:"BASE10NUM");
+  remove_field(field:"GREEDYDATA");
+  remove_field(field:"IPV4");
+  remove_field(field:"MYSQL_SLOW_QUERY_TIME");
+  remove_field(field:"MYSQL_SLOW_SET_TIMESTAMP");
+  remove_field(field:"MYSQL_SLOW_THREAD_ID");
+  remove_field(field:"MYSQL_SLOW_USER_HOST");
+  remove_field(field:"USERNAME");
+end
+
+rule "drop IPV4"
+when
+  has_field("IPV4_city_name")
+then
+  remove_field(field:"IPV4_city_name");
+  remove_field(field:"IPV4_country_code");
+  remove_field(field:"IPV4_geolocation");
+end
+
+rule "drop TIME"
+when
+  has_field("HOUR")
+then
+  remove_field(field:"HOUR");
+  remove_field(field:"INT");
+  remove_field(field:"IP");
+  remove_field(field:"IPORHOST");
+  remove_field(field:"MINUTE");
+  remove_field(field:"MONTH");
+  remove_field(field:"MONTHDAY");
+  remove_field(field:"POSINT");
+  remove_field(field:"SECOND");
+  remove_field(field:"TIME");
+  remove_field(field:"YEAR");
+  remove_field(field:"IPV4");
+  remove_field(field:"ISO8601_TIMEZONE");
+  remove_field(field:"BASE10NUM");
+end
+
+rule "drop DATA"
+when
+  has_field("DATA")
+then
+  remove_field(field:"DATA");
+  remove_field(field:"BASE10NUM");
+end
