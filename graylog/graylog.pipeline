@@ -1,0 +1,66 @@
+rule "time to local"
+when
+  has_field("timestamp")
+then
+  let utc_time = parse_date(to_string($message.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
+  //let time_local = format_date(utc_time,"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","+08:00");
+  let time_local_bj = format_date(utc_time,"yyyy-MM-dd HH:mm:ss","+08:00");
+  set_field("time_local_bj", time_local_bj);
+end
+
+rule "time to local for syslog"
+when
+  has_field("timestamp")
+then
+  let utc_time = parse_date(to_string($message.timestamp), "yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+  //let time_local = format_date(utc_time,"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'","+08:00");
+  let time_local = format_date(utc_time,"yyyy-MM-dd HH:mm:ss","+08:00");
+  set_field("time_local_bj", time_local);
+end
+
+rule "syslog level"
+when
+  has_field("level")
+then
+  // the following date format assumes there's no time zone in the string
+  let priority = to_string(syslog_level($message.level));
+  set_field("priority", priority);
+end
+
+rule "drop application_name"
+when
+  has_field("application_name")
+then
+  remove_field(field:"application_name");
+end
+
+rule "drop nrpe message"
+when
+  contains(to_string($message.message), "influxd", true) OR contains(to_string($message.message), "nrpe", true) or contains(to_string($message.application_name), "nrpe", true) or contains(to_string($message.app_name), "nrpe", true)
+then
+  remove_from_stream(id:"5db02526fe91f925fb250fe3");
+end
+
+rule "otx_lookup_clientip"
+when
+  has_field("clientip")
+then
+  let intel = otx_lookup_ip(to_string($message.src_addr));
+  let intel = otx_lookup_domain(to_string($message.dns_question));
+
+  set_field("threat_indicated", intel.otx_threat_indicated);
+  set_field("threat_ids", intel.otx_threat_ids);
+  set_field("threat_names", intel.otx_threat_names);
+end
+
+rule "otx_lookup_ip"
+when
+  has_field("remote_addr")
+then
+  let intel = otx_lookup_ip(to_string($message.remote_addr));
+  // let intel = otx_lookup_domain(to_string($message.dns_question))
+
+  set_field("threat_indicated", intel.otx_threat_indicated);
+  set_field("threat_ids", intel.otx_threat_ids);
+  set_field("threat_names", intel.otx_threat_names);
+end
