@@ -1,0 +1,3 @@
+    log_format access '$remote_addr - [$time_local] $request_time $upstream_addr $upstream_response_time "$request_method $scheme://$host$request_uri" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"';
+
+    log_format access_body '$remote_addr - [$time_iso8601] $request_time $upstream_addr $upstream_response_time "$request_method $scheme://$host$request_uri" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for" "$request_body"';
