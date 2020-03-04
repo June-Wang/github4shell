@@ -1,0 +1,1 @@
+^%{IP:remote_addr} - \[%{HTTPDATE:time_local}\] %{DATA:request_time} %{DATA:upstream_addr} %{DATA:upstream_response_time} \"%{NOTSPACE:method} %{NOTSPACE:url}\" %{NOTSPACE:status} %{DATA:body_bytes_sent} %{DATA:http_referer} \"%{DATA:http_user_agent}\"\s+\"%{DATA:http_x_forwarded_for}\"
