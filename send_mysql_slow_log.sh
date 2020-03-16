@@ -28,7 +28,7 @@ done
 cat ${list}|grep -Ev '^#|^$'|\
 while read host user_list
 do
-    file_name=`ls ${tmp_path}/|grep "${host}"|head -n1`
+    file_name=`ls ${tmp_path}/|grep "${host}_"|head -n1`
     test -z "${file_name}" && continue
     subj=`echo ${file_name}|awk -F'/' '{print $NF}'`
     file="${tmp_path}${file_name}"
