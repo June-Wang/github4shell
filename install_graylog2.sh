@@ -15,7 +15,6 @@ ipaddr=`/sbin/ip addr list|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'
 test -f /etc/graylog/server/server.conf &&\
 cp /etc/graylog/server/server.conf /etc/graylog/server/server.conf.$$ &&\
 echo "root_timezone = Asia/Shanghai
-#allow_highlighting = true
 is_master = false
 node_id_file = /etc/graylog/server/node-id
 password_secret = 
@@ -31,7 +30,7 @@ elasticsearch_max_docs_per_index = 20000000
 elasticsearch_max_number_of_indices = 20
 retention_strategy = delete
 elasticsearch_shards = 4
-elasticsearch_replicas = 0
+elasticsearch_replicas = 1
 elasticsearch_index_prefix = graylog
 allow_leading_wildcard_searches = false
 allow_highlighting = false
