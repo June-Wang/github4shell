@@ -1,0 +1,11 @@
+rule "otx_lookup_ip"
+when
+  has_field("remote_addr")
+then
+  let intel = otx_lookup_ip(to_string($message.remote_addr));
+  // let intel = otx_lookup_domain(to_string($message.dns_question))
+
+  set_field("threat_indicated", intel.otx_threat_indicated);
+  set_field("threat_ids", intel.otx_threat_ids);
+  set_field("threat_names", intel.otx_threat_names);
+end

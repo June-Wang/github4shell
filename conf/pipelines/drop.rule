@@ -1,0 +1,7 @@
+rule "drop DATA"
+when
+  has_field("DATA")
+then
+  remove_field(field:"DATA");
+  remove_field(field:"BASE10NUM");
+end
