@@ -13,5 +13,5 @@ $mtr ${ip} |grep -v '???'|grep -Ev 'Start|Loss'|\
 awk '{$1="";print}'|\
 while read ${fields}
 do
-    echo "mtr,hostname=${hostname},dst_ip=${dst_ip} loss=${loss},snt=${snt},last=${last},avg=${avg},best=${best},wrst=${wrst},stdev=${stdev} ${timetamp}"
+    echo "mtr,hostname=${hostname},ip=${ip},dst_ip=${dst_ip} loss=${loss},snt=${snt},last=${last},avg=${avg},best=${best},wrst=${wrst},stdev=${stdev} ${timetamp}"
 done|sed 's/%//g'
