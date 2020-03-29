@@ -1,0 +1,7 @@
+rule "syslog level to priority"
+when
+  has_field("level") && contains(to_string($message.log_type), "syslog", true)
+then
+  let level_str = syslog_level(to_string($message.level)); 
+  set_field("priority", level_str);
+end
