@@ -1,0 +1,6 @@
+rule "drop nrpe message"
+when
+  contains(to_string($message.message), "nrpe", true)
+then
+  remove_from_stream(id:"5b72d723dd033765e44ac9e3");
+end
