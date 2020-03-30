@@ -13,3 +13,12 @@ echo never > /sys/kernel/mm/transparent_hugepage/defrag
 sudo sed -i '/exit 0/d' /etc/rc.local
 echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo never > /sys/kernel/mm/transparent_hugepage/defrag' >> /etc/rc.local
+
+test -f /etc/mongod.conf &&\
+cp /etc/mongod.conf /etc/mongod.conf.$$ &&\
+sed -r -i 's/bindIp:.*$/bindIp: 0.0.0.0/g' /etc/mongod.conf
+
+grep 'mongo_cluster' /etc/mongod.conf >/dev/null 2>&1 ||\
+echo '#mongo_cluster
+replication:
+  replSetName: rs0' >> /etc/mongod.conf
