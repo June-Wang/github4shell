@@ -1,7 +1,7 @@
 export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
 
 PROMPT_COMMAND=$(history 1)
-typeset -r PROMPT_COMMAND
+#typeset -r PROMPT_COMMAND
 
 function log2syslog
 {
