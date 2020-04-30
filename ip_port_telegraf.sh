@@ -18,4 +18,4 @@ timetamp=`date -d now +"%s%N"`
 ss -4tan|grep -Ev '^State|^LISTEN'|awk '{print $NF,$(NF-1)}'|awk -F':' '{print $1,$NF}' > ${tmp}
 ss -4tnl|awk '/^LISTEN/{print $4}'|awk -F':' '{print $2}'|\
 xargs -r -i grep -E ' {}$' ${tmp}|sort|uniq -c|\
-awk -v hostname="$hostname" -v timetamp="$timetamp" '{print "src_ip_port,hostname="hostname",src_ip="$2",port="$NF" count="$1" "timetamp}'
+awk -v hostname="$hostname" -v timetamp="$timetamp" '{print "ip_port_telegraf,hostname="hostname",src_ip="$2",port="$NF" count="$1" "timetamp}'

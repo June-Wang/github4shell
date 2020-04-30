@@ -18,6 +18,6 @@ timetamp=`date -d now +"%s%N"`
 ss -atn4|grep -Ev '^LISTEN|^State'|awk '{print $4,$1}' > ${tmp}
 ss -4tnl |awk '{print $4}'|grep -oP ':\d+'|\
 xargs -r -i grep '{} ' ${tmp}|awk -F':' '{print $NF}'|sort|uniq -c|\
-awk -v ip="$server" -v hostname="$hostname" -v timetamp="$timetamp" '{print "netstat2json,hostname="hostname",ip="ip",status="$3",port="$2" count="$1" "timetamp}'
+awk -v ip="$server" -v hostname="$hostname" -v timetamp="$timetamp" '{print "netstat_telegraf,hostname="hostname",ip="ip",status="$3",port="$2" count="$1" "timetamp}'
 #json
 #awk -v ip="$server" '{print "{\"ip\":\""ip"\",\"name\":\"netstat2json\",\"status\":""\""$3"\",\"port\":\""$2"\",\"count\":"$1"}"}'

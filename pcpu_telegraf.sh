@@ -15,5 +15,5 @@ sort -nr|grep -Ev ':|\]$'|\
 while read pcpu rss vsize pid user args
 do
     proc_name=`echo ${args}|awk '{print $1}'`
-    echo "pcpu_info,host=${hostname},server=${ip},user=${user},proc_name=${proc_name},pid=${pid} pcpu=${pcpu},mem_rss=${rss},vsize=${vsize} ${timetamp}"
+    echo "pcpu_telegraf,host=${hostname},server=${ip},user=${user},proc_name=${proc_name},pid=${pid} pcpu=${pcpu},mem_rss=${rss},vsize=${vsize} ${timetamp}"
 done
