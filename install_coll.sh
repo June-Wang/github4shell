@@ -23,7 +23,7 @@ sudo /usr/bin/graylog-collector-sidecar -service install
 
 sudo systemctl enable collector-sidecar.service
 
-ip=`/sbin/ip addr list|grep -A1 eth0|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
+ip=`/sbin/ip addr list|grep -A1 -E '[eth|en].+:'|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
 coll_config='/etc/graylog/collector-sidecar/collector_sidecar.yml'
 test -f ${coll_config} &&\
 echo "server_url: http://${coll_server}:9000/api/
