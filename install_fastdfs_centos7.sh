@@ -113,6 +113,8 @@ test -d ${module_path} ||\
 ln -s /usr/local/${pkg_path} ${module_path}
 test -d ${module_path}
 chown -R fastdfs.fastdfs ${module_path}
+test -f ${module_path}/src/mod_fastdfs.conf &&\
+cp ${module_path}/src/mod_fastdfs.conf /etc/fdfs/
 
 exit 0
 
