@@ -16,10 +16,9 @@ eval "echo 不支持此系统!;exit 1"
 test -f /usr/bin/yum ||\
 eval "echo 未安装yum!;exit 1"
 
-echo -en 'yum安装'
-echo -en '\t->\t'
+echo "yum 安装 ${YUM_PACKAGE}"
 yum --skip-broken --nogpgcheck install -y ${YUM_PACKAGE} >/dev/null 2>&1 ||\
-eval "echo yum安装失败;exit 1" && echo 'OK!'
+eval "echo yum安装${YUM_PACKAGE}失败;exit 1"
 
 id fastdfs >/dev/null 2>&1 ||\
 useradd fastdfs -M -s /sbin/nologin && \
@@ -29,6 +28,7 @@ eval "echo 用户: fastdfs 已经存在!"
 #pkg='libfastcommon-master.zip'
 pkg='libfastcommon-1.0.43.tar.gz'
 
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
 test -f ./${pkg} ||\
 eval "echo ${pkg} not found!;exit 1" &&\
@@ -58,6 +58,7 @@ eval "编译失败!;exit 1"
 #fastdfs安装
 pkg='fastdfs-6.06.tar.gz'
 
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
 
 cd
@@ -93,6 +94,7 @@ find ${INSTALL_DIR} -type f -name 'mime.types'|xargs -r -i mv '{}' /etc/fdfs/ #�
 #pkg='fastdfs-nginx-module_v1.16.tar.gz'
 pkg='fastdfs-nginx-module-1.22.tar.gz'
 
+echo "安装${pkg}"
 cd
 test -f ./${pkg} &&\
 cp ${pkg} ${INSTALL_DIR}/ ||\
@@ -116,55 +118,42 @@ chown -R fastdfs.fastdfs ${module_path}
 test -f ${module_path}/src/mod_fastdfs.conf &&\
 cp ${module_path}/src/mod_fastdfs.conf /etc/fdfs/
 
-exit 0
+#exit 0
 
 #安装nginx
-pkg='nginx-1.6.2.tar.gz'
+pkg='nginx-1.15.12.tar.gz'
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+
+cd
+test -f ./${pkg} &&\
+cp ${pkg} ${INSTALL_DIR}/ ||\
+eval "echo ${pkg} not found!;exit 1"
 
 test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} ||\
+test -f ${pkg} && tar xzf ${pkg} >/dev/null 2>&1 ||\
 eval "echo ${pkg}不存在;exit 1"
 
-id nginx >/dev/null 2>&1 ||\
-useradd nginx -M -s /sbin/nologin && \
-eval "echo 用户: fastdfs 已经存在!"
+#id fastdfs >/dev/null 2>&1 ||\
+#useradd fastdfs -M -s /sbin/nologin && \
+#eval "echo 用户: fastdfs 已经存在!"
 
 log_file="/tmp/install_${pkg}.log"
-cd nginx-1.6.2 && \
-./configure --prefix=/usr/local/nginx --add-module=/usr/local/fastdfs-nginx-module/src > ${log_file} 2>&1
+pkg_path=`echo "${pkg}"|sed 's/.tar.gz//'`
+cd ${pkg_path} && \
+./configure --prefix=/usr/local/nginx --user=fastdfs --group=fastdfs --add-module=/usr/local/fastdfs-nginx-module/src > ${log_file} 2>&1
 
 make > ${log_file} 2>&1 && make install > ${log_file} 2>&1
 
-test -d /etc/fdfs/ || mkdir -p /etc/fdfs/
-cp /usr/local/fastdfs-nginx-module/src/mod_fastdfs.conf /etc/fdfs/
+test -f /usr/bin/nginx ||\
+ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+test -d /etc/nginx ||\
+ln -s /usr/local/nginx /etc/nginx
 
 mkdir -p /fastdfs/storage/data
 mkdir -p /fastdfs/tracker
-test -L /fastdfs/storage/data/M00 ||\
-ln -s /fastdfs/storage/data /fastdfs/storage/data/M00
+#test -L /fastdfs/storage/data/M00 ||\
+#ln -s /fastdfs/storage/data /fastdfs/storage/data/M00
 chown -R fastdfs.fastdfs /fastdfs/storage/data
-
-#下载配置文件
-pkg='fdfs.config.tar.gz'
-
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
-test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
-
-test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} -C /etc/fdfs/||\
-eval "echo ${pkg}不存在;exit 1"
-
-#tar xzf fdfs.config.tar.gz -C /tmp/fdfs/
+echo 'fastdfs安装完毕!'
