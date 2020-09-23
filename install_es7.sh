@@ -35,21 +35,29 @@ cp ${es_config} ${es_config}.${my_date}
 
 hostname=`hostname`
 echo 'cluster.name: es-cluster
-node.name: HOSTNAME
+node.name: node01
 network.host: 0.0.0.0
-#集群中的master
-discovery.zen.ping.unicast.hosts: ["es01:9300","es02:9300","es03:9300"]
-#可发现的主节点node/2+1算出
-discovery.zen.minimum_master_nodes: 2
 node.master: true
 node.data: true
-bootstrap.system_call_filter: false
+node.ingest: false
+transport.tcp.port: 9300
+http.port: 9200
 http.cors.enabled: true
 http.cors.allow-origin: "*"
+http.cors.allow-headers: Authorization
 path.data: /data/elasticsearch
 path.logs: /var/log/elasticsearch
-gateway.recover_after_nodes: 3
-gateway.expected_nodes: 3
+discovery.seed_hosts: ["192.168.100.128:9300","192.168.100.130:9300","192.168.100.131:9300"]  # 集群恢复时，发现那些主机可接受请求
+cluster.initial_master_nodes: ["node01","node02","node03"] # 手动指定可以成为 mater 的所有节点的 name 或者 ip，这些配置将会在第一次选举中进行计算
+# enable Security feature
+xpack.security.enabled: true
+# add to the end
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: /etc/elasticsearch/elastic-certificates.p12
+xpack.security.transport.ssl.truststore.path: /etc/elasticsearch/elastic-certificates.p12
+gateway.recover_after_nodes: 2
+gateway.expected_nodes: 2
 gateway.recover_after_time: 5m' > ${es_config}
 test -f ${es_config} && sed -r -i "s/${hostname}/HOSTNAME/g" ${es_config}
 cp ${es_config} ${es_config}.cluster
@@ -57,11 +65,8 @@ cp ${es_config} ${es_config}.cluster
 echo 'cluster.name: es-cluster
 node.name: localhost
 network.host: 0.0.0.0
-discovery.zen.ping.unicast.hosts: ["localhost:9300"]
-discovery.zen.minimum_master_nodes: 1
 node.master: true
 node.data: true
-bootstrap.system_call_filter: false
 http.cors.enabled: true
 http.cors.allow-origin: "*"
 path.data: /data/elasticsearch
@@ -107,3 +112,6 @@ xpack.security.transport.ssl.truststore.path: /etc/elasticsearch/elastic-certifi
 
 echo '/usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto -u "http://127.0.0.1:9200" '
 echo 'curl -u elastic:passwd -XGET "http://127.0.0.1:9200/_cluster/health?pretty"'
+
+systemctl daemon-reload
+systemctl enable elasticsearch.service
