@@ -59,7 +59,7 @@ http.cors.allow-origin: "*"
 http.cors.allow-headers: Authorization
 path.data: /data/elasticsearch
 path.logs: /var/log/elasticsearch
-discovery.seed_hosts: ["192.168.100.128:9300","192.168.100.130:9300","192.168.100.131:9300"]  # 集群恢复时，发现那些主机可接受请求
+discovery.seed_hosts: ["es01:9300","es02:9300","es03:9300"]  # 集群恢复时，发现那些主机可接受请求
 cluster.initial_master_nodes: ["node01","node02","node03"] # 手动指定可以成为 mater 的所有节点的 name 或者 ip，这些配置将会在第一次选举中进行计算
 # enable Security feature
 xpack.security.enabled: true
