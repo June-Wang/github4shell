@@ -1,5 +1,8 @@
 #!/bin/bash
 
+rpm -ivh elasticsearch-7.9.1-x86_64.rpm jdk-8u231-linux-x64.rpm ||\
+eval "echo elasticsearch-7.9.1-x86_64.rpm jdk-8u231-linux-x64.rpm not found!;exit 1"
+
 #set ulimited
 test -f /etc/security/limits.d/100-app.conf ||\
 echo '* soft nproc 10240
@@ -15,17 +18,26 @@ vm.max_map_count=262144
 vm.swappiness = 0' >> /etc/sysctl.conf
 sysctl -p
 
-/usr/share/elasticsearch/bin/elasticsearch-certutil ca
-/usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
+#/usr/share/elasticsearch/bin/elasticsearch-certutil ca
+#/usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
 
-chgrp elasticsearch /usr/share/elasticsearch/elastic-certificates.p12 /usr/share/elasticsearch/elastic-stack-ca.p12
-chmod 640 /usr/share/elasticsearch/elastic-certificates.p12 /usr/share/elasticsearch/elastic-stack-ca.p12
+#chgrp elasticsearch /usr/share/elasticsearch/elastic-certificates.p12 /usr/share/elasticsearch/elastic-stack-ca.p12
+#chmod 640 /usr/share/elasticsearch/elastic-certificates.p12 /usr/share/elasticsearch/elastic-stack-ca.p12
 
-test -f /usr/share/elasticsearch/elastic-certificates.p12 &&\
-cp /usr/share/elasticsearch/elastic-certificates.p12 /etc/elasticsearch/
+#test -f /usr/share/elasticsearch/elastic-certificates.p12 &&\
+#cp /usr/share/elasticsearch/elastic-certificates.p12 /etc/elasticsearch/
 
-test -f /usr/share/elasticsearch/elastic-stack-ca.p12 &&\
-cp /usr/share/elasticsearch/elastic-stack-ca.p12 /etc/elasticsearch/
+#test -f /usr/share/elasticsearch/elastic-stack-ca.p12 &&\
+#cp /usr/share/elasticsearch/elastic-stack-ca.p12 /etc/elasticsearch/
+
+test -f ./elastic-certificates.p12 &&\
+cp ./elastic-certificates.p12 /etc/elasticsearch/
+
+test -f ./elastic-stack-ca.p12 &&\
+cp ./elastic-stack-ca.p12 /etc/elasticsearch/
+
+test -f /etc/elasticsearch/elastic-certificates.p12 &&\
+chmod 640 /etc/elasticsearch/elastic-certificates.p12 
 
 es_config='/etc/elasticsearch/elasticsearch.yml'
 
@@ -115,3 +127,7 @@ echo 'curl -u elastic:passwd -XGET "http://127.0.0.1:9200/_cluster/health?pretty
 
 systemctl daemon-reload
 systemctl enable elasticsearch.service
+
+firewall-cmd --zone=public --add-port=9200/tcp --permanent
+firewall-cmd --zone=public --add-port=9300/tcp --permanent
+firewall-cmd --reload
