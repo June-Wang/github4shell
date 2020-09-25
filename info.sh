@@ -16,7 +16,8 @@ mem_info=`free -m|awk '/Mem:/ {print $2,"MB"}'`
 cpu_info=`awk -F':[ ]+' '/model name/ {print $2}' /proc/cpuinfo|head -n 1|sed -r 's/[ ]+/ /g'`
 cpu_num=`grep 'processor' /proc/cpuinfo |wc -l`
 #disk_info=`df -h|awk '/root/{print $2}'`
-disk_info=`df -h|awk 'NF<2{ORS=" "}NF>2{ORS="\n"}{print}'|awk '/\/$/{print $2}'`
+#disk_info=`df -h|awk 'NF<2{ORS=" "}NF>2{ORS="\n"}{print}'|awk '/\/$/{print $2}'`
+disk_info=`df -h |grep -Ev 'tmpfs|Filesystem|devtmpfs|boot'|awk '$2~/G$/{print $2}'|sed 's/G//'|awk '{sum+=$1}END{print sum"G"}'`
 swap_info=`free -m|awk '/Swap/{print $2" Mb"}'`
 
 echo -en "${ip}\t${host_name}\t${cpu_info}\t${cpu_num}\t${mem_info}\t${disk_info}\t${swap_info}\t${operating}\t${machine}\n"
