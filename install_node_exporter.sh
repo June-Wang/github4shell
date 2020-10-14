@@ -1,5 +1,7 @@
 #!/bin/bash
 
+netstat -nlpt|grep ':9100 ' >/dev/null 2>&1 && exit 0
+
 file='node_exporter-1.0.1.linux-amd64.tar.gz'
 tmp_path="/tmp/node_exporter"
 install_path='/usr/local/prometheus/'
