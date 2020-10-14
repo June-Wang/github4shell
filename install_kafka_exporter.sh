@@ -1,6 +1,8 @@
 #!/bin/bash
 
-kafka_server='172.18.30.137:9092'
+netstat -nlpt|grep ':9308 ' >/dev/null 2>&1 && exit 0
+
+kafka_server='10.0.0.1:9092'
 file='kafka_exporter-1.2.0.linux-amd64.tar.gz'
 tmp_path="/tmp/kafka_exporter"
 install_path='/usr/local/prometheus/'
