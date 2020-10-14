@@ -1,0 +1,103 @@
+# my global config
+global:
+  scrape_interval:     30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - 127.0.0.1:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['127.0.0.1:9090']
+
+#node节点指标
+  - job_name: "node_exporter_coll"
+    file_sd_configs:
+    - refresh_interval: 1m
+      files: 
+      - "/etc/prometheus/conf.d/node*.yml"
+
+#kafka指标
+  - job_name: "kafka_exporter"
+    file_sd_configs:
+    - refresh_interval: 30s
+      files: 
+      - "/etc/prometheus/conf.d/kafka_nod*.yml"
+
+#http get 指标
+  - job_name: "http_get"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/http_get*.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115 # black_exporter 这里和Prometheus在一台机器上
+
+#http post 指标
+  - job_name: "http_post"
+    metrics_path: /probe
+    params:
+      module: [http_post_2xx]  # Look for a HTTP 200 response.
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/http_post*.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115 # black_exporter 这里和Prometheus在一台机器上
+
+#tcp 指标
+  - job_name: "check_tcp"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]  # Look for a HTTP 200 response.
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/check_tcp*.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  
+
+#ping 指标
+  - job_name: "check_ping"
+    metrics_path: /probe
+    params:
+      module: [ping] 
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/check_ping*.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
