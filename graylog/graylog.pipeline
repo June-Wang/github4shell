@@ -115,3 +115,17 @@ then
   remove_field(field:"DATA");
   remove_field(field:"BASE10NUM");
 end
+
+rule "url health error"
+when
+  contains(substring(to_string($message.status), 0, 1), "4", true) OR contains(substring(to_string($message.status), 0, 1), "5", true)
+then
+  set_field("url_health", "error");
+end
+
+rule "url health ok"
+when
+  contains(substring(to_string($message.status), 0, 1), "1", true) OR contains(substring(to_string($message.status), 0, 1), "2", true) OR contains(substring(to_string($message.status), 0, 1), "3", true)
+then
+  set_field("url_health", "ok");
+end

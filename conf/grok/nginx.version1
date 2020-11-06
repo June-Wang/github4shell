@@ -1,0 +1,1 @@
+%{IP:remote_addr} - - \[%{HTTPDATE:time_local}\] \"%{NOTSPACE:method} %{NOTSPACE:url} HTTP/%{NUMBER:httpversion}\" %{NOTSPACE:status} %{DATA:body_bytes_sent} %{DATA:http_referer} \"%{DATA:http_user_agent}\"
