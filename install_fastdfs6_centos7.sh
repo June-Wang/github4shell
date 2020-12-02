@@ -162,6 +162,10 @@ ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx
 test -d /etc/nginx ||\
 ln -s /usr/local/nginx /etc/nginx
 
+firewall-cmd --zone=public --add-port=23000/tcp --permanent
+firewall-cmd --zone=public --add-port=22122/tcp --permanent
+firewall-cmd --reload
+
 mkdir -p /fastdfs/storage/data
 mkdir -p /fastdfs/tracker
 test -L /fastdfs/storage/data/M00 ||\
