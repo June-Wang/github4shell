@@ -61,5 +61,18 @@ echo "<configuration>
 </configuration>
 " > ${path}/hbase/conf/hbase-site.xml
 
-echo 'service hbase.service start
-service hbase.service status'
+#test -f hbase-create.hbase &&\
+#${path}/hbase/bin/hbase shell ./hbase-create.hbase
+
+test -f /etc/profile.d/jdk_env.sh ||\
+echo "export JAVA_HOME=${java_home}
+export JAVA_BIN=${java_home}/bin
+export PATH=\$PATH:\$JAVA_HOME/bin
+export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
+export JAVA_HOME JAVA_BIN PATH CLASSPATH" > /etc/profile.d/jdk_env.sh
+
+echo "service hbase.service start
+service hbase.service status
+export JAVA_HOME=${java_home}
+${path}/hbase/bin/hbase shell ./hbase-create.hbase
+"
