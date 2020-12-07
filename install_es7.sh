@@ -128,6 +128,14 @@ echo 'curl -u elastic:passwd -XGET "http://127.0.0.1:9200/_cluster/health?pretty
 systemctl daemon-reload
 systemctl enable elasticsearch.service
 
+#add to local
+test -d /usr/share/elasticsearch/conf ||\
+ln -s /etc/elasticsearch /usr/share/elasticsearch/conf
+
+test -d /usr/local/elasticsearch ||\
+ln -s /usr/share/elasticsearch /usr/local/elasticsearch
+
+
 firewall-cmd --zone=public --add-port=9200/tcp --permanent
 firewall-cmd --zone=public --add-port=9300/tcp --permanent
 firewall-cmd --reload
