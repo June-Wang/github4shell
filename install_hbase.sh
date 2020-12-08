@@ -13,6 +13,9 @@ rpm -ivh ${jdk_pkg}
 test -f ${pkg} ||\
 eval "echo ${pkg} not found!;exit 1"
 
+test -d ${path} ||\
+mkdir -p ${path} 
+
 test -d ${path}/hbase ||\
 tar xzf ${pkg} -C ${path}
 
