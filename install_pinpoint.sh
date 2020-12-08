@@ -20,7 +20,7 @@ eval "echo ${web_pkg} not found!;exit 1"
 echo "#!/bin/bash
 
 cd ${path}/pinpoint &&\
-nohup java -jar -Dpinpoint.zookeeper.address=localhost ${coll_pkg} > pinpoint-collector.log &" > ${path}/pinpoint/pinpoint-collector-start.sh
+nohup java -jar -Dpinpoint.zookeeper.address=localhost ${coll_pkg} > /dev/null 2>&1 &" > ${path}/pinpoint/pinpoint-collector-start.sh
 
 echo "#!/bin/bash
 
@@ -30,7 +30,7 @@ ps -eo pid,args|grep pinpoint-collector|grep -v grep|awk '{print \$1}'|xargs -r 
 echo "#!/bin/bash
 
 cd ${path}/pinpoint &&\
-nohup java -jar -Dpinpoint.zookeeper.address=localhost ${web_pkg} > pinpoint-web.log &" > ${path}/pinpoint/pinpoint-web-start.sh
+nohup java -jar -Dpinpoint.zookeeper.address=localhost ${web_pkg} > /dev/null 2>&1 &" > ${path}/pinpoint/pinpoint-web-start.sh
 
 echo "#!/bin/bash
 
