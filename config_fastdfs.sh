@@ -249,6 +249,10 @@ mkdir -p ${path}/tracker
 test -L ${path}/storage/data/M00 ||\
 ln -s ${path}/storage/data ${path}/storage/data/M00
 
+firewall-cmd --zone=public --add-port=18080/tcp --permanent
+firewall-cmd --zone=public --add-port=8888/tcp --permanent
+firewall-cmd --reload
+
 echo 'tracker高可用'
 echo 'upstream fastdfs_tracker {
         server 192.168.31.101:18080 weight=1 max_fails=2 fail_timeout=30s;
