@@ -1,15 +1,14 @@
 #!/bin/bash
 
-yum_server='yum.server.local'
-YUM_PACKAGE='unzip gcc gcc-c++ make cmake automake autoconf libtool pcre pcre-devel zlib zlib-devel openssl openssl-devel'
+YUM_PACKAGE='wget git unzip gcc gcc-c++ make cmake automake autoconf libtool pcre pcre-devel zlib zlib-devel openssl openssl-devel'
 
 #SET TEMP DIR
 INSTALL_DIR="/tmp/install_$$"
-TEMP_FILE="/tmp/tmp.$$"
+TEMP_FILE="${INSTALL_DIR}/tmp.$$"
 
 #SET EXIT STATUS AND COMMAND
 trap "exit 1"           HUP INT PIPE QUIT TERM
-trap "test -d ${INSTALL_DIR} && rm -rf ${INSTALL_DIR};test -f ${TEMP_FILE} && rm -f ${TEMP_FILE}"  EXIT
+trap "test -d ${INSTALL_DIR} && rm -rf ${INSTALL_DIR}"  EXIT
 
 test -f /etc/redhat-release ||\
 eval "echo 不支持此系统!;exit 1"
@@ -17,31 +16,30 @@ eval "echo 不支持此系统!;exit 1"
 test -f /usr/bin/yum ||\
 eval "echo 未安装yum!;exit 1"
 
-echo -en 'yum安装'
-echo -en '\t->\t'
+echo "yum 安装 ${YUM_PACKAGE}"
 yum --skip-broken --nogpgcheck install -y ${YUM_PACKAGE} >/dev/null 2>&1 ||\
-eval "echo yum安装失败;exit 1" && echo 'OK!'
+eval "echo yum安装${YUM_PACKAGE}失败;exit 1"
 
-id fastdfs >/dev/null 2>&1 ||\
-useradd fastdfs -M -s /sbin/nologin && \
-eval "echo 用户: fastdfs 已经存在!"
+#id fastdfs >/dev/null 2>&1 ||\
+#useradd fastdfs -M -s /sbin/nologin && \
+#eval "echo 用户: fastdfs 已经存在!"
 
 #libfastcommon安装
-pkg='libfastcommon-master.zip'
+#pkg='libfastcommon-master.zip'
+pkg='libfastcommon-1.0.43.tar.gz'
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+test -f ./${pkg} ||\
+eval "echo ${pkg} not found!;exit 1" &&\
+cp ${pkg} ${INSTALL_DIR}/
 
 test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && unzip ${pkg} >/dev/null 2>&1||\
+test -f ${pkg} && tar xzf ${pkg} >/dev/null 2>&1||\
 eval "echo ${pkg}不存在;exit 1"
 
-cd libfastcommon-master ||\
+pkg_path=`echo "${pkg}"|sed 's/.tar.gz//'`
+cd ${pkg_path}||\
 eval "解压失败!;exit 1"
 
 log_file="/tmp/install_${pkg}.log"
@@ -58,28 +56,26 @@ test -f /usr/lib/libfdfsclient.so ||\
 ln -s /usr/lib64/libfdfsclient.so /usr/lib/libfdfsclient.so
 
 #fastdfs安装
-pkg='FastDFS_v5.05.tar.gz'
+pkg='fastdfs-6.06.tar.gz'
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+
+cd
+test -f ./${pkg} &&\
+cp ${pkg} ${INSTALL_DIR}/ ||\
+eval "echo ${pkg} not found!;exit 1"
 
 test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} ||\
+test -f ${pkg} && tar xzf ${pkg} >/dev/null 2>&1 ||\
 eval "echo ${pkg}不存在;exit 1"
 
-cd FastDFS ||\
+pkg_path=`echo "${pkg}"|sed 's/.tar.gz//'`
+cd ${pkg_path}||\
 eval "解压失败!;exit 1"
 
 log_file="/tmp/install_${pkg}.log"
 ./make.sh > ${log_file} 2>&1 && ./make.sh install > ${log_file} 2>&1 ||\
-eval "编译失败!;exit 1"
-
-ls /usr/bin/fdfs* >/dev/null 2>&1||\
 eval "编译失败!;exit 1"
 
 test -f /etc/init.d/fdfs_storaged &&\
@@ -87,81 +83,202 @@ sed -r -i 's|/usr/local/bin/|/usr/bin/|g' /etc/init.d/fdfs_storaged
 test -f /etc/init.d/fdfs_trackerd &&\
 sed -r -i 's|/usr/local/bin/|/usr/bin/|g' /etc/init.d/fdfs_trackerd
 
-#test -d /usr/local/src/FastDFS/conf &&
-test -d conf && cp conf/* /etc/fdfs/
+cp /etc/fdfs/tracker.conf.sample /etc/fdfs/tracker.conf
+cp /etc/fdfs/storage.conf.sample /etc/fdfs/storage.conf
+cp /etc/fdfs/client.conf.sample /etc/fdfs/client.conf
+#客户端文件，测试用
 
-#tdfs-nginx-module安装
-pkg='fastdfs-nginx-module_v1.16.tar.gz'
+find ${INSTALL_DIR} -type f -name 'http.conf'|xargs -r -i mv '{}' /etc/fdfs/
+#供nginx访问使用
+find ${INSTALL_DIR} -type f -name 'mime.types'|xargs -r -i mv '{}' /etc/fdfs/
+#供nginx访问使用
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
-test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+#test -d /etc/fdfs/ &&\
+#chown fastdfs.fastdfs -R /etc/fdfs/
+
+cat > /usr/lib/systemd/system/tracker.service <<EOF
+[Unit]
+Description=The FastDFS File server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf start
+ExecStop=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf stop
+ExecRestart=/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable tracker
+
+cat >/usr/lib/systemd/system/storage.service <<EOF
+
+[Unit]
+Description=The FastDFS File server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf start
+ExecStop=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf stop
+ExecRestart=/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable storage
+
+#fastdfs-nginx-module安装
+pkg='fastdfs-nginx-module-1.22.tar.gz'
+
+echo "安装${pkg}"
+cd
+test -f ./${pkg} &&\
+cp ${pkg} ${INSTALL_DIR}/ ||\
+eval "echo ${pkg} not found!;exit 1"
 
 test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} ||\
+test -f ${pkg} && tar xzf ${pkg} >/dev/null 2>&1 ||\
 eval "echo ${pkg}不存在;exit 1"
 
-cd fastdfs-nginx-module ||\
-eval "解压失败!;exit 1"
+pkg_path=`echo "${pkg}"|sed 's/.tar.gz//'`
 
-test -f src/config && \
-sed -r -i '/^CORE_INCS/s|/usr/local/|/usr/|g' src/config
+#test -f ${pkg_path}/src/config && \
+#sed -r -i '/^CORE_INCS/s|/usr/local/|/usr/|g' ${pkg_path}/src/config
 
-test -d /usr/local/fastdfs-nginx-module/ && rm -rf /usr/local/fastdfs-nginx-module/
-cd .. && mv fastdfs-nginx-module /usr/local/
-chown -R fastdfs.fastdfs /usr/local/fastdfs-nginx-module/
+module_path='/usr/local/fastdfs-nginx-module'
+test -d ${module_path} || mv ${pkg_path} /usr/local/
+test -d ${module_path} ||\
+ln -s /usr/local/${pkg_path} ${module_path}
+test -d ${module_path}
+#chown -R fastdfs.fastdfs ${module_path}
+test -f ${module_path}/src/mod_fastdfs.conf &&\
+cp ${module_path}/src/mod_fastdfs.conf /etc/fdfs/
+
+#exit 0
 
 #安装nginx
-pkg='nginx-1.6.2.tar.gz'
+pkg='nginx-1.16.1.tar.gz'
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
+echo "安装${pkg}"
 test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+
+cd
+test -f ./${pkg} &&\
+cp ${pkg} ${INSTALL_DIR}/ ||\
+eval "echo ${pkg} not found!;exit 1"
 
 test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} ||\
+test -f ${pkg} && tar xzf ${pkg} >/dev/null 2>&1 ||\
 eval "echo ${pkg}不存在;exit 1"
 
-id nginx >/dev/null 2>&1 ||\
-useradd nginx -M -s /sbin/nologin && \
-eval "echo 用户: fastdfs 已经存在!"
+#id fastdfs >/dev/null 2>&1 ||\
+#useradd fastdfs -M -s /sbin/nologin && \
+#eval "echo 用户: fastdfs 已经存在!"
 
 log_file="/tmp/install_${pkg}.log"
-cd nginx-1.6.2 && \
-./configure --prefix=/usr/local/nginx --add-module=/usr/local/fastdfs-nginx-module/src > ${log_file} 2>&1
+pkg_path=`echo "${pkg}"|sed 's/.tar.gz//'`
+cd ${pkg_path} && \
+./configure --prefix=/usr/local/nginx \
+--with-http_stub_status_module \
+--with-http_realip_module \
+--with-http_gzip_static_module \
+--add-module=/usr/local/fastdfs-nginx-module/src > ${log_file} 2>&1
 
-make > ${log_file} 2>&1 && make install > ${log_file} 2>&1
+make >> ${log_file} 2>&1 && make install >> ${log_file} 2>&1
 
-test -d /etc/fdfs/ || mkdir -p /etc/fdfs/
-cp /usr/local/fastdfs-nginx-module/src/mod_fastdfs.conf /etc/fdfs/
+test -f /usr/bin/nginx ||\
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx
+test -d /etc/nginx ||\
+ln -s /usr/local/nginx /etc/nginx
 
-mkdir -p /fastdfs/storage/data
-mkdir -p /fastdfs/tracker
-test -L /fastdfs/storage/data/M00 ||\
-ln -s /fastdfs/storage/data /fastdfs/storage/data/M00
-chown -R fastdfs.fastdfs /fastdfs/storage/data
+test -f /usr/lib/systemd/system/nginx.service ||\
+echo '[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
 
-#下载配置文件
-pkg='fdfs.config.tar.gz'
+[Service]
+Type=forking
+#PIDFile=/tmp/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx
+ExecReload=/usr/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
 
-echo -en '下载'
-echo -en "${pkg}"
-echo -en '\t->\t'
-test -d ${INSTALL_DIR} || mkdir -p ${INSTALL_DIR}
-wget -q http://${yum_server}/tools/${pkg} -O ${INSTALL_DIR}/${pkg} ||\
-eval "echo wget下载失败;exit 1" &&\
-echo 'OK!'
+[Install]
+WantedBy=multi-user.target' > /usr/lib/systemd/system/nginx.service
 
-test -d ${INSTALL_DIR} && cd ${INSTALL_DIR}
-test -f ${pkg} && tar xzf ${pkg} -C /etc/fdfs/||\
-eval "echo ${pkg}不存在;exit 1"
+nginx_conf_path='/usr/local/nginx/conf.d'
+test -d ${nginx_conf_path} ||\
+mkdir -p ${nginx_conf_path}
 
-#tar xzf fdfs.config.tar.gz -C /tmp/fdfs/
+nginx_config='/usr/local/nginx/conf/nginx.conf'
+
+grep -E '^#SET NGINX' ${nginx_config} ||\
+echo '#SET NGINX
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    keepalive_timeout  65;
+    server_names_hash_bucket_size 128;
+    client_header_buffer_size 32k;
+    large_client_header_buffers 4 32k;
+    client_max_body_size 300m;
+    proxy_redirect off;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; proxy_connect_timeout 90;
+    proxy_send_timeout 90;
+    proxy_read_timeout 90;
+    proxy_buffer_size 16k;
+    proxy_buffers 4 64k;
+    proxy_busy_buffers_size 128k;
+    proxy_temp_file_write_size 128k;
+    proxy_cache_path /usr/local/nginx/nginx_cache keys_zone=http-cache:100m;
+    include conf.d/*.conf;
+}
+' > ${nginx_config}
+
+systemctl daemon-reload
+systemctl enable nginx.service
+
+firewall-cmd --zone=public --add-port=23000/tcp --permanent
+firewall-cmd --zone=public --add-port=22122/tcp --permanent
+firewall-cmd --reload
+echo 'fastdfs安装完毕!'
+
+#chown -R fastdfs.fastdfs /fastdfs/
+echo '
+RUN
+
+systemctl start tracker
+systemctl start storage
+
+OR
+
+/etc/init.d/fdfs_trackerd start
+/etc/init.d/fdfs_storaged start'
+
