@@ -253,7 +253,7 @@ firewall-cmd --zone=public --add-port=18080/tcp --permanent
 firewall-cmd --zone=public --add-port=8888/tcp --permanent
 firewall-cmd --reload
 
-echo 'tracker高可用'
+#echo 'tracker高可用'
 echo 'upstream fastdfs_tracker {
         server 192.168.31.101:18080 weight=1 max_fails=2 fail_timeout=30s;
         server 192.168.31.102:18080 weight=1 max_fails=2 fail_timeout=30s;
@@ -267,9 +267,13 @@ echo 'upstream fastdfs_tracker {
         }
 
     }'
-#> /usr/local/nginx/conf.d/tracker.conf
+> /usr/local/nginx/conf.d/fastdfs.conf
 
 echo 'upload file
-fdfs_upload_file /etc/fdfs/client.conf filename
+/usr/bin/fdfs_upload_file /etc/fdfs/client.conf filename
+OR
+/usr/bin/fdfs_test /etc/fdfs/client.conf upload filename
 
+monitor
+/usr/bin/fdfs_monitor /etc/fdfs/storage.conf
 '
