@@ -94,4 +94,6 @@ service xxl-job-executor start
 
 xxl-admin:
 curl http://localhost:38080/xxl-job-admin/toLogin
+user: admin
+passwd: 123456
 '
