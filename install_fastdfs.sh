@@ -1,5 +1,8 @@
 #!/bin/bash
 
+test -d /etc/fdfs &&\
+eval "echo fastdfs 已经安装!;exit 1"
+
 YUM_PACKAGE='wget git unzip gcc gcc-c++ make cmake automake autoconf libtool pcre pcre-devel zlib zlib-devel openssl openssl-devel'
 
 #SET TEMP DIR
@@ -258,27 +261,29 @@ http {
     proxy_busy_buffers_size 128k;
     proxy_temp_file_write_size 128k;
     proxy_cache_path /usr/local/nginx/nginx_cache keys_zone=http-cache:100m;
-    include conf.d/*.conf;
+    include /usr/local/nginx/conf.d/*.conf;
 }
 ' > ${nginx_config}
 
 systemctl daemon-reload
 systemctl enable nginx.service
 
+echo '开启防火墙端口22122/23000'
 firewall-cmd --zone=public --add-port=23000/tcp --permanent
 firewall-cmd --zone=public --add-port=22122/tcp --permanent
 firewall-cmd --reload
+
 echo 'fastdfs安装完毕!'
 
 #chown -R fastdfs.fastdfs /fastdfs/
-echo '
-RUN
+echo '>>>>>> README <<<<<<
+配置fastdfs请参考链接
+http://soft.hxmec.com/soft/fastdfs/%E6%90%AD%E5%BB%BA%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FFastDFS%E9%9B%86%E7%BE%A4.pdf
 
+1. 启动stracker
 systemctl start tracker
+2. 启动sotrage
 systemctl start storage
-
-OR
-
-/etc/init.d/fdfs_trackerd start
-/etc/init.d/fdfs_storaged start'
-
+3. 启动nginx
+systemctl start nginx
+'
