@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#判断是否重复安装
+es_config='/etc/elasticsearch/elasticsearch.yml'
+test -f ${es_config} &&\
+eval "echo ${es_config} exist!;exit 1"
+
+#判断是否centos
+test -f /usr/bin/yum ||\
+eval "echo 此脚本不支持本系统!;exit 1"
+
+es_config='/etc/elasticsearch/elasticsearch.yml'
+test -f ${es_config} &&\
+eval "echo ${es_config} exist!;exit 1"
+
 rpm -ivh elasticsearch-7.9.1-x86_64.rpm jdk-8u231-linux-x64.rpm ||\
 eval "echo elasticsearch-7.9.1-x86_64.rpm jdk-8u231-linux-x64.rpm not found!;exit 1"
 
@@ -122,9 +135,6 @@ xpack.security.transport.ssl.verification_mode: certificate
 xpack.security.transport.ssl.keystore.path: /etc/elasticsearch/elastic-certificates.p12
 xpack.security.transport.ssl.truststore.path: /etc/elasticsearch/elastic-certificates.p12' >> ${es_config}
 
-echo '/usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto -u "http://127.0.0.1:9200" '
-echo 'curl -u elastic:passwd -XGET "http://127.0.0.1:9200/_cluster/health?pretty"'
-
 systemctl daemon-reload
 systemctl enable elasticsearch.service
 
@@ -135,7 +145,22 @@ ln -s /etc/elasticsearch /usr/share/elasticsearch/conf
 test -d /usr/local/elasticsearch ||\
 ln -s /usr/share/elasticsearch /usr/local/elasticsearch
 
-
+echo '开启防火墙端口9200/9300'
 firewall-cmd --zone=public --add-port=9200/tcp --permanent
 firewall-cmd --zone=public --add-port=9300/tcp --permanent
 firewall-cmd --reload
+
+echo '安装完毕!'
+
+echo '
+>>>>>> README <<<<<<
+1. 修改配置文件
+vi /etc/elasticsearch/elasticsearch.yml
+2. 修改内存参数
+vi /etc/elasticsearch/jvm.options
+3. 启动ES
+systemctl start elasticsearch.service
+4. 创建密码
+/usr/share/elasticsearch/bin/elasticsearch-setup-passwords auto -u "http://127.0.0.1:9200"
+5. 查看集群状态
+curl -u elastic:passwd -XGET "http://127.0.0.1:9200/_cluster/health?pretty"'
