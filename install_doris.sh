@@ -11,10 +11,6 @@ mkdir -p ${path}
 test -z "${pkg}" &&\
 eval "echo ./install.sh be or ./install.sh fe;exit 1"
 
-test -f ${java_pkg} ||\
-eval "echo ${java_pkg} not found!;exit 1" &&\
-rpm -ivh ${java_pkg}
-
 if [ "X${pkg}" == "Xbe" ];then
    test -f /usr/lib/systemd/system/doris-be.service &&\
    eval "echo doris-be already exist!;exit 1"
@@ -52,6 +48,10 @@ elif [ "X${pkg}" == "Xfe" ]; then
    test -f /usr/lib/systemd/system/doris-fe.service &&\
    eval "echo doris-fe already exist!;exit 1"
 
+   test -f ${java_pkg} ||\
+   eval "echo ${java_pkg} not found!;exit 1" &&\
+   rpm -ivh ${java_pkg}
+
    test -f ./fe.tar.gz && tar xzf fe.tar.gz -C ${path}
 
    test -f ${path}/fe/start-fe.sh &&\
@@ -82,7 +82,15 @@ WantedBy=multi-user.target" > /usr/lib/systemd/system/doris-fe.service
     firewall-cmd --add-port=9030/tcp --permanent
     firewall-cmd --add-port=9010/tcp --permanent
     firewall-cmd --reload
+    echo 'mysql -h localhost -P 9030 -uroot -e "\
+ALTER SYSTEM ADD BACKEND 'HOST1:9050';
+ALTER SYSTEM ADD BACKEND 'HOST2:9050';
+ALTER SYSTEM ADD BACKEND 'HOST3:9050';
+"'
+else
+    eval "echo ./install.sh be or ./install.sh fe;exit 1"
 fi
 
-eval "echo ./install.sh be or ./install.sh fe;exit 1"
+echo 'service doris-fe start
+service doris-be start'
 
