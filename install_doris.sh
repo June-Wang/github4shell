@@ -15,7 +15,7 @@ if [ "X${pkg}" == "Xbe" ];then
    test -f /usr/lib/systemd/system/doris-be.service &&\
    eval "echo doris-be already exist!;exit 1"
 
-   test -f ./be.tar.gz && tar xzf be.tar.gz -C ${path}
+   test -f ./be.tar.gz && tar xzf be.tar.gz -C ${path} 
 
    echo "[Unit]
 Description=doris be
@@ -81,16 +81,19 @@ WantedBy=multi-user.target" > /usr/lib/systemd/system/doris-fe.service
     firewall-cmd --add-port=9020/tcp --permanent
     firewall-cmd --add-port=9030/tcp --permanent
     firewall-cmd --add-port=9010/tcp --permanent
-    firewall-cmd --reload
-    echo 'mysql -h localhost -P 9030 -uroot -e "\
-ALTER SYSTEM ADD BACKEND 'HOST1:9050';
-ALTER SYSTEM ADD BACKEND 'HOST2:9050';
-ALTER SYSTEM ADD BACKEND 'HOST3:9050';
-"'
+    firewall-cmd --reload 
+
 else
     eval "echo ./install.sh be or ./install.sh fe;exit 1"
 fi
 
-echo 'service doris-fe start
-service doris-be start'
+echo '
+1. service doris-fe start
+2. service doris-be start'
+echo '
+mysql -h localhost -P 9030 -uroot -e "\
+ALTER SYSTEM ADD BACKEND 'HOST1:9050';
+ALTER SYSTEM ADD BACKEND 'HOST2:9050';
+ALTER SYSTEM ADD BACKEND 'HOST3:9050';
+"'
 
