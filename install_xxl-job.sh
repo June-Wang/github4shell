@@ -31,12 +31,12 @@ echo "#!/bin/bash
 nohup java -jar ${path}/xxl-job/${exe_pkg} >/dev/null 2>&1 &
 " > ${path}/xxl-job/xxl-job-executor-start.sh
 
-test -f ${path}/xxl-job/xxl-job-admin-stop.sh ||\
+#test -f ${path}/xxl-job/xxl-job-admin-stop.sh ||\
 echo "#!/bin/bash
 ps -eo pid,args|grep 'xxl-job-admin'|grep -v grep|awk '{print \$1}'|xargs -r -i kill '{}' >/dev/null 2>&1
 " > ${path}/xxl-job/xxl-job-admin-stop.sh
 
-test -f ${path}/xxl-job/xxl-job-executor-stop.sh ||\
+#test -f ${path}/xxl-job/xxl-job-executor-stop.sh ||\
 echo "#!/bin/bash
 ps -eo pid,args|grep 'xxl-job-executor'|grep -v grep|awk '{print \$1}'|xargs -r -i kill '{}' >/dev/null 2>&1
 " > ${path}/xxl-job/xxl-job-executor-stop.sh
