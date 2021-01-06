@@ -184,9 +184,10 @@ response_mode=proxy
 if_alias_prefix=
 flv_support = true
 flv_extension = flv
-group_count = 0
+group_count = 1
 #group_count = 2
 #include http.conf
+group_name=group1
 
 [group1]
 group_name=group1
@@ -269,11 +270,30 @@ echo 'upstream fastdfs_tracker {
     }'
 > /usr/local/nginx/conf.d/fastdfs.conf
 
-echo 'upload file
+echo '>>>>>> README <<<<<<
+配置fastdfs请参考链接
+http://soft.hxmec.com/soft/fastdfs/%E6%90%AD%E5%BB%BA%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FFastDFS%E9%9B%86%E7%BE%A4.pdf
+
+1. 修改 tracker.conf
+vi /etc/fdfs/tracker.conf
+2. 修改 storage.conf
+vi /etc/fdfs/storage.conf
+3. 修改 client.conf
+vi /etc/fdfs/client.conf
+4. 修改 mod_fastdfs.conf
+vi /etc/fdfs/mod_fastdfs.conf
+5. 修改 nginx 配置
+cd /usr/local/nginx/conf.d
+6. 启动 tracker
+service tracker start
+7. 启动 storage
+service storage start
+8. 启动 nginx
+service nginx start
+9. 上传文件测试
 /usr/bin/fdfs_upload_file /etc/fdfs/client.conf filename
 OR
 /usr/bin/fdfs_test /etc/fdfs/client.conf upload filename
+10. 查看状态
+/usr/bin/fdfs_monitor /etc/fdfs/storage.conf'
 
-monitor
-/usr/bin/fdfs_monitor /etc/fdfs/storage.conf
-'
