@@ -3,92 +3,219 @@ groups:
       rules:
       - alert: 监控告警-服务异常
         expr: up  == 0
-        for: 1m
+        for: 3m
         labels:
           serverity: warning
+          level: 提示
         annotations:
-          summary: "{{$labels.job}}服务异常"
-          description: "{{$labels.job}}服务,{{$labels.instance}}异常,请尽快处理."
+          summary: "{{$labels.instance}}:{{$labels.job}}服务异常"
+          description: "{{$labels.instance}}:{{$labels.job}}服务异常,请尽快处理."
+          resolved: "{{$labels.instance}}:{{$labels.job}}服务异常,已恢复!"
+          grafana_url:"url"
 
-      - alert: 监控告警-主机状态
-        expr: up == 0
-        for: 5m
-        labels:
-          serverity: critical
-        annotations:
-          summary: "{{$labels.instance}}:服务器宕机"
-          description: "{{$labels.instance}}:服务器延时超过5分钟"
+#      - alert: 监控告警-主机状态
+#        expr: up == 0
+#        for: 5m
+#        labels:
+#          serverity: critical
+#          level: 严重
+#        annotations:
+#          summary: "{{$labels.instance}}:服务器宕机"
+#          description: "{{$labels.instance}}:服务器延时超过5分钟"
+#          resolved: "{{$labels.instance}}:服务器宕机,已恢复!"
+#          grafana_url:"url"
 
       - alert: 监控告警-CPU使用率
         expr: 100-(avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by(instance)* 100) > 80
-        for: 5m
+        for: 10m
         labels:
           serverity: warning
+          level: 提示
         annotations:
-          summary: "{{$labels.instance}}主机CPU使用率[5m]超过80%"
+          summary: "{{$labels.instance}}主机CPU使用率[10m]超过80%"
           description: "{{$labels.instance}}主机CPU使用率超过80%,当前使用率[{{ humanize $value }}%]."
+          resolved: "{{$labels.instance}}主机CPU使用率告警,已恢复!"
+          grafana_url:"url"
 
       - alert: 监控告警-内存使用率
         expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)/node_memory_MemTotal_bytes > 0.95 
         for: 10m
         labels:
           serverity: warning
+          level: 提示
         annotations:
           summary: "{{$labels.instance}}主机内存使用率超过95%"
-          description: "{{$labels.instance}}主机内存使用率超过95%,当前使用率[{{ humanize $value }}%]."
+          description: "{{$labels.instance}}主机内存使用率超过95%"
+          resolved: "{{$labels.instance}}主机内存使用率告警,已恢复!"
+          grafana_url:"url"
 
       - alert: 监控告警-磁盘使用率
         expr: 100-(node_filesystem_free_bytes{fstype=~"ext4|xfs", mountpoint=~"/"}/node_filesystem_size_bytes {fstype=~"ext4|xfs", mountpoint=~"/"}*100) > 80
         for: 5m
         labels:
           serverity: warning
+          level: 提示
         annotations:
           summary: "{{$labels.instance}}主机磁盘使用率超过80%"
           description: "{{$labels.instance}}主机磁盘使用率超过80%,当前使用率[{{ humanize $value }}%]."
+          resolved: "{{$labels.instance}}主机磁盘使用率告警,已恢复!"
+          grafana_url:"url"
+
+      - alert: 监控告警-磁盘读取
+        expr: sum by (instance) (irate(node_disk_read_bytes_total[2m])) / 1024 / 1024 > 50
+        for: 30m
+        labels:
+          severity: warning
+          level: 提示
+        annotations:
+          summary: "{{$labels.instance}}主机30分钟内磁盘读取超过50MB/s."
+          description: "{{$labels.instance}}主机30分钟内磁盘读取超过50MB/s.  VALUE = {{ $value }}"
+          resolved: "{{$labels.instance}}主机30分钟内磁盘读取告警,已恢复!"
+          grafana_url:"url"
+
+      - alert: 监控告警-磁盘写入
+        expr: sum by (instance) (irate(node_disk_written_bytes_total[2m])) / 1024 / 1024 > 50
+        for: 30m
+        labels:
+          severity: warning
+          level: 提示
+        annotations:
+          summary: "{{$labels.instance}}主机30分钟内磁盘写入超过50MB/s."
+          description: "{{$labels.instance}}主机30分钟内磁盘写入超过50MB/s.  VALUE = {{ $value }}"
+          resolved: "{{$labels.instance}}主机30分钟内磁盘写入告警,已恢复!"
+          grafana_url:"url"
+
+      - alert: 监控告警-磁盘读取延时
+        expr: rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 100
+        for: 30m
+        labels:
+          severity: warning
+          level: 提示
+        annotations:
+          summary: "{{$labels.instance}}主机30分钟内磁盘读取延时超过100ms."
+          description: "{{$labels.instance}}主机30分钟内磁盘读取延时超过100ms.  VALUE = {{ $value }}"
+          resolved: "{{$labels.instance}}主机30分钟内磁盘读取延时告警,已恢复!"
+          grafana_url:"url"
 
       - alert: 监控告警-网络流入
-        expr: ((sum(rate (node_network_receive_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
-        for: 1m
+        expr: ((sum(rate (node_network_receive_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[10m])) by (instance)) / 100) > 102400
+        for: 10m
         labels:
           serverity: warning
+          level: 提示
         annotations:
-          summary: "{{$labels.instance}}主机{{$labels.mountpoint}} 流入网络带宽过高！"
-          description: "{{$labels.instance}}主机{{$labels.mountpoint }}流入网络带宽持续2分钟高于100M. RX带宽使用率{{humanize $value}}"
+          summary: "{{$labels.instance}}主机{{$labels.mountpoint}} 流入网络带宽续10分钟高于100M."
+          description: "{{$labels.instance}}主机{{$labels.mountpoint }}流入网络带宽持续10分钟高于100M."
+          resolved: "{{$labels.instance}}主机{{$labels.mountpoint}} 流入网络带宽告警,已恢复!"
+          grafana_url:"url"
  
       - alert: 监控告警-网络流出
-        expr: ((sum(rate (node_network_transmit_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 102400
-        for: 1m
+        expr: ((sum(rate (node_network_transmit_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[10m])) by (instance)) / 100) > 102400
+        for: 10m
         labels:
           serverity: warning
+          level: 提示
         annotations:
-          summary: "{{$labels.instance}}主机{{$labels.mountpoint}} 流出网络带宽过高！"
-          description: "{{$labels.instance}}主机{{$labels.mountpoint }}流出网络带宽持续2分钟高于100M. RX带宽使用率{{humanize $value}}"
+          summary: "{{$labels.instance}}主机{{$labels.mountpoint}} 流出网络带宽持续10分钟高于100M."
+          description: "{{$labels.instance}}主机{{$labels.mountpoint }}流出网络带宽持续10分钟高于100M."
+          resolved: "{{$labels.instance}}主机{{$labels.mountpoint}} 流出网络带宽告警,已恢复!"
+          grafana_url:"url"
 
     - name: alert_network 
       rules:
         - alert: 监控告警-TCP端口连通性
           expr: probe_success{job="check_tcp"} == 0
-          for: 1m
-          labels:
-            serverity: critical
-          annotations:
-            summary: "接口/主机/端口 {{$labels.instance}} 无法访问!"
-            description: "{{$labels.project}} {{$labels.instance}} 无法访问!"
-
-        - alert: 监控告警-WEB可用性
-          expr: probe_success{job="http_get"} == 0
           for: 2m
           labels:
             serverity: critical
+            level: 严重
           annotations:
-            summary: "接口/主机/端口 {{$labels.instance}} 无法访问!"
+            summary: "{{$labels.project}} {{$labels.instance}} 无法访问!"
             description: "{{$labels.project}} {{$labels.instance}} 无法访问!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 无法访问,已恢复!"
+            grafana_url:"url"
+
+        - alert: 监控告警-WEB可用性
+          expr: probe_success{job="http_get"} == 0
+          for: 3m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.project}} {{$labels.instance}} 无法访问!"
+            description: "{{$labels.project}} {{$labels.instance}} 无法访问!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 无法访问,已恢复!"
+            grafana_url:"url"
 
         - alert: 监控告警-ICMP线路质量监控
           expr: probe_success{job="check_ping"} == 0
           for: 2m
           labels:
             serverity: critical
+            level: 严重
           annotations:
-            summary: "接口/主机/端口 {{$labels.instance}} 无法访问!"
+            summary: "{{$labels.project}} {{$labels.instance}} 无法访问!"
             description: "{{$labels.project}} {{$labels.instance}} 无法访问!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 无法访问,已恢复!"
+            grafana_url:"url"
+
+    - name: alert_mysql_cpu
+      rules:
+        - alert: 监控告警-MySQL-RDS-CPU使用率
+          expr: mysql_memcpuusage_cpuusage{job="MySQL"} > 90
+          for: 2m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.project}} {{$labels.instance}} CPU使用率超过90%!"
+            description: "{{$labels.project}} {{$labels.instance}} CPU使用率超过90%!"
+            resolved: "{{$labels.project}} {{$labels.instance}} CPU使用率超过90%,已恢复!"
+            grafana_url:"url"
+        - alert: 监控告警-MySQL-RDS-内存使用率
+          expr: mysql_memcpuusage_memusage{job="MySQL"} > 90
+          for: 2m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.project}} {{$labels.instance}} 内存使用率超过90%!"
+            description: "{{$labels.project}} {{$labels.instance}} 内存使用率超过90%!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 内存使用率超过90%,已恢复!"
+            grafana_url:"url"
+        - alert: 监控告警-MySQL-RDS-磁盘使用率
+          expr: ((mysql_detailedspaceusage_ins_size{job="MySQL"}/1024)/DBInstanceStorage{job="MySQL"})*100 > 90
+          for: 30m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.project}} {{$labels.instance}} 磁盘使用率超过90%!"
+            description: "{{$labels.project}} {{$labels.instance}} 磁盘使用率超过90%!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 磁盘使用率超过90%,已恢复!"
+            grafana_url:"url"
+        - alert: 监控告警-MySQL-RDS-连接数过高
+          expr: max(mysql_global_status_threads_connected{job="MySQL"} or mysql_global_status_threads_connected{job="MySQL"} ) > 500
+          for: 2m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.project}} {{$labels.instance}} 连接数超过500!"
+            description: "{{$labels.project}} {{$labels.instance}} 连接数超过500!"
+            resolved: "{{$labels.project}} {{$labels.instance}} 连接数超过500,已恢复!"
+            grafana_url:"url"
+
+    - name: ssl_expiry
+      rules: 
+        - alert: SSL证书过期
+          expr: probe_ssl_earliest_cert_expiry{job="ssl_cert"} - time() < 86400 * 30
+          for: 10m
+          labels:
+            serverity: critical
+            level: 严重
+          annotations:
+            summary: "{{$labels.instance}} 网站SSL证书还有不到30天过期!"
+            description: "{{$labels.instance}} 网站SSL证书还有不到30天过期!"
+            resolved: "{{$labels.instance}} 网站SSL证书过期,已恢复!"
+            grafana_url:"url"
