@@ -1,20 +1,88 @@
 global:
   resolve_timeout: 5m
-
 route:
-  group_by: ['instance']
-  group_wait: 30s
-  group_interval: 5m
-  #repeat_interval: 4h
-  receiver: 'web.hook'
+  group_wait: 30s # 在组内等待所配置的时间，如果同组内，30秒内出现相同报警，在一个组内出现。
+  group_interval: 5m # 如果组内内容不变化，5m后发送。
+  repeat_interval: 24h # 发送报警间隔，如果指定时间内没有修复，则重新发送报警
+  group_by: ['alertname','project']  # 报警分组，根据 prometheus 的 lables 进行报警分组，这些警报会合并为一个通知发送给接收器，也就是警报分组。
+  receiver: 'ops'
+  routes:
+  - receiver: 'ops'
+    group_wait: 10s
+    match_re:
+      serverity: critical|warning
+  - receiver: 'phone'
+    group_wait: 10s
+    match:
+      serverity: critical
+  - receiver: 'db'
+    group_wait: 10s
+    match:
+      service: mysql
+
+#      - match:
+#          serverity: critical|warning
+#        group_by: [instance]
+#        receiver: 'ops'
+#      - match_re:
+#          serverity: critical
+#        receiver: 'phone'
+#      - match_re:
+#          service: nginx|apache
+#        receiver: 'web'
+#      - match_re:
+#          service: mysql|mongodb
+#        receiver: 'db'
+#      - match_re:
+#          service: hbase|spark
+#        receiver: 'hadoop'
 receivers:
-- name: 'web.hook'
+- name: 'ops'
   webhook_configs:
-  - url: 'http://sss.sss.sss'
+  - url: 'url'
+- name: 'phone'
+  webhook_configs:
+  - url: 'url'
+- name: 'db'
+  webhook_configs:
+  - url: 'url'
+#    # 企业微信配置
+#  wechat_configs:
+#  - corp_id: 'ww5421dksajhdasjkhj'
+#    api_url: 'https://qyapi.weixin.qq.com/cgi-bin/'
+#    send_resolved: true
+#    to_party: '2'
+#    agent_id: '1000002'
+#    api_secret: 'Tm1kkEE3RGqVhv5hO-khdakjsdkjsahjkdksahjkdsahkj'
+
+#- name: web
+#  email_configs:
+#  - to: '9935226@qq.com'
+#    send_resolved: true
+#    headers: { Subject: "[web] 报警邮件"} # 接收邮件的标题
+#  webhook_configs:
+#  - url: http://localhost:8070/dingtalk/web/send
+#  - url: http://localhost:8070/dingtalk/ops/send
+#- name: db
+#  email_configs:
+#  - to: '9935226@qq.com'
+#    send_resolved: true
+#    headers: { Subject: "[db] 报警邮件"} # 接收邮件的标题
+#  webhook_configs:
+#  - url: http://localhost:8070/dingtalk/db/send
+#  - url: http://localhost:8070/dingtalk/ops/send
+#- name: hadoop
+#  email_configs:
+#  - to: '9935226@qq.com'
+#    send_resolved: true
+#    headers: { Subject: "[hadoop] 报警邮件"} # 接收邮件的标题
+#  webhook_configs:
+#  - url: http://localhost:8070/dingtalk/hadoop/send
+#  - url: http://localhost:8070/dingtalk/ops/send
 
 inhibit_rules:
   - source_match:
       severity: 'critical'
     target_match:
       severity: 'warning'
-    equal: ['instance','alertname','project','job']
+    equal: ['instance','alertname','project']
