@@ -35,6 +35,13 @@ scrape_configs:
       files: 
       - "/etc/prometheus/conf.d/node*.yml"
 
+#burrow指标
+  - job_name: "burrow_kafka"
+    file_sd_configs:
+    - refresh_interval: 30s
+      files: 
+      - "/etc/prometheus/conf.d/burrow_nod*.yml"
+
 #kafka指标
   - job_name: "kafka_exporter"
     file_sd_configs:
@@ -54,8 +61,10 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
       - target_label: __address__
-        replacement: 127.0.0.1:9115 # black_exporter 这里和Prometheus在一台机器上
+        replacement: 127.0.0.1:9115  
 
 #http post 指标
   - job_name: "http_post"
@@ -69,14 +78,33 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
       - target_label: __address__
-        replacement: 127.0.0.1:9115 # black_exporter 这里和Prometheus在一台机器上
+        replacement: 127.0.0.1:9115  
+
+#http 证书 指标
+  - job_name: "ssl_cert"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/ssl_cert.yml"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  
 
 #tcp 指标
   - job_name: "check_tcp"
     metrics_path: /probe
     params:
-      module: [tcp_connect]  # Look for a HTTP 200 response.
+      module: [tcp_connect]
     file_sd_configs:
     - refresh_interval: 1m
       files:
@@ -84,6 +112,8 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
       - target_label: __address__
         replacement: 127.0.0.1:9115  
 
@@ -100,4 +130,59 @@ scrape_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - target_label: __address__
-        replacement: 127.0.0.1:9115
+        replacement: 127.0.0.1:9115  
+
+#jvm 指标
+  - job_name: "tomcat_jvm"
+    metrics_path: /actuator/prometheus
+    scrape_interval: 30s
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/tomcat_jvm*.yml"
+
+#jvm 指标
+  - job_name: "jvm_management"
+    metrics_path: /management/prometheus
+    scrape_interval: 30s
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/jvm-management.yml"
+
+#pushgateway
+  - job_name: "pushgateway"
+    honor_labels: true
+    static_configs:
+    - targets: ["127.0.0.1:9091"]
+
+#mysql monitor
+  - job_name: "MySQL"
+    metrics_path: /metrics
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/mysql.yml"
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        regex: (.*)
+#        target_labels: __address__
+#        replacement: $1
+
+#nacos 指标
+  - job_name: "nacos"
+    metrics_path: /nacos/actuator/prometheus
+    scrape_interval: 30s
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/nacos*.yml"
+
+#doris 指标
+  - job_name: "doris"
+    metrics_path: /metrics
+    scrape_interval: 30s
+    file_sd_configs:
+    - refresh_interval: 1m
+      files:
+      - "/etc/prometheus/conf.d/doris.yml"
