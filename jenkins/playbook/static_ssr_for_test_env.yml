@@ -1,0 +1,104 @@
+#前提条件：ansible hosts中添加机器配置组，并对远程机器做免密
+- hosts: test-ssr-npm #job名，统一变量
+  remote_user: root
+  gather_facts: False
+  serial: 1
+  vars:
+    component: test-ssr-npm  #job名，也是静态目录名，以prod-static-开头，例如prod-static-hxmec-portal
+    pkg_path: /opt/tomcat/.jenkins/workspace/{{component}} #注意路径是否正确
+
+
+  tasks:
+
+    
+    - name: 清除临时文件/tmp/deploy/{{component}}_new
+      file: path=/tmp/deploy/{{component}}_new state=absent
+      tags:
+        - pre_install
+
+
+    - name: 清除临时文件{{pkg_path}}/{{component}}_new.tar.gz
+      file: path={{pkg_path}}/{{component}}_new.tar.gz state=absent
+      delegate_to: localhost
+      tags:
+        - pre_install
+
+
+
+    - name: 压缩{{component}}目录，生成文件{{component}}_new.tar.gz
+      archive: path={{pkg_path}} dest={{pkg_path}}/{{component}}_new.tar.gz format=gz
+      delegate_to: localhost
+      tags:
+        - pre_install
+
+    - name: 创建临时文件目录/tmp/deploy
+      file: path=/tmp/deploy state=directory
+      tags:
+        - pre_install
+
+    - name: 创建临时文件目录/tmp/deploy/{{component}}_new
+      file: path=/tmp/deploy/{{component}}_new state=directory
+      tags:
+        - pre_install
+
+    - name: 传输压缩文件{{component}}_new.tar.gz
+      synchronize: src={{pkg_path}}/{{component}}_new.tar.gz dest=/tmp/deploy/{{component}}_new
+
+
+    - name: 判断当前环境/opt/deploy/{{component}}文件夹存在
+      stat: path=/opt/deploy/{{component}}
+      register: component_dir 
+      tags:
+        - pre_install
+        
+    - name: 当前环境创建/opt/deploy/{{component}}文件夹
+      file: path=/opt/deploy/{{component}} state=directory     
+      when: not component_dir.stat.exists
+      tags:
+        - pre_install
+
+    - name: 压缩当前环境/opt/deploy/{{component}}
+      archive: path=/opt/deploy/{{component}} dest=/opt/deploy/{{component}}.tar.gz format=gz
+      tags:
+        - backup
+
+
+    - name: 创建备份目录 /opt/deploy/backup
+      file: path=/opt/deploy/backup state=directory
+      tags:
+        - backup
+
+
+    - name: 备份当前环境{{component}}文件夹
+      shell:
+        cmd: | 
+              mv /opt/deploy/{{component}}.tar.gz /opt/deploy/backup/{{component}}_$(date +%Y-%m-%d-%H-%M-%S).tar.gz
+      #when: /opt/deploy/{{component}}.tar.gz.stat.exists
+      ignore_errors: yes      
+      tags:
+        - backup
+
+    - name: 清除文件/opt/deploy/{{component}}
+      file: path=/opt/deploy/{{component}} state=absent
+      tags:
+        - pre_install
+
+    - name: 创建文件/opt/deploy/{{component}}
+      file: path=/opt/deploy/{{component}} state=directory
+      tags:
+        - pre_install 
+
+    - name: 部署新的{{component}}到当前环境 
+      command: "tar zxvf /tmp/deploy/{{component}}_new/{{component}}_new.tar.gz -C /opt/deploy/"
+      args:
+        warn: no
+
+    - name: cnpm
+      shell: "cd /opt/deploy/{{component}};cnpm i"
+      args:
+        warn: no
+    - name: npm run build
+      shell: "cd /opt/deploy/{{component}};npm run build"
+      args:
+        warn: no
+

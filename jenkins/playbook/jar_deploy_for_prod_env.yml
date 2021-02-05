@@ -1,0 +1,207 @@
+#前提条件：ansible hosts中添加机器配置组，并对远程机器做免密
+- hosts: your_hosts_config #job名，统一变量，例如test-hx-ams
+  gather_facts: no
+  serial: 1
+  vars:
+    component:  your_component_config  #job名，例如test-hx-ams
+    app_name: your_app_name_config #应用名，例如hx-ams-web
+    pkg_name: your_pkg_name_config  #jar包，例如hx-ams-web.jar
+    app_port:  your_app_port_config #端口，18587，目前开发侧会在配置中心配置，需要确认
+
+    app_env: prod #环境，配置pinpoint时需要
+    pkg_path: /opt/tomcat/.jenkins/workspace/{{component}}/*/{{app_name}}/target #注意路径是否正确
+    pkg_path1: /opt/tomcat/.jenkins/workspace/{{component}}
+    app_home: /usr/local/springboot/{{app_name}}
+    health_check: actuator/health
+    app_shutdown: actuator/shutdown
+
+  tasks:
+
+    - name: 优雅关闭服务springboot {{component}}
+      action: uri url=http://127.0.0.1:{{app_port}}/{{app_shutdown}} method=POST return_content=yes
+      ignore_errors: yes
+      delegate_to:
+      tags:
+        - stop
+
+    - name: 暂停执行，等待springboot处理完剩余请求
+      pause: seconds=10
+      tags:
+        - stop
+
+    - name: 检测启停命令是否加入systemctl服务
+      stat: path="/usr/lib/systemd/system/{{app_name}}.service"
+      register: systemctl_stat_orign
+      tags:
+        - stop
+
+    - name: 停止 tomcat 
+      systemd: name={{app_name}} state=stopped
+      register: tomcat_status
+      when: systemctl_stat_orign.stat.exists
+      delegate_to: 
+      tags:
+        - stop
+
+    - name: 创建tomcat用户组
+      group: name=tomcat state=present
+      tags:
+        - install
+        
+    - name: 创建tomcat用户
+      user: name=tomcat groups=tomcat state=present
+      tags:
+        - install
+        
+    - name: 创建文件夹 {{app_home}}
+      file: path={{app_home}} state=directory owner=tomcat group=tomcat
+      tags:
+        - install
+
+    - name: 创建根日志目录 /opt/logs
+      file: path=/opt/logs state=directory owner=tomcat group=tomcat
+      tags:
+        - install
+
+    - name: 创建app日志目录 /opt/logs/{{app_name}}
+      file: path=/opt/logs/{{app_name}} state=directory owner=tomcat group=tomcat
+      tags:
+        - install       
+
+    - name: 创建app pinpoint日志目录 /opt/logs/{{app_name}}/point
+      file: path=/opt/logs/{{app_name}}/point state=directory owner=tomcat group=tomcat
+      tags:
+        - install
+        
+    - name: 检测启动脚本{{app_home}}/start.sh是否存在
+      stat: path="{{app_home}}/start.sh"
+      register: start_script_stat
+      tags:
+        - install
+
+    - name: 创建启动脚本{{app_home}}/start.sh
+      shell: 
+        cmd: |
+              LOCAL_IP=$(ip a | grep inet | grep -v inet6 | grep -v 127 | sed 's/^[ \t]*//g' | cut -d ' ' -f2| cut -d '/' -f1);
+              cat >> {{app_home}}/start.sh << EOF
+              #!/bin/sh
+              echo "Starting SpringBoot Application"
+              cd {{app_home}}
+              BUILD_ID=dontKillMe
+              nohup java -Dserver.port={{app_port}} -Xmx4096m -Xms4096m -Xmn1024m -Xss1024K -jar {{pkg_name}} > {{app_name}}.log & 
+              EOF
+              chmod +x {{app_home}}/start.sh
+              chown tomcat:tomcat {{app_home}}/start.sh
+      when: start_script_stat.stat.exists == False 
+      tags:
+        - install
+
+    - name: 检测停止脚本{{app_home}}/stop.sh是否存在
+      stat: path="{{app_home}}/stop.sh"
+      register: stop_script_stat
+      tags:
+        - install
+
+    - name: 创建停止脚本{{app_home}}/stop.sh
+      shell: 
+        cmd: |
+              cat >> {{app_home}}/stop.sh << EOF
+              #!/bin/sh
+              echo "Stopping SpringBoot Application"
+              pid=\$(ps -ef | grep {{app_port}} | grep -v grep | awk "{print \$2}")
+              if [ -n "\$pid" ]
+              then
+                 kill -9 \$pid
+              fi
+              EOF
+              chmod +x {{app_home}}/stop.sh
+              chown tomcat:tomcat {{app_home}}/stop.sh
+      when: stop_script_stat.stat.exists == False 
+      tags:
+        - install
+
+    - name: 检测启停命令是否加入systemctl服务
+      stat: path="/usr/lib/systemd/system/{{app_name}}.service"
+      register: systemctl_stat
+      tags:
+        - install
+
+
+    - name: 创建systemctl服务{{app_name}}.service
+      shell: 
+        cmd: |
+              cat >> /usr/lib/systemd/system/{{app_name}}.service << EOF
+              [Unit]
+              Description=The tomcat {{app_name}} server
+              After=syslog.target network.target
+
+              [Service]
+              Type=forking
+              User=tomcat
+              Group=tomcat
+              LimitNOFILE=65536
+              LimitNPROC=65536
+              WorkingDirectory={{app_home}}
+              ExecStart={{app_home}}/start.sh
+              ExecStop={{app_home}}/stop.sh
+              PrivateTmp=true
+
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+      when: systemctl_stat.stat.exists == False
+      notify: 重载systemctl服务并设置开机启动
+      tags:
+        - install
+
+    - name: "{{pkg_path}}/{{pkg_name}} 到 {{app_home}}"
+      copy:
+        src: "{{item}}"
+        dest: "{{app_home}}/{{pkg_name}}"
+        mode: '0644'
+        owner: tomcat
+        group: tomcat
+      with_lines:
+        - "find {{pkg_path}} -type f -name '{{pkg_name}}'||find {{pkg_path1}} -type f -name '{{pkg_name}}'"
+      tags:
+        - install
+        
+    - name: 开放应用端口{{app_port}} 
+      shell: 
+        cmd: |
+             firewall-cmd --zone=public --add-port={{app_port}}/tcp --permanent
+             firewall-cmd --reload
+      tags:
+        - install
+
+    - name: 启动 tomcat 
+      systemd: name={{app_name}} state=started
+      register: tomcat_status
+      delegate_to: 
+      tags:
+        - start
+
+
+    - name: 等待服务 {{component}} 可用
+      action: uri url=http://127.0.0.1:{{app_port}}/{{health_check}} method=HEAD return_content=yes
+      register: result
+      until: "result['status']==200"
+      retries: 15
+      delay: 2
+      delegate_to:
+      tags:
+        - verify
+
+
+    - name: 正在开启负载均衡，需要等待 6 秒
+      pause:
+        seconds: 6
+      tags:
+        - post
+
+  handlers:
+     - name: 重载systemctl服务并设置开机启动
+       shell: 
+         cmd: |
+              systemctl daemon-reload
+              systemctl enable {{app_name}}.service

@@ -1,0 +1,156 @@
+#前提条件：ansible hosts中添加机器配置组，并对远程机器做免密
+- hosts: nginx-backend #job名，统一变量
+  gather_facts: no
+  serial: 1
+  vars:
+    component:  your_component_config  #job名，也是静态目录名，以prod-static-开头，例如prod-static-hxmec-portal
+    pkg_path: /opt/tomcat/.jenkins/workspace/{{component}} #注意路径是否正确
+    static_path: /app/nginx/html/static
+    # pre_component、next_component，若发布时，传入此2个变量，则会进行微前端方式发布，另限定只允许含有字母、数字、横线、下划线
+  
+  tasks:
+
+    - name: 清除临时文件/tmp/deploy/{{component}}
+      file: path=/tmp/deploy/{{component}} state=absent
+      tags:
+        - pre_install
+
+
+    - name: 清除临时文件/tmp/deploy/{{component}}_new
+      file: path=/tmp/deploy/{{component}}_new state=absent
+      tags:
+        - pre_install
+
+
+    - name: 清除临时文件{{pkg_path}}/{{component}}_new.tar.gz
+      file: path={{pkg_path}}/{{component}}_new.tar.gz state=absent
+      tags:
+        - pre_install
+
+
+    - name: 判断{{pkg_path}}/dist/index.html文件存在
+      stat: path={{pkg_path}}/dist/index.html
+      register: index
+      failed_when: not index.stat.exists 
+      delegate_to: localhost
+      tags:
+        - pre_install
+
+
+    - name: 压缩dist目录，生成文件{{component}}_new.tar.gz
+      archive: path={{pkg_path}}/dist dest={{pkg_path}}/{{component}}_new.tar.gz format=gz
+      delegate_to: localhost
+      tags:
+        - pre_install
+
+
+    - name: 创建临时目录 /tmp/deploy
+      file: path=/tmp/deploy state=directory owner=nginx group=nginx
+      tags:
+        - pre_install
+
+
+    - name: 创建临时目录 /tmp/deploy/{{component}}
+      file: path=/tmp/deploy/{{component}} state=directory owner=nginx group=nginx
+      tags:
+        - pre_install
+
+
+    - name: 创建临时目录 /tmp/deploy/{{component}}_new
+      file: path=/tmp/deploy/{{component}}_new state=directory owner=nginx group=nginx
+      tags:
+        - pre_install
+
+
+    - name: 传输文件并解压到/tmp目录下，{{component}}_new.tar.gz
+      unarchive: src={{pkg_path}}/{{component}}_new.tar.gz dest=/tmp/deploy/{{component}}_new/ copy=yes owner=nginx group=nginx
+      tags:
+        - pre_install
+
+
+    - name: 判断当前环境{{static_path}}/{{component}}文件夹存在
+      stat: path={{static_path}}/{{component}}
+      register: component_dir 
+      tags:
+        - pre_install
+
+
+    - name: 当前环境创建{{static_path}}/{{component}}文件夹
+      file: path={{static_path}}/{{component}} state=directory owner=nginx group=nginx
+      when: not component_dir.stat.exists
+      tags:
+        - pre_install
+
+
+    - name: 压缩当前环境{{static_path}}/{{component}}
+      archive: path={{static_path}}/{{component}} dest={{static_path}}/{{component}}.tar.gz format=gz
+      tags:
+        - backup
+
+
+    - name: 创建备份目录 {{static_path}}/backup
+      file: path={{static_path}}/backup state=directory owner=nginx group=nginx
+      tags:
+        - backup
+
+
+    - name: 备份当前环境{{component}}文件夹
+      shell:
+        cmd: | 
+              mv {{static_path}}/{{component}}.tar.gz {{static_path}}/backup/{{component}}_$(date +%Y-%m-%d-%H-%M-%S).tar.gz
+      #when: {{static_path}}/{{component}}.tar.gz.stat.exists
+      ignore_errors: yes      
+      tags:
+        - backup
+
+
+    - name: 判断当前环境{{static_path}}/{{component}}下存在文件
+      find: paths={{static_path}}/{{component}}/
+      register: files_found 
+
+
+    - name: 清空当前环境{{component}}文件夹 
+      shell: mv {{static_path}}/{{component}}/* /tmp/deploy/{{component}}/
+      when: files_found.matched|int != 0
+      tags:
+        - install
+
+
+    - name: 部署新的{{component}}到当前环境 
+      shell: 
+        cmd: |
+             mv /tmp/deploy/{{component}}_new/dist/* {{static_path}}/{{component}}/
+      tags:
+        - install
+
+
+    - name: 更新{{component}}文件权限为755
+      file: path={{static_path}}/{{component}} mode=0755
+      tags:
+        - install
+
+
+    - debug:
+       msg: 部署路径为{{static_path}}/{{component}}/
+
+
+    - name: 微前端方式发布(拷贝前端文件到主目录)
+      shell:
+        cmd: |
+             if echo "{{pre_component}}" | grep -q '^[a-zA-Z0-9_-]\+$'; then
+                if echo "{{next_component}}" | grep -q '^[a-zA-Z0-9_-]\+$'; then
+                  test -d {{static_path}}/{{pre_component}} && cd {{static_path}}/{{pre_component}} && rm -rf ./{{next_component}}
+                  mkdir -p {{static_path}}/{{pre_component}}/{{next_component}}
+                  cp -r {{static_path}}/{{component}}/* {{static_path}}/{{pre_component}}/{{next_component}}/
+                  cd {{static_path}}/{{pre_component}} && chmod -R 755 {{next_component}}
+                fi
+             fi
+      when: pre_component|default(false) and next_component|default(false)
+      tags:
+        - install
+
+
+    - debug:
+        msg: "微前端部署路径为{{static_path}}/{{pre_component}}/{{next_component}}/"
+      when: pre_component|default(false) and next_component|default(false)
+

@@ -1,0 +1,67 @@
+#前提条件：ansible hosts中添加机器配置组，并对远程机器做免密
+- hosts: pro-nanping-dupnp-all #job名，统一变量
+  gather_facts: no
+  vars:
+    component: pro-nanping-dupnp-all #job名
+    app_name: dup-web-portal #应用名
+    pkg_name: dupfj-web-portal.war #war包
+    app_port: 8080 #端口
+
+    app_env: prod #环境，配置pinpoint时需要
+    pkg_path: /opt/tomcat/.jenkins/workspace/{{component}}/*/{{app_name}}/target #注意路径是否正确
+    pkg_file: "{{pkg_path}}/{{pkg_name}}"
+    app_home: /usr/local/tomcat/{{app_name}}
+    health_check: healthCheck.jsp
+
+  tasks:
+
+    - name: 检测启停命令是否加入systemctl服务
+      stat: path="/usr/lib/systemd/system/{{app_name}}.service"
+      register: systemctl_stat_orign
+      tags:
+        - install
+
+    - name: 停止 tomcat 
+      systemd: name={{app_name}} state=stopped
+      register: tomcat_status
+      when: systemctl_stat_orign.stat.exists
+      delegate_to: 
+      tags:
+        - stop
+
+    - name: 拷贝本地文件 {{pkg_path}}/{{pkg_name}} 到 {{app_home}}/webapps/{{pkg_name}}
+      copy:
+        src: "{{item}}"
+        dest: "{{app_home}}/webapps/{{pkg_name}}"
+        mode: '0644'
+      with_lines:
+        - "find {{pkg_path}} -type f -name '{{pkg_name}}'"
+      tags:
+        - install
+
+
+    - name: 启动 tomcat 
+      systemd: name={{app_name}} state=started
+      register: tomcat_status
+      delegate_to: 
+      tags:
+        - start
+
+
+    - name: 等待服务 {{component}} 可用
+      action: uri url=http://127.0.0.1:{{app_port}} method=HEAD return_content=yes
+      register: result
+      until: "result['status']==200"
+      retries: 15
+      delay: 2
+      delegate_to:
+      tags:
+        - verify
+
+
+    - name: 正在开启负载均衡，需要等待 6 秒
+      pause:
+        seconds: 6
+      tags:
+        - post
+
