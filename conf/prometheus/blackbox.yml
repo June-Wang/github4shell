@@ -1,7 +1,7 @@
 modules:
   http_2xx:
     prober: http
-    timeout: 10s
+    timeout: 30s
     http:
       headers:
         Accept: "*/*"
@@ -10,7 +10,7 @@ modules:
       valid_status_codes: [200,301,302]
       #valid_status_codes: []
       preferred_ip_protocol: "ip4" # 首选IP协议
-      no_follow_redirects: true # 开启跟随重定向
+      no_follow_redirects: true #开启跟随重定向
 
   http_post_2xx:
     prober: http
