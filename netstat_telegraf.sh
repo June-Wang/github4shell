@@ -1,10 +1,8 @@
 #!/bin/bash
 #telegraf netstat 状态
 
-dev="$1"
-/bin/ip addr show dev $dev >/dev/null || exit 1
 
-server=`/bin/ip addr show dev ${dev}|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
+server=`/bin/ip addr list|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^172|^127|255$'|head -n1`
 #echo $server
 hostname=`hostname`
 

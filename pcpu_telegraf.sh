@@ -1,11 +1,7 @@
 #!/bin/bash
 
-dev_name="$1"
-test -z ${dev_name} &&\
-eval "echo dev_name is null!;exit 1"
-
 hostname=`hostname`
-ip=`/sbin/ip addr list|grep -E "${dev_name}$"|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^127|255$'|head -n1`
+ip=`/sbin/ip addr list|grep -oP '\d{1,3}(\.\d{1,3}){3}'|grep -Ev '^172|^127|255$'|head -n1`
 now=`date -d now +"%F %T"`
 
 timetamp=`date -d now +"%s%N"`
